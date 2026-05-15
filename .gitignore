@@ -1,0 +1,23 @@
+# Environment secrets — never commit
+.env
+
+# OS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+
+# Test reports
+frontend/playwright-report/
+frontend/test-results/
+
+# Local screenshots
+*.png
+Screenshot*.png
+
+# Google OAuth client secret
+client_secret_*.json
+
+# Claude settings
+.claude/

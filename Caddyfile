@@ -1,0 +1,18 @@
+{$DOMAIN} {
+    # Route API calls to the .NET backend
+    handle /api/* {
+        reverse_proxy backend:8080
+    }
+
+    # Route everything else to the React frontend
+    handle {
+        reverse_proxy frontend:80
+    }
+
+    # Security headers
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+}

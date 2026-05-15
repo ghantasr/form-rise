@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "g_state",
+      "value": "{\"i_l\":0,\"i_ll\":1778836437465,\"i_b\":\"yCiLO+clzp4cjZLioZvVZF7ovPZzscFC5kVTjo5B/Uc\",\"i_e\":{\"enable_itp_optimization\":23},\"i_et\":1778836437465}",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1794388437,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "refreshToken",
+      "value": "VSE1VC3vf%2Fh35zIiJ%2FUXVqdTfmxv1xdSbP0EruY6MROTwAj3g4g6Pfa%2FoJox%2FpbfEA503AzsJs3tH7amsuW63Q%3D%3D",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1781428439.616575,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
