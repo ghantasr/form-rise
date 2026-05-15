@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /forms/
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://formrise.fyi/sitemap.xml
