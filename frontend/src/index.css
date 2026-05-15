@@ -4,12 +4,11 @@
   --primary: #1B6B4A;
   --primary-light: #E8F5EE;
   --primary-dark: #134F36;
-  --accent: #E8593C;
-  --bg: #FAFAF8;
+  --bg: #F5F4F1;
   --card: #FFFFFF;
-  --text: #1A1A18;
+  --text: #141412;
   --text-muted: #6B6B66;
-  --border: #E8E8E4;
+  --border: #E4E4E0;
 }
 
 * {
@@ -20,10 +19,21 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  font-family: "Inter", "DM Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
+}
+
+.login-left-panel {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .login-left-panel {
+    display: flex;
+  }
 }

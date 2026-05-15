@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GitFork, FileText } from 'lucide-react';
+import { GitFork, Layers } from 'lucide-react';
 import client from '../api/client';
 import { Button } from '../components/shared/Button';
 import { EmptyState } from '../components/shared/EmptyState';
@@ -15,6 +15,38 @@ interface Template {
   forkCount: number;
 }
 
+type CategoryStyle = { bg: string; text: string; dot: string };
+
+function getCategoryStyle(title: string): CategoryStyle {
+  const t = title.toLowerCase();
+  if (t.includes('feedback') || t.includes('nps') || t.includes('review') || t.includes('satisfaction') || t.includes('table'))
+    return { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-400' };
+  if (t.includes('registr') || t.includes('event') || t.includes('workshop') || t.includes('enrollment') || t.includes('waitlist') || t.includes('meeting'))
+    return { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-400' };
+  if (t.includes('job') || t.includes('application') || t.includes('scholarship') || t.includes('admission') || t.includes('volunteer') || t.includes('adoption'))
+    return { bg: 'bg-purple-50', text: 'text-purple-700', dot: 'bg-purple-400' };
+  if (t.includes('bug') || t.includes('support') || t.includes('return') || t.includes('refund') || t.includes('ticket') || t.includes('feature'))
+    return { bg: 'bg-orange-50', text: 'text-orange-700', dot: 'bg-orange-400' };
+  if (t.includes('patient') || t.includes('health') || t.includes('gym') || t.includes('medical') || t.includes('pet'))
+    return { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-400' };
+  if (t.includes('contact') || t.includes('lead') || t.includes('vendor') || t.includes('speaker') || t.includes('travel') || t.includes('design') || t.includes('newsletter'))
+    return { bg: 'bg-indigo-50', text: 'text-indigo-700', dot: 'bg-indigo-400' };
+  return { bg: 'bg-[#F5F4F1]', text: 'text-[#6B6B66]', dot: 'bg-[#C0C0BB]' };
+}
+
+function getCategoryLabel(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes('feedback') || t.includes('nps') || t.includes('review') || t.includes('satisfaction')) return 'Feedback';
+  if (t.includes('registr') || t.includes('event') || t.includes('workshop') || t.includes('enrollment') || t.includes('waitlist') || t.includes('meeting')) return 'Registration';
+  if (t.includes('job') || t.includes('application') || t.includes('scholarship') || t.includes('admission') || t.includes('volunteer') || t.includes('adoption')) return 'Applications';
+  if (t.includes('bug') || t.includes('support') || t.includes('ticket') || t.includes('feature')) return 'Support';
+  if (t.includes('return') || t.includes('refund')) return 'Operations';
+  if (t.includes('patient') || t.includes('health') || t.includes('gym') || t.includes('medical') || t.includes('pet')) return 'Health & Wellness';
+  if (t.includes('contact') || t.includes('lead') || t.includes('newsletter')) return 'Marketing';
+  if (t.includes('vendor') || t.includes('speaker') || t.includes('travel') || t.includes('design')) return 'Business';
+  return 'General';
+}
+
 export function Templates() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -22,6 +54,7 @@ export function Templates() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [forkingId, setForkingId] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('All');
 
   useEffect(() => {
     client
@@ -35,62 +68,102 @@ export function Templates() {
     setForkingId(slug);
     try {
       const { data } = await client.post<{ id: string }>(`/templates/${slug}/fork`);
-      toast('Template forked successfully', 'success');
+      toast('Template added to your forms', 'success');
       navigate(`/forms/${data.id}/edit`);
     } catch {
-      toast('Failed to fork template', 'error');
+      toast('Failed to use template', 'error');
     } finally {
       setForkingId(null);
     }
   };
 
+  const categories = ['All', ...Array.from(new Set(templates.map((t) => getCategoryLabel(t.title))))].sort((a, b) =>
+    a === 'All' ? -1 : b === 'All' ? 1 : a.localeCompare(b)
+  );
+
+  const filtered = activeCategory === 'All'
+    ? templates
+    : templates.filter((t) => getCategoryLabel(t.title) === activeCategory);
+
   if (loading) return <PageLoader />;
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A18]">Templates</h1>
-        <p className="text-sm text-[#6B6B66] mt-1">
-          Start with a ready-made form template and customize it to your needs.
+    <div className="p-8 max-w-6xl">
+      <div className="mb-7">
+        <h1 className="text-2xl font-bold text-[#141412] tracking-[-0.02em]">Templates</h1>
+        <p className="text-sm text-[#6B6B66] mt-0.5">
+          Start with a ready-made template and customize it to your needs.
         </p>
       </div>
 
-      {templates.length === 0 ? (
+      {/* Category filter */}
+      {templates.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap mb-7">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                activeCategory === cat
+                  ? 'bg-[#1B6B4A] text-white'
+                  : 'bg-white border border-[#E4E4E0] text-[#6B6B66] hover:border-[#1B6B4A] hover:text-[#1B6B4A]'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {filtered.length === 0 ? (
         <EmptyState
-          icon={<FileText size={48} />}
+          icon={<Layers size={44} />}
           title="No templates yet"
-          description="Check back later for community templates."
+          description="Check back soon — community templates are on the way."
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {templates.map((template) => (
-            <div
-              key={template.id}
-              className="bg-white border border-[#E8E8E4] rounded-xl p-5 flex flex-col gap-3 hover:border-[#1B6B4A] hover:shadow-sm transition-all"
-            >
-              <div>
-                <h3 className="font-semibold text-[#1A1A18] mb-1 line-clamp-2">{template.title}</h3>
-                {template.description && (
-                  <p className="text-xs text-[#9C9C96] line-clamp-3">{template.description}</p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#F0F0EC]">
-                <div className="flex items-center gap-1.5 text-xs text-[#6B6B66]">
-                  <GitFork size={12} />
-                  <span>{template.forkCount} fork{template.forkCount !== 1 ? 's' : ''}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          {filtered.map((template) => {
+            const style = getCategoryStyle(template.title);
+            const catLabel = getCategoryLabel(template.title);
+            return (
+              <div
+                key={template.id}
+                className="bg-white border border-[#E4E4E0] rounded-xl p-5 flex flex-col gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 group"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full mb-2 ${style.bg} ${style.text}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                      {catLabel}
+                    </span>
+                    <h3 className="font-semibold text-[#141412] line-clamp-2 text-[15px] tracking-[-0.01em]">
+                      {template.title}
+                    </h3>
+                  </div>
                 </div>
-                <Button
-                  size="sm"
-                  onClick={() => handleFork(template.slug)}
-                  isLoading={forkingId === template.slug}
-                >
-                  <GitFork size={13} />
-                  Fork
-                </Button>
+
+                {template.description && (
+                  <p className="text-xs text-[#9C9C96] line-clamp-2 leading-relaxed -mt-1">{template.description}</p>
+                )}
+
+                <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#F0F0EC]">
+                  <div className="flex items-center gap-1.5 text-xs text-[#9C9C96]">
+                    <GitFork size={11} />
+                    <span>{template.forkCount} use{template.forkCount !== 1 ? 's' : ''}</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => handleFork(template.slug)}
+                    isLoading={forkingId === template.slug}
+                    className="text-xs"
+                  >
+                    Use template
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

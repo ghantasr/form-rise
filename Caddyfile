@@ -1,4 +1,4 @@
-{$DOMAIN} {
+:80 {
     # Route API calls to the .NET backend
     handle /api/* {
         reverse_proxy backend:8080

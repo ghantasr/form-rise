@@ -18,7 +18,6 @@ export function Settings() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Persist display name — extend this to call your profile API when available
       toast('Settings saved', 'success');
     } catch {
       toast('Failed to save settings', 'error');
@@ -27,37 +26,53 @@ export function Settings() {
     }
   };
 
+  const initials = user?.displayName
+    ? user.displayName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+    : user?.email?.slice(0, 2).toUpperCase() ?? '??';
+
   return (
     <div className="p-8 max-w-lg">
-      <h1 className="text-2xl font-bold text-[#1A1A18] mb-1">Settings</h1>
-      <p className="text-sm text-[#6B6B66] mb-8">Manage your account preferences.</p>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[#141412] tracking-[-0.02em]">Settings</h1>
+        <p className="text-sm text-[#6B6B66] mt-0.5">Manage your account preferences.</p>
+      </div>
 
-      <div className="bg-white border border-[#E8E8E4] rounded-xl p-6 flex flex-col gap-5">
-        <div>
-          <p className="text-xs font-semibold text-[#6B6B66] uppercase tracking-wider mb-3">
-            Account
-          </p>
-          <div className="flex flex-col gap-4">
-            <div>
-              <p className="text-xs text-[#9C9C96] mb-0.5">Email</p>
-              <p className="text-sm font-medium text-[#1A1A18]">{user?.email ?? '—'}</p>
-            </div>
-
-            <Input
-              label="Display name"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Your name"
-            />
+      {/* Profile card */}
+      <div className="bg-white border border-[#E4E4E0] rounded-xl p-6 mb-4">
+        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-[#F0F0EC]">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base shrink-0"
+            style={{ background: '#1B6B4A' }}
+          >
+            {initials}
+          </div>
+          <div>
+            <p className="font-semibold text-[#141412] text-sm">{user?.displayName || 'No name set'}</p>
+            <p className="text-xs text-[#9C9C96] mt-0.5">{user?.email}</p>
           </div>
         </div>
 
-        <div className="pt-2 border-t border-[#F0F0EC]">
-          <Button onClick={handleSave} isLoading={saving}>
-            Save changes
-          </Button>
+        <div className="flex flex-col gap-5">
+          <Input
+            label="Display name"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Your name"
+          />
+
+          <div>
+            <p className="text-xs font-medium text-[#6B6B66] mb-1.5">Email address</p>
+            <p className="text-sm text-[#141412] font-medium bg-[#F5F4F1] border border-[#E4E4E0] rounded-lg px-3 py-2.5">
+              {user?.email ?? '—'}
+            </p>
+            <p className="text-xs text-[#9C9C96] mt-1">Email cannot be changed.</p>
+          </div>
         </div>
       </div>
+
+      <Button onClick={handleSave} isLoading={saving}>
+        Save changes
+      </Button>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json .
-RUN npm ci
+RUN npm install
 COPY . .
 # Vite bakes env vars at build time — pass them as build args
 ARG VITE_GOOGLE_CLIENT_ID
