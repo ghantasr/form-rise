@@ -12,6 +12,13 @@
 frontend/playwright-report/
 frontend/test-results/
 
+# .NET build output
+backend/**/bin/
+backend/**/obj/
+
+# Node modules
+frontend/node_modules/
+
 # Local screenshots
 *.png
 Screenshot*.png
