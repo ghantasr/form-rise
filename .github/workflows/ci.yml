@@ -27,8 +27,11 @@ jobs:
       - name: Build
         run: dotnet build FormFlow.Api/FormFlow.Api.csproj -c Release --no-restore
 
-      - name: Docker image (build only, no push on PRs)
-        uses: docker/build-push-action@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker image (build only, no push)
+        uses: docker/build-push-action@v6
         with:
           context: backend
           push: false
@@ -59,8 +62,11 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Docker image (build only, no push on PRs)
-        uses: docker/build-push-action@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker image (build only, no push)
+        uses: docker/build-push-action@v6
         with:
           context: frontend
           push: false
