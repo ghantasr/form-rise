@@ -1,12 +1,7 @@
-const CACHE = 'formrise-v3';
-const SHELL = ['/', '/dashboard', '/templates', '/login'];
+const CACHE = 'formrise-v4';
 
-// Install: cache the app shell
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())
-  );
-});
+// Install: skip waiting immediately — no shell pre-cache to avoid stale HTML after deploys
+self.addEventListener('install', () => self.skipWaiting());
 
 // Activate: remove old caches
 self.addEventListener('activate', (e) => {
