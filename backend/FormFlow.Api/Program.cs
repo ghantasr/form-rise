@@ -59,6 +59,9 @@ builder.Services.AddCors(opts =>
          .AllowCredentials();
     }));
 
+// HTTP clients
+builder.Services.AddHttpClient("google", c => c.BaseAddress = new Uri("https://oauth2.googleapis.com/"));
+
 // Services
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<IAuthService, AuthService>();

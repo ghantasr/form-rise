@@ -2,7 +2,6 @@ using FormFlow.Api.Data;
 using FormFlow.Api.Helpers;
 using FormFlow.Api.Models.DTOs.Auth;
 using FormFlow.Api.Models.Entities;
-using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +14,8 @@ public class AuthService(
     IDistributedCache cache,
     IEmailService emailService,
     JwtHelper jwt,
-    IConfiguration config) : IAuthService
+    IConfiguration config,
+    IHttpClientFactory httpClientFactory) : IAuthService
 {
     public async Task SendOtpAsync(string email)
     {
@@ -147,43 +147,51 @@ public class AuthService(
         }
     }
 
-    public async Task<AuthResponse> GoogleLoginAsync(string idToken)
+    public async Task<AuthResponse> GoogleLoginAsync(string accessToken)
     {
         var clientId = config["Google:ClientId"]
             ?? throw new InvalidOperationException("Google:ClientId not configured.");
 
-        var settings = new GoogleJsonWebSignature.ValidationSettings
-        {
-            Audience = [clientId]
-        };
-
-        GoogleJsonWebSignature.Payload payload;
-        try
-        {
-            payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
-        }
-        catch
-        {
+        var http = httpClientFactory.CreateClient("google");
+        var res = await http.GetAsync($"tokeninfo?access_token={Uri.EscapeDataString(accessToken)}");
+        if (!res.IsSuccessStatusCode)
             throw new UnauthorizedAccessException("Invalid Google token.");
-        }
 
-        var email = payload.Email;
+        using var doc = JsonDocument.Parse(await res.Content.ReadAsStringAsync());
+        var root = doc.RootElement;
+
+        // Verify the token was issued for our app
+        var aud = root.TryGetProperty("aud", out var audProp) ? audProp.GetString() : null;
+        if (aud != clientId)
+            throw new UnauthorizedAccessException("Google token audience mismatch.");
+
+        var emailVerified = root.TryGetProperty("email_verified", out var evProp) && evProp.GetString() == "true";
+        if (!emailVerified)
+            throw new UnauthorizedAccessException("Google email not verified.");
+
+        var email = root.TryGetProperty("email", out var emailProp) ? emailProp.GetString() : null;
+        if (string.IsNullOrEmpty(email))
+            throw new UnauthorizedAccessException("Google token missing email.");
+
+        var name = root.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : null;
+        var picture = root.TryGetProperty("picture", out var picProp) ? picProp.GetString() : null;
+
         var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user is null)
         {
             user = new User
             {
                 Email = email,
-                DisplayName = payload.Name,
-                AvatarUrl = payload.Picture,
+                DisplayName = name,
+                AvatarUrl = picture,
                 IsVerified = true
             };
             db.Users.Add(user);
         }
         else
         {
-            user.DisplayName ??= payload.Name;
-            user.AvatarUrl ??= payload.Picture;
+            user.DisplayName ??= name;
+            user.AvatarUrl ??= picture;
             user.LastLoginAt = DateTime.UtcNow;
             user.UpdatedAt = DateTime.UtcNow;
         }

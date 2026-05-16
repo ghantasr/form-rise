@@ -187,7 +187,7 @@ export function FormFill() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] py-10 px-4">
+    <div className="min-h-screen bg-[#FAFAF8] py-6 sm:py-10 px-4">
       <div className="max-w-xl mx-auto">
         {qrToken && (
           <div className="flex items-center gap-2 px-4 py-2.5 bg-[#E8F5EE] border border-[#1B6B4A]/20 rounded-lg text-sm text-[#1B6B4A] mb-5">
@@ -212,8 +212,8 @@ export function FormFill() {
 
         <div className="bg-white border border-[#E8E8E4] rounded-xl shadow-sm overflow-hidden mb-6">
           <div className="h-2 bg-[#1B6B4A]" />
-          <div className="px-8 py-6">
-            <h1 className="text-2xl font-bold text-[#1A1A18] mb-1">{form.title}</h1>
+          <div className="px-4 py-4 sm:px-8 sm:py-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A18] mb-1">{form.title}</h1>
             {form.description && (
               <p className="text-sm text-[#6B6B66]">{form.description}</p>
             )}
@@ -225,7 +225,7 @@ export function FormFill() {
             {form.fields.map((field) => (
               <div
                 key={field.id}
-                className="bg-white border border-[#E8E8E4] rounded-xl px-8 py-6"
+                className="bg-white border border-[#E8E8E4] rounded-xl px-4 py-4 sm:px-8 sm:py-6"
               >
                 <FieldRenderer
                   field={field}

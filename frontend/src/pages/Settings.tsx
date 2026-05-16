@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/shared/Button';
 import { Input } from '../components/shared/Input';
@@ -6,6 +8,7 @@ import { useToast } from '../components/shared/Toast';
 
 export function Settings() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const [displayName, setDisplayName] = useState('');
@@ -31,7 +34,15 @@ export function Settings() {
     : user?.email?.slice(0, 2).toUpperCase() ?? '??';
 
   return (
-    <div className="p-8 max-w-lg">
+    <div className="p-4 sm:p-8 max-w-lg">
+      <button
+        onClick={() => navigate(-1)}
+        className="lg:hidden flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer mb-6"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
+
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[#141412] tracking-[-0.02em]">Settings</h1>
         <p className="text-sm text-[#6B6B66] mt-0.5">Manage your account preferences.</p>
@@ -46,9 +57,9 @@ export function Settings() {
           >
             {initials}
           </div>
-          <div>
-            <p className="font-semibold text-[#141412] text-sm">{user?.displayName || 'No name set'}</p>
-            <p className="text-xs text-[#9C9C96] mt-0.5">{user?.email}</p>
+          <div className="min-w-0">
+            <p className="font-semibold text-[#141412] text-sm truncate">{user?.displayName || 'No name set'}</p>
+            <p className="text-xs text-[#9C9C96] mt-0.5 truncate">{user?.email}</p>
           </div>
         </div>
 
@@ -62,7 +73,7 @@ export function Settings() {
 
           <div>
             <p className="text-xs font-medium text-[#6B6B66] mb-1.5">Email address</p>
-            <p className="text-sm text-[#141412] font-medium bg-[#F5F4F1] border border-[#E4E4E0] rounded-lg px-3 py-2.5">
+            <p className="text-sm text-[#141412] font-medium bg-[#F5F4F1] border border-[#E4E4E0] rounded-lg px-3 py-2.5 truncate">
               {user?.email ?? '—'}
             </p>
             <p className="text-xs text-[#9C9C96] mt-1">Email cannot be changed.</p>

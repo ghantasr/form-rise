@@ -10,7 +10,12 @@ const navItems = [
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
@@ -25,8 +30,18 @@ export function Sidebar() {
     ? user.displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
     : user?.email?.slice(0, 2).toUpperCase() ?? '??';
 
+  const handleNavClick = () => {
+    // Brief delay so the active state is visible before the drawer slides away
+    setTimeout(() => onClose?.(), 180);
+  };
+
   return (
-    <aside className="w-54 flex flex-col h-screen sticky top-0 shrink-0" style={{ width: '216px', background: '#0C1910' }}>
+    <aside
+      className={`fixed lg:sticky lg:top-0 inset-y-0 left-0 z-40 lg:z-auto flex flex-col h-screen shrink-0 transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}
+      style={{ width: '216px', background: '#0C1910' }}
+    >
       {/* Logo */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-2.5">
@@ -49,6 +64,7 @@ export function Sidebar() {
           <NavLink
             key={to}
             to={to}
+            onClick={handleNavClick}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all ${
                 isActive

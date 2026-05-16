@@ -11,8 +11,9 @@
   --border: #E4E4E0;
 }
 
-* {
+*, html {
   box-sizing: border-box;
+  overscroll-behavior-x: none;
 }
 
 body {
@@ -22,6 +23,7 @@ body {
   font-family: "Inter", "DM Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-x: none;
 }
 
 #root {

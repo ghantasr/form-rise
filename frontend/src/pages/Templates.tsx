@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GitFork, Layers } from 'lucide-react';
+import { ArrowLeft, GitFork, Layers } from 'lucide-react';
 import client from '../api/client';
 import { Button } from '../components/shared/Button';
 import { EmptyState } from '../components/shared/EmptyState';
@@ -88,7 +88,15 @@ export function Templates() {
   if (loading) return <PageLoader />;
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl">
+      <button
+        onClick={() => navigate(-1)}
+        className="lg:hidden flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer mb-6"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
+
       <div className="mb-7">
         <h1 className="text-2xl font-bold text-[#141412] tracking-[-0.02em]">Templates</h1>
         <p className="text-sm text-[#6B6B66] mt-0.5">
