@@ -87,10 +87,10 @@ export function FormResponses() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex flex-wrap items-start gap-3 mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#1A1A18] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#1A1A18] transition-colors cursor-pointer mt-1"
         >
           <ArrowLeft size={14} />
           Back
@@ -107,9 +107,11 @@ export function FormResponses() {
           onClick={handleExportCsv}
           isLoading={exporting}
           disabled={responses.length === 0}
+          className="shrink-0"
         >
           <Download size={14} />
-          Export CSV
+          <span className="hidden sm:inline">Export CSV</span>
+          <span className="sm:hidden">CSV</span>
         </Button>
       </div>
 
@@ -143,62 +145,110 @@ export function FormResponses() {
             description="Share your form to start collecting responses."
           />
         ) : (
-          <div className="bg-white border border-[#E8E8E4] rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[#E8E8E4] bg-[#FAFAF8]">
-                    <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap">
-                      Submitted at
-                    </th>
-                    <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap">
-                      Email
-                    </th>
-                    {fields.map((f) => (
-                      <th
-                        key={f.id}
-                        className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap max-w-[180px]"
-                      >
-                        {truncate(f.label, 30)}
-                      </th>
-                    ))}
-                    <th className="w-16" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {responses.map((response, i) => (
-                    <tr
-                      key={response.id}
-                      onClick={() => setSelectedResponse(response)}
-                      className={`border-b border-[#F0F0EC] cursor-pointer hover:bg-[#F5FAF7] transition-colors group ${
-                        i % 2 === 0 ? '' : 'bg-[#FAFAF8]'
-                      } ${selectedResponse?.id === response.id ? 'bg-[#E8F5EE]' : ''}`}
-                    >
-                      <td className="px-4 py-3 text-[#1A1A18] whitespace-nowrap">
+          <>
+            {/* Mobile: card layout */}
+            <div className="flex flex-col gap-3 md:hidden">
+              {responses.map((response) => (
+                <div
+                  key={response.id}
+                  onClick={() => setSelectedResponse(response)}
+                  className={`bg-white border rounded-xl p-4 cursor-pointer transition-colors ${
+                    selectedResponse?.id === response.id
+                      ? 'border-[#1B6B4A] bg-[#E8F5EE]'
+                      : 'border-[#E8E8E4] hover:border-[#1B6B4A]/40'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div>
+                      <p className="text-xs text-[#6B6B66]">
                         {new Date(response.submittedAt).toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-[#6B6B66] whitespace-nowrap">
-                        {response.respondentEmail ?? '—'}
-                      </td>
-                      {fields.map((f) => (
-                        <td key={f.id} className="px-4 py-3 text-[#1A1A18] max-w-[180px] truncate">
-                          {getAnswerDisplay(response, f.id)}
-                        </td>
-                      ))}
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleDeleteResponse(response.id); }}
-                          className="opacity-0 group-hover:opacity-100 text-xs text-[#6B6B66] hover:text-red-500 transition-all cursor-pointer"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </p>
+                      {response.respondentEmail && (
+                        <p className="text-sm font-medium text-[#1A1A18] mt-0.5 truncate">
+                          {response.respondentEmail}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDeleteResponse(response.id); }}
+                      className="text-xs text-[#6B6B66] hover:text-red-500 transition-colors shrink-0 cursor-pointer"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {fields.slice(0, 3).map((f) => (
+                      <div key={f.id} className="flex gap-2 text-xs">
+                        <span className="text-[#6B6B66] shrink-0 w-24 truncate">{f.label}</span>
+                        <span className="text-[#1A1A18] truncate">{getAnswerDisplay(response, f.id)}</span>
+                      </div>
+                    ))}
+                    {fields.length > 3 && (
+                      <p className="text-xs text-[#1B6B4A] mt-1">+{fields.length - 3} more — tap to view all</p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+
+            {/* Desktop: table layout */}
+            <div className="hidden md:block bg-white border border-[#E8E8E4] rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[#E8E8E4] bg-[#FAFAF8]">
+                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap">
+                        Submitted at
+                      </th>
+                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap">
+                        Email
+                      </th>
+                      {fields.map((f) => (
+                        <th
+                          key={f.id}
+                          className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap max-w-[180px]"
+                        >
+                          {truncate(f.label, 30)}
+                        </th>
+                      ))}
+                      <th className="w-16" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {responses.map((response, i) => (
+                      <tr
+                        key={response.id}
+                        onClick={() => setSelectedResponse(response)}
+                        className={`border-b border-[#F0F0EC] cursor-pointer hover:bg-[#F5FAF7] transition-colors group ${
+                          i % 2 === 0 ? '' : 'bg-[#FAFAF8]'
+                        } ${selectedResponse?.id === response.id ? 'bg-[#E8F5EE]' : ''}`}
+                      >
+                        <td className="px-4 py-3 text-[#1A1A18] whitespace-nowrap">
+                          {new Date(response.submittedAt).toLocaleString()}
+                        </td>
+                        <td className="px-4 py-3 text-[#6B6B66] whitespace-nowrap">
+                          {response.respondentEmail ?? '—'}
+                        </td>
+                        {fields.map((f) => (
+                          <td key={f.id} className="px-4 py-3 text-[#1A1A18] max-w-[180px] truncate">
+                            {getAnswerDisplay(response, f.id)}
+                          </td>
+                        ))}
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteResponse(response.id); }}
+                            className="opacity-0 group-hover:opacity-100 text-xs text-[#6B6B66] hover:text-red-500 transition-all cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )
       )}
 
