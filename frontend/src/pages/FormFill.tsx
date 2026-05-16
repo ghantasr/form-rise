@@ -15,6 +15,7 @@ export function FormFill() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const qrToken = searchParams.get('token') ?? undefined;
+  const isPreview = searchParams.get('preview') === 'true';
 
   const [form, setForm] = useState<Form | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,15 +34,19 @@ export function FormFill() {
 
   useEffect(() => {
     if (!slug) return;
-    formsApi
-      .getPublic(slug)
+    const fetch = isPreview
+      ? formsApi.getPreview(slug)   // slug is actually the form ID in preview mode
+      : formsApi.getPublic(slug);
+    fetch
       .then(({ data }) => {
         setForm(data);
         if (!data.allowedEmails || data.allowedEmails.length === 0) {
           setEmailVerified(true);
         }
       })
-      .catch(() => setError('This form is not available or does not exist.'))
+      .catch(() => setError(isPreview
+        ? 'Could not load preview. Make sure you are signed in.'
+        : 'This form is not available or does not exist.'))
       .finally(() => setLoading(false));
   }, [slug]);
 
@@ -189,6 +194,12 @@ export function FormFill() {
   return (
     <div className="min-h-screen bg-[#FAFAF8] py-6 sm:py-10 px-4">
       <div className="max-w-xl mx-auto">
+        {isPreview && (
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-[#FFF8E6] border border-amber-200 rounded-lg text-sm text-amber-700 mb-5">
+            <span>👁 <strong>Preview mode</strong> — this form is not published yet. Submissions are disabled.</span>
+            <button onClick={() => window.close()} className="text-xs font-medium underline underline-offset-2 cursor-pointer shrink-0">Close</button>
+          </div>
+        )}
         {qrToken && (
           <div className="flex items-center gap-2 px-4 py-2.5 bg-[#E8F5EE] border border-[#1B6B4A]/20 rounded-lg text-sm text-[#1B6B4A] mb-5">
             <span className="text-base">📷</span>
@@ -242,8 +253,8 @@ export function FormFill() {
           )}
 
           <div className="mt-6">
-            <Button type="submit" size="lg" isLoading={submitting} className="w-full justify-center">
-              Submit
+            <Button type="submit" size="lg" isLoading={submitting} disabled={isPreview} className="w-full justify-center">
+              {isPreview ? 'Submission disabled in preview' : 'Submit'}
             </Button>
           </div>
         </form>

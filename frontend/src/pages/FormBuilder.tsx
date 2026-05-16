@@ -143,8 +143,8 @@ export function FormBuilder() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => window.open(`/f/${form?.slug}`, '_blank')}
-            disabled={!form?.slug}
+            onClick={() => window.open(`/f/${form?.id}?preview=true`, '_blank')}
+            disabled={!form?.id}
             className="hidden sm:flex"
           >
             <Eye size={14} />

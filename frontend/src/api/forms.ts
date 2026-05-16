@@ -11,6 +11,9 @@ export const formsApi = {
   getPublic: (slug: string) =>
     client.get<Form>(`/f/${slug}`),
 
+  getPreview: (id: string) =>
+    client.get<Form>(`/forms/${id}`),
+
   create: (title: string, description?: string) =>
     client.post<Form>('/forms', { title, description }),
 
