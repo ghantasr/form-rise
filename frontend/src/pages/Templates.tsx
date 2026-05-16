@@ -6,6 +6,7 @@ import { Button } from '../components/shared/Button';
 import { EmptyState } from '../components/shared/EmptyState';
 import { PageLoader } from '../components/shared/LoadingSpinner';
 import { useToast } from '../components/shared/Toast';
+import { useAuthStore } from '../stores/authStore';
 
 interface Template {
   id: string;
@@ -50,6 +51,7 @@ function getCategoryLabel(title: string): string {
 export function Templates() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAuthenticated } = useAuthStore();
 
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,6 +67,10 @@ export function Templates() {
   }, []);
 
   const handleFork = async (slug: string) => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { next: '/templates' } });
+      return;
+    }
     setForkingId(slug);
     try {
       const { data } = await client.post<{ id: string }>(`/templates/${slug}/fork`);
