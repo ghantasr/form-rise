@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/FormFlow.Api.props" />
-</Project>
