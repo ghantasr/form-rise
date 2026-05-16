@@ -23,6 +23,9 @@ frontend/node_modules/
 *.png
 Screenshot*.png
 
+# Allow PWA icons
+!frontend/public/icons/*.png
+
 # Google OAuth client secret
 client_secret_*.json
 

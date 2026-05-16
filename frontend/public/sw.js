@@ -1,5 +1,5 @@
-const CACHE = 'formflow-v1';
-const SHELL = ['/'];
+const CACHE = 'formrise-v2';
+const SHELL = ['/', '/dashboard', '/templates', '/login'];
 
 // Install: cache the app shell
 self.addEventListener('install', (e) => {
@@ -56,6 +56,6 @@ self.addEventListener('fetch', (e) => {
         caches.open(CACHE).then((c) => c.put(request, clone));
         return res;
       })
-      .catch(() => caches.match('/') ?? fetch(request))
+      .catch(() => caches.match('/').then((r) => r ?? fetch(request)))
   );
 });
