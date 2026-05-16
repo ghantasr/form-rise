@@ -16,6 +16,8 @@ public interface IForkService
 
 public class ForkService(AppDbContext db, IDistributedCache cache) : IForkService
 {
+    private static readonly Guid TemplateUserId = new("00000000-0000-0000-0000-000000000001");
+
     private static string TemplatesKey(string sort, int page, int pageSize) =>
         $"fr:templates:{sort}:{page}:{pageSize}";
 
@@ -88,7 +90,7 @@ public class ForkService(AppDbContext db, IDistributedCache cache) : IForkServic
         if (cached is not null)
             return JsonSerializer.Deserialize<List<FormListItemDto>>(cached)!;
 
-        var query = db.Forms.Where(f => f.IsPublic && f.Status == "active");
+        var query = db.Forms.Where(f => f.UserId == TemplateUserId && f.IsPublic && f.Status == "active");
         query = sort == "popular"
             ? query.OrderByDescending(f => f.ForkCount)
             : query.OrderByDescending(f => f.CreatedAt);

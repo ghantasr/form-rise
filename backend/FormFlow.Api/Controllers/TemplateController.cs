@@ -14,7 +14,7 @@ public class TemplateController(IForkService forkService) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> List(
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 12,
+        [FromQuery] int pageSize = 100,
         [FromQuery] string sort = "popular")
     {
         var result = await forkService.GetTemplatesAsync(page, pageSize, sort);
