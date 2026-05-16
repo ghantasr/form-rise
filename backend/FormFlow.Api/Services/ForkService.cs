@@ -1,8 +1,10 @@
+using System.Text.Json;
 using FormFlow.Api.Data;
 using FormFlow.Api.Helpers;
 using FormFlow.Api.Models.DTOs.Forms;
 using FormFlow.Api.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace FormFlow.Api.Services;
 
@@ -12,8 +14,14 @@ public interface IForkService
     Task<List<FormListItemDto>> GetTemplatesAsync(int page, int pageSize, string? sort);
 }
 
-public class ForkService(AppDbContext db) : IForkService
+public class ForkService(AppDbContext db, IDistributedCache cache) : IForkService
 {
+    private static string TemplatesKey(string sort, int page, int pageSize) =>
+        $"fr:templates:{sort}:{page}:{pageSize}";
+
+    private static readonly DistributedCacheEntryOptions TemplatesTtl =
+        new() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) };
+
     public async Task<FormDto> ForkAsync(string slug, Guid userId)
     {
         var original = await db.Forms
@@ -55,6 +63,9 @@ public class ForkService(AppDbContext db) : IForkService
         original.ForkCount++;
         await db.SaveChangesAsync();
 
+        // Invalidate templates cache so fork counts stay fresh
+        await InvalidateTemplatesCacheAsync();
+
         return new FormDto(
             forked.Id, forked.Slug, forked.Title, forked.Description, forked.Status,
             forked.IsPublic, forked.AllowAnonymous, forked.CollectEmail,
@@ -71,17 +82,37 @@ public class ForkService(AppDbContext db) : IForkService
 
     public async Task<List<FormListItemDto>> GetTemplatesAsync(int page, int pageSize, string? sort)
     {
+        sort ??= "popular";
+        var key = TemplatesKey(sort, page, pageSize);
+        var cached = await cache.GetStringAsync(key);
+        if (cached is not null)
+            return JsonSerializer.Deserialize<List<FormListItemDto>>(cached)!;
+
         var query = db.Forms.Where(f => f.IsPublic && f.Status == "active");
         query = sort == "popular"
             ? query.OrderByDescending(f => f.ForkCount)
             : query.OrderByDescending(f => f.CreatedAt);
 
-        return await query
+        var result = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(f => new FormListItemDto(
                 f.Id, f.Slug, f.Title, f.Description,
                 f.Status, f.ResponseCount, f.CreatedAt, f.UpdatedAt))
             .ToListAsync();
+
+        await cache.SetStringAsync(key, JsonSerializer.Serialize(result), TemplatesTtl);
+        return result;
+    }
+
+    // Invalidate common template cache permutations
+    private async Task InvalidateTemplatesCacheAsync()
+    {
+        var tasks = new List<Task>();
+        foreach (var sort in new[] { "popular", "recent" })
+            foreach (var page in new[] { 1, 2 })
+                foreach (var size in new[] { 12, 24 })
+                    tasks.Add(cache.RemoveAsync(TemplatesKey(sort, page, size)));
+        await Task.WhenAll(tasks);
     }
 }

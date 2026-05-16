@@ -1,4 +1,6 @@
 :80 {
+    encode gzip zstd
+
     # Route API calls to the .NET backend
     handle /api/* {
         reverse_proxy backend:8080
@@ -14,7 +16,6 @@
         X-Frame-Options "SAMEORIGIN"
         X-Content-Type-Options "nosniff"
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
-        # Allows Google OAuth popup to postMessage back to the opener
         Cross-Origin-Opener-Policy "same-origin-allow-popups"
     }
 }

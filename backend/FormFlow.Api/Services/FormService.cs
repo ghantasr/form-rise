@@ -1,13 +1,20 @@
+using System.Text.Json;
 using FormFlow.Api.Data;
 using FormFlow.Api.Helpers;
 using FormFlow.Api.Models.DTOs.Forms;
 using FormFlow.Api.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace FormFlow.Api.Services;
 
-public class FormService(AppDbContext db) : IFormService
+public class FormService(AppDbContext db, IDistributedCache cache) : IFormService
 {
+    private static string PubFormKey(string slug) => $"fr:form:pub:{slug}";
+
+    private static readonly DistributedCacheEntryOptions PubFormTtl =
+        new() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2) };
+
     public async Task<List<FormListItemDto>> GetUserFormsAsync(Guid userId)
     {
         return await db.Forms
@@ -30,11 +37,18 @@ public class FormService(AppDbContext db) : IFormService
 
     public async Task<FormDto> GetPublicFormAsync(string slug)
     {
+        var cached = await cache.GetStringAsync(PubFormKey(slug));
+        if (cached is not null)
+            return JsonSerializer.Deserialize<FormDto>(cached)!;
+
         var form = await db.Forms
             .Include(f => f.Fields.OrderBy(ff => ff.SortOrder))
             .FirstOrDefaultAsync(f => f.Slug == slug && f.Status == "active")
             ?? throw new KeyNotFoundException("Form not found or not active.");
-        return MapToDto(form);
+
+        var dto = MapToDto(form);
+        await cache.SetStringAsync(PubFormKey(slug), JsonSerializer.Serialize(dto), PubFormTtl);
+        return dto;
     }
 
     public async Task<FormDto> CreateFormAsync(Guid userId, CreateFormRequest req)
@@ -98,6 +112,7 @@ public class FormService(AppDbContext db) : IFormService
 
         form.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
+        await cache.RemoveAsync(PubFormKey(form.Slug));
         return MapToDto(form);
     }
 
@@ -105,6 +120,7 @@ public class FormService(AppDbContext db) : IFormService
     {
         var form = await db.Forms.FirstOrDefaultAsync(f => f.Id == formId && f.UserId == userId)
             ?? throw new KeyNotFoundException("Form not found.");
+        await cache.RemoveAsync(PubFormKey(form.Slug));
         db.Forms.Remove(form);
         await db.SaveChangesAsync();
     }
@@ -117,6 +133,7 @@ public class FormService(AppDbContext db) : IFormService
         form.Status = "active";
         form.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
+        await cache.RemoveAsync(PubFormKey(form.Slug));
         return MapToDto(form);
     }
 
@@ -128,6 +145,7 @@ public class FormService(AppDbContext db) : IFormService
         form.Status = "paused";
         form.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
+        await cache.RemoveAsync(PubFormKey(form.Slug));
         return MapToDto(form);
     }
 
