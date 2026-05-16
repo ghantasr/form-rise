@@ -7,6 +7,7 @@ import { EmptyState } from '../components/shared/EmptyState';
 import { PageLoader } from '../components/shared/LoadingSpinner';
 import { useToast } from '../components/shared/Toast';
 import { useAuthStore } from '../stores/authStore';
+import { LogoMark } from '../components/shared/LogoMark';
 
 interface Template {
   id: string;
@@ -51,7 +52,7 @@ function getCategoryLabel(title: string): string {
 export function Templates() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isLoading: authLoading } = useAuthStore();
 
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,19 +92,47 @@ export function Templates() {
     ? templates
     : templates.filter((t) => getCategoryLabel(t.title) === activeCategory);
 
-  if (loading) return <PageLoader />;
+  if (loading || authLoading) return <PageLoader />;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-6xl">
-      <button
-        onClick={() => navigate(-1)}
-        className="lg:hidden flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer mb-6"
-      >
-        <ArrowLeft size={14} />
-        Back
-      </button>
+    <div className="min-h-screen bg-[#F5F4F1]" style={{ fontFamily: '"Inter", "DM Sans", system-ui, sans-serif' }}>
+      {/* Header — public nav or authenticated back-link */}
+      <header className="sticky top-0 z-50 bg-[#F5F4F1]/90 backdrop-blur border-b border-[#E4E4E0]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+            <LogoMark size={28} variant="dark" />
+            <span className="font-semibold text-[15px] tracking-[-0.02em] text-[#141412]">formrise</span>
+          </div>
+          {isAuthenticated ? (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer font-medium"
+            >
+              <ArrowLeft size={14} />
+              Dashboard
+            </button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate('/login')}
+                className="text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer font-medium"
+              >
+                Sign in
+              </button>
+              <button
+                onClick={() => navigate('/login')}
+                className="px-4 py-1.5 rounded-lg text-sm font-semibold text-white transition-all cursor-pointer hover:opacity-90 active:scale-95"
+                style={{ background: '#1B6B4A' }}
+              >
+                Get started free
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
 
-      <div className="mb-7">
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto">
+      <div className="mb-7 mt-2">
         <h1 className="text-2xl font-bold text-[#141412] tracking-[-0.02em]">Templates</h1>
         <p className="text-sm text-[#6B6B66] mt-0.5">
           Start with a ready-made template and customize it to your needs.
@@ -180,6 +209,7 @@ export function Templates() {
           })}
         </div>
       )}
+    </div>
     </div>
   );
 }

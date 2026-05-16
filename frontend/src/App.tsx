@@ -27,12 +27,6 @@ function ProtectedRoute() {
   return <Outlet />;
 }
 
-// Passes through for everyone — lets AppLayout render without requiring auth
-function OptionalAuthRoute() {
-  const { isLoading } = useAuthStore();
-  if (isLoading) return <PageLoader />;
-  return <Outlet />;
-}
 
 function AppInitializer() {
   const { login, setLoading } = useAuthStore();
@@ -77,12 +71,8 @@ export default function App() {
             <Route path="/f/:slug" element={<FormFill />} />
             <Route path="/f/:slug/thank-you" element={<ThankYou />} />
 
-            {/* Public-browsable pages — AppLayout shown, no auth required */}
-            <Route element={<OptionalAuthRoute />}>
-              <Route element={<AppLayout />}>
-                <Route path="/templates" element={<Templates />} />
-              </Route>
-            </Route>
+            {/* Public standalone page — own layout, no sidebar */}
+            <Route path="/templates" element={<Templates />} />
 
             {/* Private pages — redirect to login if not authenticated */}
             <Route element={<ProtectedRoute />}>
