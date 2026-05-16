@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, GitFork, Layers } from 'lucide-react';
+import { GitFork, Layers } from 'lucide-react';
 import client from '../api/client';
 import { Button } from '../components/shared/Button';
 import { EmptyState } from '../components/shared/EmptyState';
@@ -96,22 +96,14 @@ export function Templates() {
 
   return (
     <div className="min-h-screen bg-[#F5F4F1]" style={{ fontFamily: '"Inter", "DM Sans", system-ui, sans-serif' }}>
-      {/* Header — public nav or authenticated back-link */}
-      <header className="sticky top-0 z-50 bg-[#F5F4F1]/90 backdrop-blur border-b border-[#E4E4E0]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <LogoMark size={28} variant="dark" />
-            <span className="font-semibold text-[15px] tracking-[-0.02em] text-[#141412]">formrise</span>
-          </div>
-          {isAuthenticated ? (
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer font-medium"
-            >
-              <ArrowLeft size={14} />
-              Dashboard
-            </button>
-          ) : (
+      {/* Public-only header — hidden for authenticated users (AppLayout provides sidebar + hamburger) */}
+      {!isAuthenticated && (
+        <header className="sticky top-0 z-50 bg-[#F5F4F1]/90 backdrop-blur border-b border-[#E4E4E0]">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+              <LogoMark size={28} variant="dark" />
+              <span className="font-semibold text-[15px] tracking-[-0.02em] text-[#141412]">formrise</span>
+            </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate('/login')}
@@ -127,9 +119,9 @@ export function Templates() {
                 Get started free
               </button>
             </div>
-          )}
-        </div>
-      </header>
+          </div>
+        </header>
+      )}
 
     <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto">
       <div className="mb-7 mt-2">
