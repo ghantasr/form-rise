@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { LogoMark } from '../shared/LogoMark';
+import { PageLoader } from '../shared/LoadingSpinner';
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,7 +36,9 @@ export function AppLayout() {
         </header>
 
         <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden">
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

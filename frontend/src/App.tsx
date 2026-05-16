@@ -20,19 +20,20 @@ const Settings     = lazy(() => import('./pages/Settings').then(m => ({ default:
 
 const SESSION_HINT_KEY = 'fr_has_session';
 
-function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuthStore();
-  if (isLoading) return <PageLoader />;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  return <Outlet />;
-}
-
-
-// Wraps with AppLayout+sidebar for authenticated users; bare Outlet for public users.
-function OptionalAuthLayout() {
+// Single shell for all "app" routes — renders AppLayout (with sidebar) for
+// authenticated users, or a bare Outlet (no sidebar) for public routes.
+function AppShell() {
   const { isAuthenticated, isLoading } = useAuthStore();
   if (isLoading) return <PageLoader />;
   if (isAuthenticated) return <AppLayout />;
+  return <Outlet />;
+}
+
+// Auth guard used inside AppShell — AppLayout is already mounted by AppShell
+// so this just blocks access without re-mounting any layout.
+function RequireAuth() {
+  const { isAuthenticated } = useAuthStore();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 
@@ -80,14 +81,11 @@ export default function App() {
             <Route path="/f/:slug" element={<FormFill />} />
             <Route path="/f/:slug/thank-you" element={<ThankYou />} />
 
-            {/* Templates: sidebar for authenticated users, standalone for public */}
-            <Route element={<OptionalAuthLayout />}>
+            {/* All app routes share one AppShell (= one AppLayout instance).
+                Templates is public; the rest require auth via RequireAuth. */}
+            <Route element={<AppShell />}>
               <Route path="/templates" element={<Templates />} />
-            </Route>
-
-            {/* Private pages — redirect to login if not authenticated */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AppLayout />}>
+              <Route element={<RequireAuth />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/forms/new" element={<FormBuilder />} />
                 <Route path="/forms/:id/edit" element={<FormBuilder />} />
