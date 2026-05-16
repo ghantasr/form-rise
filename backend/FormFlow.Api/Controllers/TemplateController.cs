@@ -15,8 +15,12 @@ public class TemplateController(IForkService forkService) : ControllerBase
     public async Task<IActionResult> List(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 12,
-        [FromQuery] string sort = "popular") =>
-        Ok(await forkService.GetTemplatesAsync(page, pageSize, sort));
+        [FromQuery] string sort = "popular")
+    {
+        var result = await forkService.GetTemplatesAsync(page, pageSize, sort);
+        Response.Headers.CacheControl = "public, max-age=600, stale-while-revalidate=60";
+        return Ok(result);
+    }
 
     [HttpPost("{slug}/fork")]
     [Authorize]
