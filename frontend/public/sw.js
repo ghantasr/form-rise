@@ -1,4 +1,4 @@
-const CACHE = 'formrise-v2';
+const CACHE = 'formrise-v3';
 const SHELL = ['/', '/dashboard', '/templates', '/login'];
 
 // Install: cache the app shell

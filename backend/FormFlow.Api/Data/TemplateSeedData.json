@@ -1,0 +1,838 @@
+[
+  {
+    "title": "Patient Registration Form",
+    "description": "Collect new patient details at a clinic or hospital before consultation.",
+    "sector": "Healthcare",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Other"] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Aadhar Number", "type": "text", "required": false, "options": [] },
+      { "label": "Blood Group", "type": "dropdown", "required": false, "options": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Don't Know"] },
+      { "label": "Chief Complaint / Reason for Visit", "type": "textarea", "required": true, "options": [] },
+      { "label": "Known Allergies", "type": "textarea", "required": false, "options": [] },
+      { "label": "Existing Medical Conditions", "type": "checkbox", "required": false, "options": ["Diabetes", "Hypertension", "Asthma", "Heart Disease", "Thyroid", "None"] },
+      { "label": "Emergency Contact Name & Number", "type": "text", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Doctor Appointment Booking",
+    "description": "Allow patients to book a doctor appointment online or at the front desk.",
+    "sector": "Healthcare",
+    "fields": [
+      { "label": "Patient Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Preferred Doctor", "type": "dropdown", "required": true, "options": ["Dr. Sharma (General)", "Dr. Reddy (Ortho)", "Dr. Gupta (ENT)", "Dr. Mehta (Paediatrics)", "Dr. Rao (Gynaecology)"] },
+      { "label": "Appointment Date", "type": "date", "required": true, "options": [] },
+      { "label": "Preferred Time Slot", "type": "radio", "required": true, "options": ["9:00 AM – 11:00 AM", "11:00 AM – 1:00 PM", "3:00 PM – 5:00 PM", "5:00 PM – 7:00 PM"] },
+      { "label": "Type of Visit", "type": "radio", "required": true, "options": ["First Visit", "Follow-up"] },
+      { "label": "Brief Description of Symptoms", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Pharmacy Prescription Refill Request",
+    "description": "Let customers submit a request to refill their prescriptions at the pharmacy.",
+    "sector": "Healthcare",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Doctor's Name", "type": "text", "required": false, "options": [] },
+      { "label": "Medicine Name(s)", "type": "textarea", "required": true, "options": [] },
+      { "label": "Quantity Required", "type": "number", "required": true, "options": [] },
+      { "label": "Preferred Pickup Date", "type": "date", "required": true, "options": [] },
+      { "label": "Do you have a valid prescription?", "type": "radio", "required": true, "options": ["Yes – will bring original", "Yes – uploading copy", "No – need doctor referral"] },
+      { "label": "Additional Instructions", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Pathology Lab Test Booking",
+    "description": "Book blood tests, urine tests, or diagnostic packages at a diagnostic lab.",
+    "sector": "Healthcare",
+    "fields": [
+      { "label": "Patient Name", "type": "text", "required": true, "options": [] },
+      { "label": "Age", "type": "number", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Other"] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Tests Required", "type": "checkbox", "required": true, "options": ["Complete Blood Count (CBC)", "HbA1c", "Lipid Profile", "Thyroid Panel", "Liver Function Test", "Urine Routine", "COVID-19 RT-PCR", "Dengue NS1 Antigen"] },
+      { "label": "Sample Collection Preference", "type": "radio", "required": true, "options": ["Walk-in at Lab", "Home Collection"] },
+      { "label": "Preferred Date & Time", "type": "date", "required": true, "options": [] },
+      { "label": "Referring Doctor (if any)", "type": "text", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Hospital Discharge Feedback",
+    "description": "Gather patient satisfaction feedback after discharge from a hospital.",
+    "sector": "Healthcare",
+    "fields": [
+      { "label": "Patient Name", "type": "text", "required": true, "options": [] },
+      { "label": "Ward / Department", "type": "dropdown", "required": true, "options": ["General Ward", "ICU", "Maternity", "Orthopaedics", "Cardiology", "Surgery"] },
+      { "label": "Date of Discharge", "type": "date", "required": true, "options": [] },
+      { "label": "Overall Experience Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Doctor's Care & Behaviour", "type": "rating", "required": true, "options": [] },
+      { "label": "Nursing Staff Behaviour", "type": "rating", "required": true, "options": [] },
+      { "label": "Cleanliness of Facility", "type": "rating", "required": true, "options": [] },
+      { "label": "Food Quality (if applicable)", "type": "rating", "required": false, "options": [] },
+      { "label": "Would you recommend this hospital?", "type": "radio", "required": true, "options": ["Definitely Yes", "Probably Yes", "Not Sure", "Probably No", "Definitely No"] },
+      { "label": "Additional Comments", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Legal Consultation Request",
+    "description": "Allow clients to request an initial legal consultation with an advocate or law firm.",
+    "sector": "Legal",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "City", "type": "text", "required": true, "options": [] },
+      { "label": "Type of Legal Matter", "type": "dropdown", "required": true, "options": ["Civil Dispute", "Criminal Matter", "Family / Divorce", "Property & Real Estate", "Consumer Complaint", "Labour / Employment", "Business / Corporate", "Intellectual Property", "Taxation", "Other"] },
+      { "label": "Brief Description of Your Issue", "type": "textarea", "required": true, "options": [] },
+      { "label": "Is the matter urgent?", "type": "radio", "required": true, "options": ["Yes – immediate help needed", "Somewhat urgent", "Can wait a few days"] },
+      { "label": "Preferred Consultation Mode", "type": "radio", "required": true, "options": ["In-person at office", "Video call", "Phone call"] },
+      { "label": "Preferred Date for Consultation", "type": "date", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Notary Document Service Request",
+    "description": "Collect document details for notarisation or attestation services.",
+    "sector": "Legal",
+    "fields": [
+      { "label": "Applicant Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Type of Document", "type": "dropdown", "required": true, "options": ["Affidavit", "Power of Attorney", "Rent Agreement", "Sale Deed", "Gift Deed", "Will / Testament", "Declaration Form", "Other"] },
+      { "label": "Purpose of Notarisation", "type": "textarea", "required": true, "options": [] },
+      { "label": "Number of Copies Required", "type": "number", "required": true, "options": [] },
+      { "label": "Preferred Appointment Date", "type": "date", "required": true, "options": [] },
+      { "label": "Do you have witnesses arranged?", "type": "radio", "required": false, "options": ["Yes", "No – need help arranging"] }
+    ]
+  },
+  {
+    "title": "School Admission Enquiry Form",
+    "description": "Capture parent enquiries for new admissions in a school.",
+    "sector": "Education",
+    "fields": [
+      { "label": "Student's Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Other"] },
+      { "label": "Class Applying For", "type": "dropdown", "required": true, "options": ["Nursery", "LKG", "UKG", "Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"] },
+      { "label": "Parent / Guardian Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Current School (if any)", "type": "text", "required": false, "options": [] },
+      { "label": "How did you hear about us?", "type": "dropdown", "required": false, "options": ["Friends / Family", "Google Search", "Social Media", "Pamphlet / Hoarding", "Walk-in"] },
+      { "label": "Any special requirements or queries?", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "College Course Enquiry Form",
+    "description": "Capture prospective student interest for degree and diploma courses at a college.",
+    "sector": "Education",
+    "fields": [
+      { "label": "Applicant Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "Course Interested In", "type": "dropdown", "required": true, "options": ["B.Tech", "B.Com", "B.Sc", "BBA", "MBA", "MCA", "B.Pharmacy", "BA", "M.Tech", "Other"] },
+      { "label": "Specialisation / Stream", "type": "text", "required": false, "options": [] },
+      { "label": "Year of Passing 12th / Intermediate", "type": "number", "required": true, "options": [] },
+      { "label": "Percentage in Last Qualifying Exam", "type": "number", "required": true, "options": [] },
+      { "label": "Category", "type": "dropdown", "required": false, "options": ["General", "OBC", "SC", "ST", "EWS"] },
+      { "label": "City / State", "type": "text", "required": true, "options": [] },
+      { "label": "Any scholarship enquiry?", "type": "radio", "required": false, "options": ["Yes", "No"] }
+    ]
+  },
+  {
+    "title": "Coaching / Tuition Enrolment Form",
+    "description": "Register students for coaching classes or private tuitions.",
+    "sector": "Education",
+    "fields": [
+      { "label": "Student Name", "type": "text", "required": true, "options": [] },
+      { "label": "Class / Grade", "type": "dropdown", "required": true, "options": ["Class 6", "Class 7", "Class 8", "Class 9", "Class 10", "Class 11", "Class 12", "Graduation"] },
+      { "label": "Subject(s) Required", "type": "checkbox", "required": true, "options": ["Mathematics", "Physics", "Chemistry", "Biology", "English", "Hindi", "Social Science", "Computer Science", "Accounts", "Economics"] },
+      { "label": "Preferred Batch Timing", "type": "radio", "required": true, "options": ["Morning (6 AM – 9 AM)", "Afternoon (2 PM – 5 PM)", "Evening (5 PM – 8 PM)", "Weekend Only"] },
+      { "label": "Parent / Guardian Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Residential Address", "type": "textarea", "required": false, "options": [] },
+      { "label": "Mode of Learning", "type": "radio", "required": true, "options": ["Offline – at centre", "Online – video call", "Home Tuition"] }
+    ]
+  },
+  {
+    "title": "Restaurant Table Reservation",
+    "description": "Accept advance table booking requests from dine-in customers.",
+    "sector": "Restaurants & Food",
+    "fields": [
+      { "label": "Guest Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Reservation Date", "type": "date", "required": true, "options": [] },
+      { "label": "Preferred Time", "type": "radio", "required": true, "options": ["12:00 PM – 2:00 PM", "2:00 PM – 4:00 PM", "7:00 PM – 9:00 PM", "9:00 PM – 11:00 PM"] },
+      { "label": "Number of Guests", "type": "number", "required": true, "options": [] },
+      { "label": "Occasion", "type": "dropdown", "required": false, "options": ["None / Regular", "Birthday", "Anniversary", "Business Dinner", "Family Get-together", "Other"] },
+      { "label": "Seating Preference", "type": "radio", "required": false, "options": ["Indoor AC", "Outdoor / Terrace", "Private Room", "No Preference"] },
+      { "label": "Dietary Preference", "type": "checkbox", "required": false, "options": ["Pure Vegetarian", "Jain Food", "Vegan", "Non-Vegetarian", "Gluten-Free"] },
+      { "label": "Special Requests", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Catering Service Enquiry",
+    "description": "Gather event catering requirements from prospective clients.",
+    "sector": "Restaurants & Food",
+    "fields": [
+      { "label": "Contact Person Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Event Type", "type": "dropdown", "required": true, "options": ["Wedding", "Birthday Party", "Corporate Event", "Pooja / Religious Function", "Baby Shower", "College Fest", "Other"] },
+      { "label": "Event Date", "type": "date", "required": true, "options": [] },
+      { "label": "Venue / Location", "type": "text", "required": true, "options": [] },
+      { "label": "Expected Number of Guests", "type": "number", "required": true, "options": [] },
+      { "label": "Meal Type", "type": "checkbox", "required": true, "options": ["Breakfast", "Lunch", "Snacks / Hi-Tea", "Dinner", "Midnight Snacks"] },
+      { "label": "Food Preference", "type": "radio", "required": true, "options": ["Pure Veg", "Non-Veg", "Both Veg & Non-Veg"] },
+      { "label": "Cuisine Preference", "type": "checkbox", "required": false, "options": ["North Indian", "South Indian", "Continental", "Chinese", "Mughlai", "Rajasthani", "Street Food Stalls"] },
+      { "label": "Budget per Plate (Approx)", "type": "dropdown", "required": false, "options": ["Below ₹300", "₹300 – ₹500", "₹500 – ₹800", "₹800 – ₹1200", "Above ₹1200"] }
+    ]
+  },
+  {
+    "title": "Cloud Kitchen / Food Delivery Feedback",
+    "description": "Collect customer feedback on food quality and delivery experience.",
+    "sector": "Restaurants & Food",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": false, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Order ID", "type": "text", "required": true, "options": [] },
+      { "label": "Order Date", "type": "date", "required": true, "options": [] },
+      { "label": "Food Quality Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Packaging Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Delivery Speed Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Was your order accurate?", "type": "radio", "required": true, "options": ["Yes – everything was correct", "Partially – minor issue", "No – wrong items received"] },
+      { "label": "Overall Satisfaction", "type": "rating", "required": true, "options": [] },
+      { "label": "Suggestions for Improvement", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Kirana / Grocery Shop Order Form",
+    "description": "Let customers place advance grocery orders from their local kirana store.",
+    "sector": "Retail & Shops",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Delivery Address", "type": "textarea", "required": true, "options": [] },
+      { "label": "Pincode", "type": "text", "required": true, "options": [] },
+      { "label": "Items Required (name & quantity)", "type": "textarea", "required": true, "options": [] },
+      { "label": "Preferred Delivery Time", "type": "radio", "required": true, "options": ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evening (4 PM – 8 PM)"] },
+      { "label": "Payment Method", "type": "radio", "required": true, "options": ["Cash on Delivery", "UPI / GPay", "Paytm", "Bank Transfer"] },
+      { "label": "Special Instructions", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Clothing Store Custom Order / Stitching Form",
+    "description": "Collect measurements and preferences for custom stitching orders at a boutique.",
+    "sector": "Retail & Shops",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Type of Garment", "type": "dropdown", "required": true, "options": ["Blouse", "Salwar Kameez", "Kurti", "Lehenga", "Shirt", "Trousers", "Ethnic Wear", "Jacket", "Other"] },
+      { "label": "Chest Measurement (inches)", "type": "number", "required": true, "options": [] },
+      { "label": "Waist Measurement (inches)", "type": "number", "required": true, "options": [] },
+      { "label": "Hip Measurement (inches)", "type": "number", "required": false, "options": [] },
+      { "label": "Length (inches)", "type": "number", "required": false, "options": [] },
+      { "label": "Fabric Preference", "type": "dropdown", "required": false, "options": ["Cotton", "Silk", "Georgette", "Chiffon", "Linen", "Polyester", "Customer will provide fabric"] },
+      { "label": "Delivery Date Required By", "type": "date", "required": true, "options": [] },
+      { "label": "Design Notes / References", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Electronics Store Service Request",
+    "description": "Register customer electronics for repair or service at a retail service centre.",
+    "sector": "Retail & Shops",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Device Type", "type": "dropdown", "required": true, "options": ["Mobile Phone", "Laptop", "Desktop", "Television", "Washing Machine", "Refrigerator", "Air Conditioner", "Microwave", "Other"] },
+      { "label": "Brand", "type": "text", "required": true, "options": [] },
+      { "label": "Model Number", "type": "text", "required": false, "options": [] },
+      { "label": "Problem Description", "type": "textarea", "required": true, "options": [] },
+      { "label": "Is the device under warranty?", "type": "radio", "required": true, "options": ["Yes", "No", "Not Sure"] },
+      { "label": "Date of Purchase (approx)", "type": "date", "required": false, "options": [] },
+      { "label": "Preferred Service Date", "type": "date", "required": true, "options": [] }
+    ]
+  },
+  {
+    "title": "Property Purchase Enquiry Form",
+    "description": "Capture potential buyer details and requirements for property purchase.",
+    "sector": "Real Estate",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Property Type Looking For", "type": "dropdown", "required": true, "options": ["Flat / Apartment", "Independent House / Villa", "Plot / Land", "Row House", "Penthouse", "Commercial Space"] },
+      { "label": "Preferred Location / Area", "type": "text", "required": true, "options": [] },
+      { "label": "Budget Range", "type": "dropdown", "required": true, "options": ["Below ₹20 Lakhs", "₹20L – ₹50L", "₹50L – ₹1 Crore", "₹1Cr – ₹2Cr", "Above ₹2Cr"] },
+      { "label": "BHK Configuration", "type": "radio", "required": false, "options": ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "5+ BHK"] },
+      { "label": "Purpose of Purchase", "type": "radio", "required": true, "options": ["Self Use / Own Stay", "Investment", "Rental Income"] },
+      { "label": "Loan Required?", "type": "radio", "required": false, "options": ["Yes – need home loan assistance", "No – self-funded"] },
+      { "label": "Additional Requirements", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Rental Property Enquiry Form",
+    "description": "Collect tenant details and rental preferences for residential or commercial properties.",
+    "sector": "Real Estate",
+    "fields": [
+      { "label": "Prospective Tenant Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Property Type Required", "type": "dropdown", "required": true, "options": ["1 BHK Flat", "2 BHK Flat", "3 BHK Flat", "Independent House", "PG / Hostel", "Office Space", "Shop / Showroom"] },
+      { "label": "Preferred Locality", "type": "text", "required": true, "options": [] },
+      { "label": "Monthly Budget (₹)", "type": "number", "required": true, "options": [] },
+      { "label": "Expected Move-in Date", "type": "date", "required": true, "options": [] },
+      { "label": "Family / Occupant Type", "type": "radio", "required": true, "options": ["Family", "Bachelor (Male)", "Bachelor (Female)", "Working Professionals", "Company Lease"] },
+      { "label": "Vegetarian / Non-Vegetarian preference (if shared)", "type": "radio", "required": false, "options": ["Vegetarian", "Non-Vegetarian", "No Preference"] },
+      { "label": "Any pets?", "type": "radio", "required": false, "options": ["Yes", "No"] }
+    ]
+  },
+  {
+    "title": "Property Site Visit Booking",
+    "description": "Schedule a site visit for prospective buyers or tenants at a property.",
+    "sector": "Real Estate",
+    "fields": [
+      { "label": "Visitor Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Property Address / Project Name", "type": "text", "required": true, "options": [] },
+      { "label": "Preferred Visit Date", "type": "date", "required": true, "options": [] },
+      { "label": "Preferred Time Slot", "type": "radio", "required": true, "options": ["10:00 AM – 12:00 PM", "12:00 PM – 2:00 PM", "3:00 PM – 5:00 PM", "5:00 PM – 7:00 PM"] },
+      { "label": "Number of People Visiting", "type": "number", "required": false, "options": [] },
+      { "label": "Interested In", "type": "radio", "required": true, "options": ["Buying", "Renting", "Just Exploring"] },
+      { "label": "Questions / Special Requests for Site Visit", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Public Grievance / Complaint Form",
+    "description": "Allow citizens to register civic complaints with a municipal body or government office.",
+    "sector": "Government & Civic",
+    "fields": [
+      { "label": "Complainant Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Aadhar Number (optional)", "type": "text", "required": false, "options": [] },
+      { "label": "Type of Complaint", "type": "dropdown", "required": true, "options": ["Road / Pothole", "Street Light", "Water Supply", "Drainage / Sewage", "Garbage Collection", "Encroachment", "Noise Pollution", "Electricity Outage", "Other"] },
+      { "label": "Ward / Area Name", "type": "text", "required": true, "options": [] },
+      { "label": "Pincode", "type": "text", "required": true, "options": [] },
+      { "label": "Detailed Description of Complaint", "type": "textarea", "required": true, "options": [] },
+      { "label": "Date of Incident (if specific)", "type": "date", "required": false, "options": [] },
+      { "label": "Is this complaint reported earlier?", "type": "radio", "required": false, "options": ["Yes – provide reference no.", "No – first time reporting"] }
+    ]
+  },
+  {
+    "title": "Government Scheme Application Form",
+    "description": "Capture beneficiary details for enrollment in a government welfare scheme.",
+    "sector": "Government & Civic",
+    "fields": [
+      { "label": "Applicant Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Transgender"] },
+      { "label": "Aadhar Number", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Category", "type": "dropdown", "required": true, "options": ["General", "OBC", "SC", "ST", "EWS", "Minority"] },
+      { "label": "Annual Family Income (₹)", "type": "number", "required": true, "options": [] },
+      { "label": "Scheme Name Applying For", "type": "text", "required": true, "options": [] },
+      { "label": "Residential Address", "type": "textarea", "required": true, "options": [] },
+      { "label": "Pincode", "type": "text", "required": true, "options": [] },
+      { "label": "Bank Account Number (for DBT)", "type": "text", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Tax / CA Services Enquiry Form",
+    "description": "Let clients enquire about income tax filing, GST registration, or accounting services.",
+    "sector": "Finance",
+    "fields": [
+      { "label": "Client Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "PAN Number", "type": "text", "required": false, "options": [] },
+      { "label": "Service Required", "type": "checkbox", "required": true, "options": ["Income Tax Return (ITR) Filing", "GST Registration", "GST Return Filing", "Company Registration", "Bookkeeping / Accounting", "TDS Filing", "Tax Planning & Advisory", "Audit"] },
+      { "label": "Type of Taxpayer", "type": "radio", "required": true, "options": ["Individual / Salaried", "Self-Employed / Freelancer", "Business / Partnership", "Private Limited Company", "LLP"] },
+      { "label": "Financial Year", "type": "dropdown", "required": false, "options": ["2024-25", "2023-24", "2022-23", "2021-22"] },
+      { "label": "Any specific issue or query?", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Insurance Policy Enquiry Form",
+    "description": "Collect prospect details and insurance requirements for agent follow-up.",
+    "sector": "Finance",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Type of Insurance Needed", "type": "checkbox", "required": true, "options": ["Term Life Insurance", "Health Insurance", "Motor Insurance", "Travel Insurance", "Home Insurance", "Child Plan", "ULIP / Investment Plan"] },
+      { "label": "Current Occupation", "type": "dropdown", "required": false, "options": ["Salaried – Private", "Salaried – Government", "Self-Employed", "Business Owner", "Homemaker", "Student", "Retired"] },
+      { "label": "Annual Income Range", "type": "dropdown", "required": false, "options": ["Below ₹3 LPA", "₹3L – ₹6L", "₹6L – ₹12L", "₹12L – ₹25L", "Above ₹25L"] },
+      { "label": "Existing Insurance Policies (if any)", "type": "textarea", "required": false, "options": [] },
+      { "label": "Sum Assured Required (approx)", "type": "dropdown", "required": false, "options": ["₹5 Lakhs", "₹10 Lakhs", "₹25 Lakhs", "₹50 Lakhs", "₹1 Crore", "More than ₹1 Crore"] },
+      { "label": "Best time to call you", "type": "radio", "required": false, "options": ["Morning (9 AM – 12 PM)", "Afternoon (12 PM – 3 PM)", "Evening (5 PM – 8 PM)"] }
+    ]
+  },
+  {
+    "title": "Home / Personal Loan Enquiry Form",
+    "description": "Capture loan applicant details for bank or NBFC loan processing.",
+    "sector": "Finance",
+    "fields": [
+      { "label": "Applicant Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Type of Loan", "type": "dropdown", "required": true, "options": ["Home Loan", "Personal Loan", "Vehicle Loan", "Education Loan", "Business Loan", "Loan Against Property"] },
+      { "label": "Loan Amount Required (₹)", "type": "number", "required": true, "options": [] },
+      { "label": "Employment Type", "type": "radio", "required": true, "options": ["Salaried – Private", "Salaried – Government", "Self-Employed / Business"] },
+      { "label": "Monthly Income (₹)", "type": "number", "required": true, "options": [] },
+      { "label": "CIBIL Score (approx, if known)", "type": "dropdown", "required": false, "options": ["750 and above", "700 – 749", "650 – 699", "600 – 649", "Below 600", "Don't Know"] },
+      { "label": "City", "type": "text", "required": true, "options": [] },
+      { "label": "Do you have any existing loans?", "type": "radio", "required": false, "options": ["Yes", "No"] }
+    ]
+  },
+  {
+    "title": "Hotel Room Booking Enquiry",
+    "description": "Capture guest details for hotel room reservations and availability checks.",
+    "sector": "Hospitality",
+    "fields": [
+      { "label": "Guest Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Check-in Date", "type": "date", "required": true, "options": [] },
+      { "label": "Check-out Date", "type": "date", "required": true, "options": [] },
+      { "label": "Number of Adults", "type": "number", "required": true, "options": [] },
+      { "label": "Number of Children", "type": "number", "required": false, "options": [] },
+      { "label": "Room Type Preference", "type": "dropdown", "required": true, "options": ["Standard Room", "Deluxe Room", "Suite", "Family Room", "Budget Room"] },
+      { "label": "Meal Preference", "type": "radio", "required": false, "options": ["Room Only", "Bed & Breakfast", "Half Board", "Full Board"] },
+      { "label": "Purpose of Visit", "type": "dropdown", "required": false, "options": ["Leisure / Tourism", "Business", "Wedding / Event", "Medical Visit", "Pilgrimage"] },
+      { "label": "Special Requests", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Travel Package Enquiry Form",
+    "description": "Collect traveller details and preferences for customised tour packages.",
+    "sector": "Hospitality",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "Departure City", "type": "text", "required": true, "options": [] },
+      { "label": "Destination(s) Interested In", "type": "text", "required": true, "options": [] },
+      { "label": "Travel Start Date (approx)", "type": "date", "required": false, "options": [] },
+      { "label": "Duration (Number of Days)", "type": "number", "required": false, "options": [] },
+      { "label": "Number of Travellers", "type": "number", "required": true, "options": [] },
+      { "label": "Package Type", "type": "checkbox", "required": false, "options": ["Honeymoon", "Family Tour", "Group Tour", "Adventure / Trek", "Pilgrimage", "International Holiday", "Weekend Getaway"] },
+      { "label": "Budget per Person (approx)", "type": "dropdown", "required": false, "options": ["Below ₹10,000", "₹10K – ₹25K", "₹25K – ₹50K", "₹50K – ₹1L", "Above ₹1L"] },
+      { "label": "Any special requirements?", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Wedding Venue Booking Enquiry",
+    "description": "Capture event details from couples or families looking to book a wedding venue.",
+    "sector": "Weddings & Events",
+    "fields": [
+      { "label": "Contact Person Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Event Date", "type": "date", "required": true, "options": [] },
+      { "label": "Event Type", "type": "dropdown", "required": true, "options": ["Wedding Reception", "Mehendi / Sangeet", "Haldi Ceremony", "Engagement", "Birthday Party", "Corporate Event", "Conference"] },
+      { "label": "Expected Number of Guests", "type": "number", "required": true, "options": [] },
+      { "label": "Preferred Venue Setup", "type": "radio", "required": false, "options": ["Indoor Banquet Hall", "Outdoor / Lawn", "Rooftop", "Both Indoor & Outdoor"] },
+      { "label": "Catering Required?", "type": "radio", "required": true, "options": ["Yes – from venue", "Bringing own caterer", "No food required"] },
+      { "label": "Decoration Required?", "type": "radio", "required": false, "options": ["Yes – from venue", "Bringing own decorator", "Not needed"] },
+      { "label": "Budget (approx)", "type": "dropdown", "required": false, "options": ["Below ₹1 Lakh", "₹1L – ₹3L", "₹3L – ₹7L", "₹7L – ₹15L", "Above ₹15L"] }
+    ]
+  },
+  {
+    "title": "Wedding Photography / Videography Booking",
+    "description": "Let couples book photography and videography services for their wedding events.",
+    "sector": "Weddings & Events",
+    "fields": [
+      { "label": "Couple / Client Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Wedding Date", "type": "date", "required": true, "options": [] },
+      { "label": "Events to Cover", "type": "checkbox", "required": true, "options": ["Haldi", "Mehendi", "Sangeet", "Wedding Ceremony", "Reception", "Pre-wedding Shoot", "Engagement"] },
+      { "label": "Service Required", "type": "checkbox", "required": true, "options": ["Photography", "Videography", "Drone Coverage", "Cinematic Film", "Photo Album", "Teaser / Highlights Reel"] },
+      { "label": "Venue City", "type": "text", "required": true, "options": [] },
+      { "label": "Total Budget Range", "type": "dropdown", "required": false, "options": ["Below ₹50,000", "₹50K – ₹1L", "₹1L – ₹2L", "₹2L – ₹5L", "Above ₹5L"] },
+      { "label": "How did you hear about us?", "type": "dropdown", "required": false, "options": ["Instagram", "WedMeGood / JustDial", "Friend Referral", "Google Search", "Other"] }
+    ]
+  },
+  {
+    "title": "Gym / Fitness Centre Membership Form",
+    "description": "Register new members for a gym or fitness centre.",
+    "sector": "Fitness & Wellness",
+    "fields": [
+      { "label": "Member Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Other"] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Fitness Goal", "type": "checkbox", "required": true, "options": ["Weight Loss", "Muscle Gain / Bulking", "General Fitness", "Flexibility / Yoga", "Sports Training", "Rehabilitation"] },
+      { "label": "Membership Plan", "type": "radio", "required": true, "options": ["Monthly", "Quarterly (3 months)", "Half-yearly (6 months)", "Annual"] },
+      { "label": "Do you have any medical conditions?", "type": "textarea", "required": false, "options": [] },
+      { "label": "How did you hear about us?", "type": "dropdown", "required": false, "options": ["Walk-in", "Social Media", "Friend Referral", "Google", "Pamphlet"] }
+    ]
+  },
+  {
+    "title": "Spa & Salon Appointment Booking",
+    "description": "Allow clients to book beauty, hair, or spa treatments online.",
+    "sector": "Fitness & Wellness",
+    "fields": [
+      { "label": "Client Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Other"] },
+      { "label": "Service Required", "type": "checkbox", "required": true, "options": ["Haircut & Styling", "Hair Colour / Highlights", "Facial", "Waxing / Threading", "Manicure / Pedicure", "Body Massage", "Spa Package", "Bridal Package"] },
+      { "label": "Preferred Date", "type": "date", "required": true, "options": [] },
+      { "label": "Preferred Time Slot", "type": "radio", "required": true, "options": ["10:00 AM – 12:00 PM", "12:00 PM – 2:00 PM", "2:00 PM – 4:00 PM", "4:00 PM – 6:00 PM", "6:00 PM – 8:00 PM"] },
+      { "label": "Stylist Preference (if any)", "type": "text", "required": false, "options": [] },
+      { "label": "Any skin/hair concerns to note?", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Car Service Centre Appointment Form",
+    "description": "Book a vehicle service or repair appointment at a car service centre.",
+    "sector": "Automotive",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Vehicle Make & Model", "type": "text", "required": true, "options": [] },
+      { "label": "Vehicle Registration Number", "type": "text", "required": true, "options": [] },
+      { "label": "Year of Manufacture", "type": "number", "required": false, "options": [] },
+      { "label": "Service Type Required", "type": "checkbox", "required": true, "options": ["Routine Service / Oil Change", "Tyre Replacement", "Brake Service", "AC Service", "Denting & Painting", "Electrical Issue", "Battery Replacement", "General Inspection", "Insurance Claim Repair"] },
+      { "label": "Fuel Type", "type": "radio", "required": false, "options": ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"] },
+      { "label": "Preferred Appointment Date", "type": "date", "required": true, "options": [] },
+      { "label": "Problem Description", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Driving School Registration Form",
+    "description": "Register new learners for driving lessons at a driving school.",
+    "sector": "Automotive",
+    "fields": [
+      { "label": "Applicant Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Aadhar Number", "type": "text", "required": true, "options": [] },
+      { "label": "Vehicle Type to Learn", "type": "radio", "required": true, "options": ["Two-Wheeler (Bike)", "Four-Wheeler (Car) – Manual", "Four-Wheeler (Car) – Automatic", "Both Two-Wheeler & Four-Wheeler"] },
+      { "label": "Do you have a Learner's Licence?", "type": "radio", "required": true, "options": ["Yes", "No – need help obtaining"] },
+      { "label": "Preferred Training Time", "type": "radio", "required": true, "options": ["Early Morning (6 AM – 8 AM)", "Morning (9 AM – 11 AM)", "Evening (5 PM – 7 PM)"] },
+      { "label": "Residential Address", "type": "textarea", "required": true, "options": [] }
+    ]
+  },
+  {
+    "title": "Farmer Input & Crop Feedback Form",
+    "description": "Collect feedback from farmers on seeds, fertilisers, pesticides, and crop yields.",
+    "sector": "Agriculture",
+    "fields": [
+      { "label": "Farmer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Village / Gram Panchayat", "type": "text", "required": true, "options": [] },
+      { "label": "District", "type": "text", "required": true, "options": [] },
+      { "label": "State", "type": "dropdown", "required": true, "options": ["Andhra Pradesh", "Bihar", "Gujarat", "Haryana", "Karnataka", "Madhya Pradesh", "Maharashtra", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"] },
+      { "label": "Land Holding (in acres)", "type": "number", "required": false, "options": [] },
+      { "label": "Primary Crop Grown", "type": "dropdown", "required": true, "options": ["Wheat", "Rice / Paddy", "Sugarcane", "Cotton", "Maize", "Pulses", "Vegetables", "Fruits", "Groundnut", "Soybean", "Other"] },
+      { "label": "Input Product Used (seed/fertiliser/pesticide brand)", "type": "text", "required": false, "options": [] },
+      { "label": "Overall Satisfaction with Product", "type": "rating", "required": false, "options": [] },
+      { "label": "Problems Faced This Season", "type": "textarea", "required": false, "options": [] },
+      { "label": "Suggestions / Government Support Needed", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "NGO Volunteer Registration Form",
+    "description": "Register new volunteers for an NGO or social welfare organisation.",
+    "sector": "NGO & Social Work",
+    "fields": [
+      { "label": "Volunteer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Other"] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "City / Town", "type": "text", "required": true, "options": [] },
+      { "label": "Highest Qualification", "type": "dropdown", "required": false, "options": ["10th Pass", "12th Pass", "Graduate", "Post-Graduate", "Professional Degree"] },
+      { "label": "Area of Interest / Skill", "type": "checkbox", "required": true, "options": ["Education & Literacy", "Healthcare & Hygiene", "Environment", "Women Empowerment", "Child Welfare", "Elder Care", "Disaster Relief", "IT / Tech Support", "Fundraising"] },
+      { "label": "Days Available per Week", "type": "checkbox", "required": false, "options": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] },
+      { "label": "Why do you want to volunteer?", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "NGO Donation / Contribution Form",
+    "description": "Collect donor details and contribution preferences for an NGO or charitable trust.",
+    "sector": "NGO & Social Work",
+    "fields": [
+      { "label": "Donor Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "PAN Number (for 80G receipt)", "type": "text", "required": false, "options": [] },
+      { "label": "Donation Amount (₹)", "type": "number", "required": true, "options": [] },
+      { "label": "Cause to Support", "type": "dropdown", "required": true, "options": ["Child Education", "Girl Child Welfare", "Senior Citizens", "Disaster Relief", "Tree Plantation", "Animal Welfare", "General Fund"] },
+      { "label": "Mode of Donation", "type": "radio", "required": true, "options": ["UPI", "Bank Transfer", "Cheque", "Cash (in-person)"] },
+      { "label": "Would you like a tax-exemption (80G) receipt?", "type": "radio", "required": false, "options": ["Yes – send via email", "No, not needed"] },
+      { "label": "Message to the Organisation", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Temple / Religious Trust Donation Form",
+    "description": "Collect devotee details for temple donations, seva booking, or prasad offerings.",
+    "sector": "Religious / Temple",
+    "fields": [
+      { "label": "Devotee Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "City / Town", "type": "text", "required": false, "options": [] },
+      { "label": "Type of Seva / Donation", "type": "dropdown", "required": true, "options": ["General Donation / Hundi", "Annadanam (Food Donation)", "Archana / Abhishekam Booking", "Kalyanotsavam", "Vahana Seva", "Special Pooja Sponsorship", "Temple Renovation Fund"] },
+      { "label": "Donation Amount (₹)", "type": "number", "required": false, "options": [] },
+      { "label": "Preferred Date for Seva (if applicable)", "type": "date", "required": false, "options": [] },
+      { "label": "Occasion / Reason for Donation", "type": "dropdown", "required": false, "options": ["Birthday", "Wedding Anniversary", "In Memory of a Loved One", "Festival / Auspicious Day", "General Devotion", "Other"] },
+      { "label": "Special Prayer Request / Message", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Job Application Form",
+    "description": "Standard job application form for candidates applying to open positions.",
+    "sector": "HR & Recruitment",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "Position Applied For", "type": "text", "required": true, "options": [] },
+      { "label": "Total Work Experience (years)", "type": "number", "required": true, "options": [] },
+      { "label": "Highest Qualification", "type": "dropdown", "required": true, "options": ["10th Pass", "12th Pass", "Diploma", "B.Tech / BE", "B.Com / BA / BSc", "MBA / PGDM", "CA / CMA / CS", "Post-Graduate", "PhD"] },
+      { "label": "Current CTC (₹ per annum)", "type": "number", "required": false, "options": [] },
+      { "label": "Expected CTC (₹ per annum)", "type": "number", "required": false, "options": [] },
+      { "label": "Notice Period", "type": "dropdown", "required": true, "options": ["Immediate / 0 days", "15 days", "30 days", "45 days", "60 days", "90 days"] },
+      { "label": "Current City", "type": "text", "required": true, "options": [] },
+      { "label": "Willing to Relocate?", "type": "radio", "required": false, "options": ["Yes", "No", "Open to Discussion"] },
+      { "label": "Key Skills", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Employee Exit Interview Form",
+    "description": "Capture insights from departing employees to improve retention and work culture.",
+    "sector": "HR & Recruitment",
+    "fields": [
+      { "label": "Employee Name", "type": "text", "required": false, "options": [] },
+      { "label": "Department", "type": "text", "required": true, "options": [] },
+      { "label": "Designation", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Joining", "type": "date", "required": false, "options": [] },
+      { "label": "Last Working Day", "type": "date", "required": true, "options": [] },
+      { "label": "Primary Reason for Leaving", "type": "dropdown", "required": true, "options": ["Better Opportunity / Higher CTC", "Work-Life Balance", "Relocation", "Higher Studies", "Health Reasons", "Organisational Culture", "No Growth / Promotion", "Manager Issues", "Job Role Change", "Personal Reasons"] },
+      { "label": "Overall Job Satisfaction Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Manager / Team Lead Behaviour Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Would you recommend this company to others?", "type": "radio", "required": true, "options": ["Yes", "No", "Maybe"] },
+      { "label": "Suggestions for Improvement", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Employee Satisfaction Survey",
+    "description": "Measure employee engagement, morale, and satisfaction levels within an organisation.",
+    "sector": "HR & Recruitment",
+    "fields": [
+      { "label": "Department (optional)", "type": "dropdown", "required": false, "options": ["Engineering", "Sales", "Marketing", "Finance & Accounts", "HR", "Operations", "Customer Support", "Other"] },
+      { "label": "Years at the Company", "type": "radio", "required": false, "options": ["Less than 1 year", "1 – 2 years", "2 – 5 years", "More than 5 years"] },
+      { "label": "Overall Work Satisfaction", "type": "rating", "required": true, "options": [] },
+      { "label": "Work-Life Balance Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Growth & Career Opportunities Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Compensation & Benefits Satisfaction", "type": "rating", "required": true, "options": [] },
+      { "label": "Team & Collaboration Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "What do you like most about working here?", "type": "textarea", "required": false, "options": [] },
+      { "label": "What needs to be improved?", "type": "textarea", "required": false, "options": [] },
+      { "label": "Would you refer a friend to join this company?", "type": "radio", "required": true, "options": ["Definitely Yes", "Probably Yes", "Not Sure", "Probably No", "Definitely No"] }
+    ]
+  },
+  {
+    "title": "Product / Service Feedback Form (NPS)",
+    "description": "Collect Net Promoter Score and qualitative feedback from customers.",
+    "sector": "Customer Feedback",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": false, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": false, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Product / Service Used", "type": "text", "required": true, "options": [] },
+      { "label": "How likely are you to recommend us? (0–10)", "type": "rating", "required": true, "options": [] },
+      { "label": "Overall Experience Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "What did you like most?", "type": "textarea", "required": false, "options": [] },
+      { "label": "What can we improve?", "type": "textarea", "required": false, "options": [] },
+      { "label": "How did you discover us?", "type": "dropdown", "required": false, "options": ["Google Search", "Social Media", "Friend / Family Referral", "Advertisement", "Walk-in / In-store"] }
+    ]
+  },
+  {
+    "title": "E-commerce / Online Delivery Feedback",
+    "description": "Capture post-delivery feedback from online shoppers on their order experience.",
+    "sector": "Customer Feedback",
+    "fields": [
+      { "label": "Order ID", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": false, "options": [] },
+      { "label": "Product Received As Described?", "type": "radio", "required": true, "options": ["Yes – exactly as shown", "Mostly yes – minor difference", "No – significant difference"] },
+      { "label": "Product Quality Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Packaging Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Delivery Speed Rating", "type": "rating", "required": true, "options": [] },
+      { "label": "Delivery Executive Behaviour", "type": "rating", "required": false, "options": [] },
+      { "label": "Any issue with the order?", "type": "checkbox", "required": false, "options": ["Damaged product", "Wrong item delivered", "Item missing", "Late delivery", "Poor packaging", "No issue"] },
+      { "label": "Would you shop with us again?", "type": "radio", "required": true, "options": ["Definitely Yes", "Probably Yes", "Not Sure", "No"] },
+      { "label": "Additional Comments", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Yoga / Meditation Centre Enquiry",
+    "description": "Capture enquiries from individuals interested in yoga or meditation classes.",
+    "sector": "Fitness & Wellness",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Age", "type": "number", "required": false, "options": [] },
+      { "label": "Gender", "type": "radio", "required": false, "options": ["Male", "Female", "Other"] },
+      { "label": "Health Goal", "type": "checkbox", "required": true, "options": ["Stress Relief", "Weight Management", "Flexibility & Posture", "Back Pain Relief", "Diabetes / BP Management", "Spiritual Practice", "Prenatal Yoga", "General Wellness"] },
+      { "label": "Experience Level", "type": "radio", "required": true, "options": ["Beginner", "Intermediate", "Advanced"] },
+      { "label": "Preferred Batch", "type": "radio", "required": true, "options": ["Early Morning (5:30 AM – 7:00 AM)", "Morning (7:00 AM – 9:00 AM)", "Evening (5:30 PM – 7:00 PM)", "Online Sessions"] },
+      { "label": "Any medical conditions we should know?", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Homestay / Airbnb Booking Request",
+    "description": "Allow guests to submit a stay request at a homestay or private holiday rental.",
+    "sector": "Hospitality",
+    "fields": [
+      { "label": "Guest Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "Check-in Date", "type": "date", "required": true, "options": [] },
+      { "label": "Check-out Date", "type": "date", "required": true, "options": [] },
+      { "label": "Number of Guests (Adults)", "type": "number", "required": true, "options": [] },
+      { "label": "Number of Children (if any)", "type": "number", "required": false, "options": [] },
+      { "label": "Purpose of Stay", "type": "dropdown", "required": false, "options": ["Leisure / Vacation", "Work from Home / Remote Work", "Family Visit", "Honeymoon", "Group Trip", "Other"] },
+      { "label": "Special Requirements", "type": "textarea", "required": false, "options": [] },
+      { "label": "How did you find us?", "type": "dropdown", "required": false, "options": ["Airbnb / MakeMyTrip", "Google", "Instagram", "Friend Referral", "Previous Guest"] }
+    ]
+  },
+  {
+    "title": "Bike Service Centre Appointment",
+    "description": "Let two-wheeler owners schedule a service or repair at a bike service centre.",
+    "sector": "Automotive",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Bike Make & Model", "type": "text", "required": true, "options": [] },
+      { "label": "Registration Number", "type": "text", "required": true, "options": [] },
+      { "label": "Fuel Type", "type": "radio", "required": false, "options": ["Petrol", "Electric"] },
+      { "label": "Service Required", "type": "checkbox", "required": true, "options": ["General Service / Oil Change", "Tyre Replacement", "Chain & Sprocket", "Brake Pads", "Clutch Plate", "Battery Replacement", "Electrical Issue", "Denting / Scratches", "Periodic Checkup"] },
+      { "label": "Current Km Reading (approx)", "type": "number", "required": false, "options": [] },
+      { "label": "Preferred Appointment Date", "type": "date", "required": true, "options": [] },
+      { "label": "Problem Description", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "NGO Beneficiary Registration Form",
+    "description": "Enrol beneficiaries for welfare programmes run by an NGO or government body.",
+    "sector": "NGO & Social Work",
+    "fields": [
+      { "label": "Beneficiary Name", "type": "text", "required": true, "options": [] },
+      { "label": "Date of Birth", "type": "date", "required": true, "options": [] },
+      { "label": "Gender", "type": "radio", "required": true, "options": ["Male", "Female", "Transgender"] },
+      { "label": "Aadhar Number", "type": "text", "required": false, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": false, "options": [] },
+      { "label": "Village / Ward / Area", "type": "text", "required": true, "options": [] },
+      { "label": "District", "type": "text", "required": true, "options": [] },
+      { "label": "Programme Enrolled In", "type": "dropdown", "required": true, "options": ["Midday Meal", "Skill Training", "Health Camp", "Women Self-Help Group", "Child Education Support", "Housing Assistance", "Financial Literacy"] },
+      { "label": "Annual Household Income (₹)", "type": "number", "required": false, "options": [] },
+      { "label": "Special Needs / Remarks", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Temple Event / Prasad Booking Form",
+    "description": "Book a slot for a religious event, prasad distribution, or sponsored pooja.",
+    "sector": "Religious / Temple",
+    "fields": [
+      { "label": "Devotee Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "City / Town", "type": "text", "required": true, "options": [] },
+      { "label": "Event / Seva Type", "type": "dropdown", "required": true, "options": ["Sahasranama Archana", "Rudrabhishekam", "Satyanarayan Pooja", "Annadanam Sponsorship", "Birthday Archana", "Navagraha Pooja", "Prasad Distribution"] },
+      { "label": "Preferred Event Date", "type": "date", "required": true, "options": [] },
+      { "label": "Number of Participants / Prasad Packets", "type": "number", "required": false, "options": [] },
+      { "label": "Gotram (if applicable)", "type": "text", "required": false, "options": [] },
+      { "label": "Special Prayers / Names to be Included", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "Customer Complaint & Support Form",
+    "description": "Allow customers to register complaints or request support from a business.",
+    "sector": "Customer Feedback",
+    "fields": [
+      { "label": "Customer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "Order / Invoice Number (if applicable)", "type": "text", "required": false, "options": [] },
+      { "label": "Issue Category", "type": "dropdown", "required": true, "options": ["Product Defect / Damage", "Wrong Item Received", "Delivery Not Received", "Billing / Payment Issue", "Refund Request", "Account / Login Issue", "Service Quality Complaint", "Staff Behaviour", "Other"] },
+      { "label": "Date of Purchase / Incident", "type": "date", "required": false, "options": [] },
+      { "label": "Detailed Description of Issue", "type": "textarea", "required": true, "options": [] },
+      { "label": "Urgency Level", "type": "radio", "required": true, "options": ["High – needs immediate resolution", "Medium – within 2-3 days", "Low – whenever possible"] },
+      { "label": "Preferred Resolution", "type": "radio", "required": false, "options": ["Replacement", "Refund", "Repair", "Apology / Acknowledgement", "Other"] }
+    ]
+  },
+  {
+    "title": "Agri Extension / KVK Farmer Training Registration",
+    "description": "Register farmers for Krishi Vigyan Kendra training camps or agricultural workshops.",
+    "sector": "Agriculture",
+    "fields": [
+      { "label": "Farmer Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Village", "type": "text", "required": true, "options": [] },
+      { "label": "Taluk / Block", "type": "text", "required": true, "options": [] },
+      { "label": "District", "type": "text", "required": true, "options": [] },
+      { "label": "Farming Type", "type": "radio", "required": false, "options": ["Rain-fed / Dryland", "Irrigated", "Organic", "Mixed"] },
+      { "label": "Training Topic Interested In", "type": "checkbox", "required": true, "options": ["Organic Farming", "Drip Irrigation", "Soil Health & Testing", "Pest Management", "Post-Harvest Storage", "Horticulture", "Animal Husbandry", "Government Schemes & Subsidies"] },
+      { "label": "Preferred Training Mode", "type": "radio", "required": false, "options": ["In-person at KVK / FPO Centre", "Village-level Camp", "Online / WhatsApp"] },
+      { "label": "Kisan Credit Card / PM Kisan Enrolled?", "type": "radio", "required": false, "options": ["Yes", "No", "Applied – pending"] }
+    ]
+  },
+  {
+    "title": "Event / Conference Registration Form",
+    "description": "Register participants for a corporate conference, seminar, or public event.",
+    "sector": "Weddings & Events",
+    "fields": [
+      { "label": "Participant Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": true, "options": [] },
+      { "label": "Organisation / Company Name", "type": "text", "required": false, "options": [] },
+      { "label": "Designation", "type": "text", "required": false, "options": [] },
+      { "label": "Event Name", "type": "text", "required": true, "options": [] },
+      { "label": "Session Preference", "type": "checkbox", "required": false, "options": ["Keynote Address", "Panel Discussion", "Workshop / Masterclass", "Networking Lunch", "Award Ceremony", "Exhibition / Expo"] },
+      { "label": "Dietary Requirement", "type": "radio", "required": false, "options": ["Vegetarian", "Jain", "Non-Vegetarian", "Vegan", "No Preference"] },
+      { "label": "T-Shirt Size (if provided)", "type": "dropdown", "required": false, "options": ["XS", "S", "M", "L", "XL", "XXL"] },
+      { "label": "City Travelling From", "type": "text", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "School Parent–Teacher Meeting (PTM) Slot Booking",
+    "description": "Allow parents to book a time slot for Parent-Teacher Meeting at a school.",
+    "sector": "Education",
+    "fields": [
+      { "label": "Parent / Guardian Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Student Name", "type": "text", "required": true, "options": [] },
+      { "label": "Class & Section", "type": "text", "required": true, "options": [] },
+      { "label": "Preferred PTM Date", "type": "date", "required": true, "options": [] },
+      { "label": "Preferred Time Slot", "type": "radio", "required": true, "options": ["9:00 AM – 10:00 AM", "10:00 AM – 11:00 AM", "11:00 AM – 12:00 PM", "1:00 PM – 2:00 PM", "2:00 PM – 3:00 PM"] },
+      { "label": "Teacher to Meet", "type": "text", "required": false, "options": [] },
+      { "label": "Topic / Concern to Discuss", "type": "textarea", "required": false, "options": [] }
+    ]
+  },
+  {
+    "title": "General Business Lead Capture Form",
+    "description": "A simple enquiry form for any business to capture potential customer leads.",
+    "sector": "Customer Feedback",
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true, "options": [] },
+      { "label": "Mobile Number", "type": "phone", "required": true, "options": [] },
+      { "label": "Email Address", "type": "email", "required": false, "options": [] },
+      { "label": "City", "type": "text", "required": false, "options": [] },
+      { "label": "Product / Service Interested In", "type": "text", "required": true, "options": [] },
+      { "label": "Budget Range", "type": "dropdown", "required": false, "options": ["Below ₹5,000", "₹5K – ₹20K", "₹20K – ₹50K", "₹50K – ₹1L", "Above ₹1L", "Not sure yet"] },
+      { "label": "Best Time to Contact", "type": "radio", "required": false, "options": ["Morning (9 AM – 12 PM)", "Afternoon (12 PM – 3 PM)", "Evening (5 PM – 8 PM)"] },
+      { "label": "How did you hear about us?", "type": "dropdown", "required": false, "options": ["Google Search", "Facebook / Instagram", "WhatsApp", "Friend Referral", "Walk-in / Hoarding"] },
+      { "label": "Message / Enquiry Details", "type": "textarea", "required": false, "options": [] }
+    ]
+  }
+]

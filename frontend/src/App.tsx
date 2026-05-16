@@ -27,6 +27,7 @@ function ProtectedRoute() {
   return <Outlet />;
 }
 
+
 // Wraps with AppLayout+sidebar for authenticated users; bare Outlet for public users.
 function OptionalAuthLayout() {
   const { isAuthenticated, isLoading } = useAuthStore();

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LinkedIn Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #ECEAE6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    padding: 48px;
+  }
+
+  .card {
+    width: 980px;
+    background: #ffffff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 20px 60px rgba(0,0,0,0.10);
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    background: #0C1910;
+    padding: 18px 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .top-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+  }
+  .logo-row { display: flex; align-items: center; gap: 9px; position: relative; z-index: 1; }
+  .logo-mark {
+    width: 30px; height: 30px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-name { font-size: 16px; font-weight: 700; color: white; letter-spacing: -0.03em; }
+  .badge {
+    position: relative; z-index: 1;
+    background: rgba(111,217,168,0.15);
+    color: #6FD9A8;
+    font-size: 11px; font-weight: 600;
+    padding: 4px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(111,217,168,0.25);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 32px 44px 28px;
+    border-bottom: 1px solid #F0EFEB;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; color: #1B6B4A;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .eyebrow-dot { width: 5px; height: 5px; border-radius: 50%; background: #1B6B4A; }
+  .hero-main { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; }
+  .headline {
+    font-size: 40px; font-weight: 900;
+    color: #0D1410; line-height: 1.08;
+    letter-spacing: -0.04em;
+    margin-bottom: 10px;
+  }
+  .headline em { font-style: normal; color: #1B6B4A; }
+  .subline { font-size: 14px; color: #6B6B66; line-height: 1.55; max-width: 400px; }
+
+  /* Stats in a row */
+  .stats-row { display: flex; gap: 10px; flex-shrink: 0; align-items: flex-start; padding-top: 6px; }
+  .stat-chip {
+    background: #F7F6F3; border: 1px solid #ECEAE6;
+    border-radius: 14px; padding: 12px 18px; text-align: center; min-width: 100px;
+  }
+  .stat-num { font-size: 22px; font-weight: 900; color: #1B6B4A; letter-spacing: -0.04em; line-height: 1; margin-bottom: 3px; }
+  .stat-label { font-size: 10.5px; color: #9C9C96; font-weight: 500; }
+
+  /* ── Body: two cols ── */
+  .body {
+    padding: 24px 44px;
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 16px;
+    border-bottom: 1px solid #F0EFEB;
+  }
+  .block { background: #F7F6F3; border-radius: 16px; padding: 20px 22px; }
+  .block-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.09em;
+    color: #1B6B4A; margin-bottom: 13px;
+  }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .feature-list li {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13px; color: #2A2A26; font-weight: 500;
+  }
+  .check {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #E8F5EE;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* Stack — single horizontal scrolling row */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pill {
+    background: white; border: 1.5px solid #E4E4E0;
+    color: #2A2A26; font-size: 12px; font-weight: 600;
+    padding: 5px 13px; border-radius: 999px; white-space: nowrap;
+  }
+  .pill.green { background: #E8F5EE; border-color: #B8DFC9; color: #1B6B4A; }
+
+  /* ── Bottom: cost + footer in one row ── */
+  .bottom {
+    background: #0C1910;
+    padding: 24px 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bottom::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+  }
+
+  /* Cost */
+  .cost-group { display: flex; align-items: center; gap: 20px; position: relative; z-index: 1; }
+  .cost-main {}
+  .cost-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); margin-bottom: 3px; }
+  .cost-value { font-size: 30px; font-weight: 900; color: white; letter-spacing: -0.04em; line-height: 1; }
+  .cost-value span { color: #6FD9A8; }
+  .cost-desc { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 3px; }
+  .cost-chips { display: flex; gap: 8px; }
+  .cost-chip {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 11px; padding: 10px 16px; text-align: center;
+  }
+  .cost-chip-num { font-size: 16px; font-weight: 800; color: #6FD9A8; letter-spacing: -0.02em; }
+  .cost-chip-label { font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 500; margin-top: 2px; }
+
+  /* Divider */
+  .bottom-divider { width: 1px; height: 52px; background: rgba(255,255,255,0.08); flex-shrink: 0; position: relative; z-index: 1; }
+
+  /* Lesson */
+  .lesson { flex: 1; position: relative; z-index: 1; }
+  .lesson-text { font-size: 12.5px; color: rgba(255,255,255,0.5); line-height: 1.55; }
+  .lesson-text strong { color: rgba(255,255,255,0.85); }
+
+  /* CTA */
+  .cta { flex-shrink: 0; text-align: right; position: relative; z-index: 1; }
+  .cta-name { font-size: 13px; font-weight: 700; color: white; letter-spacing: -0.01em; }
+  .cta-role { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; margin-bottom: 10px; }
+  .cta-btn {
+    display: inline-block;
+    background: #1B6B4A; color: white;
+    font-size: 13px; font-weight: 700;
+    padding: 9px 20px; border-radius: 10px;
+    letter-spacing: -0.01em;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="logo-row">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="14" width="4" height="7" rx="1.5" fill="#6FD9A8"/>
+          <rect x="10" y="9" width="4" height="12" rx="1.5" fill="#6FD9A8"/>
+          <rect x="17" y="3" width="4" height="18" rx="1.5" fill="#6FD9A8"/>
+        </svg>
+      </div>
+      <span class="logo-name">formrise</span>
+    </div>
+    <span class="badge">Solo-built &nbsp;·&nbsp; Shipped ✓</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="eyebrow"><span class="eyebrow-dot"></span> Full-Stack SaaS · Side Project</div>
+    <div class="hero-main">
+      <div>
+        <div class="headline">Built a product.<br/><em>Solo. From scratch.</em></div>
+        <div class="subline">A form builder that works everywhere — even without internet. Free forever, no credit card needed.</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-chip">
+          <div class="stat-num">~40ms</div>
+          <div class="stat-label">API (cached)</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Solo built</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-num">Free</div>
+          <div class="stat-label">For everyone</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+    <div class="block">
+      <div class="block-label">What it does</div>
+      <ul class="feature-list">
+        <li><span class="check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1B6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Drag-and-drop form builder</li>
+        <li><span class="check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1B6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Offline submissions + auto-sync</li>
+        <li><span class="check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1B6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>QR code sharing</li>
+        <li><span class="check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1B6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Response dashboard + CSV export</li>
+        <li><span class="check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#1B6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Community templates</li>
+      </ul>
+    </div>
+    <div class="block">
+      <div class="block-label">Tech Stack</div>
+      <div class="pill-row">
+        <span class="pill green">React 18</span>
+        <span class="pill green">TypeScript</span>
+        <span class="pill green">ASP.NET Core</span>
+        <span class="pill green">.NET 9</span>
+        <span class="pill">PostgreSQL</span>
+        <span class="pill">Redis</span>
+        <span class="pill">Docker</span>
+        <span class="pill">Caddy</span>
+        <span class="pill">Hetzner VPS</span>
+        <span class="pill">Service Worker</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottom">
+    <div class="cost-group">
+      <div class="cost-main">
+        <div class="cost-title">Cost to run</div>
+        <div class="cost-value"><span>$5.90</span>/mo</div>
+        <div class="cost-desc">Full production stack.</div>
+      </div>
+      <div class="cost-chips">
+        <div class="cost-chip">
+          <div class="cost-chip-num">$5.90</div>
+          <div class="cost-chip-label">Hetzner / mo</div>
+        </div>
+        <div class="cost-chip">
+          <div class="cost-chip-num">$6.00</div>
+          <div class="cost-chip-label">Domain / yr</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-divider"></div>
+
+    <div class="lesson">
+      <div class="lesson-text">
+        💡 <strong>Biggest lesson:</strong> Ship the ugly version first. The first build just had forms — no templates, no QR, no offline. That was enough to validate and keep building.
+      </div>
+    </div>
+
+    <div class="bottom-divider"></div>
+
+    <div class="cta">
+      <div class="cta-name">Sai Nadh Reddy</div>
+      <div class="cta-role">Full-Stack Engineer</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
