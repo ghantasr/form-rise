@@ -105,7 +105,7 @@ export function Landing() {
             <ArrowRight size={15} />
           </button>
           <button
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/templates')}
             className="w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-semibold text-[#141412] bg-white border border-[#E4E4E0] hover:border-[#1B6B4A] transition-all cursor-pointer"
           >
             View templates →
