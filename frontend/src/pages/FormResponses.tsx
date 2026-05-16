@@ -188,7 +188,7 @@ export function FormResponses() {
                       <td className="px-4 py-3">
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDeleteResponse(response.id); }}
-                          className="opacity-0 group-hover:opacity-100 text-xs text-[#9C9C96] hover:text-red-500 transition-all cursor-pointer"
+                          className="opacity-0 group-hover:opacity-100 text-xs text-[#6B6B66] hover:text-red-500 transition-all cursor-pointer"
                         >
                           Delete
                         </button>

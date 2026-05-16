@@ -63,7 +63,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
             placeholder="Optional description shown below the field"
             rows={2}
             className="w-full px-3 py-2 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
-              placeholder:text-[#9C9C96] transition-colors outline-none resize-none
+              placeholder:text-[#6B6B66] transition-colors outline-none resize-none
               focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
           />
         </div>
@@ -71,7 +71,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-[#1A1A18]">Required</p>
-            <p className="text-xs text-[#9C9C96]">Respondents must answer</p>
+            <p className="text-xs text-[#6B6B66]">Respondents must answer</p>
           </div>
           <button
             onClick={() => onChange({ isRequired: !field.isRequired })}
@@ -98,12 +98,12 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
                     value={option}
                     onChange={(e) => handleOptionChange(index, e.target.value)}
                     className="flex-1 px-3 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
-                      placeholder:text-[#9C9C96] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
+                      placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
                     placeholder={`Option ${index + 1}`}
                   />
                   <button
                     onClick={() => removeOption(index)}
-                    className="text-[#9C9C96] hover:text-red-500 transition-colors cursor-pointer flex-shrink-0"
+                    className="text-[#6B6B66] hover:text-red-500 transition-colors cursor-pointer flex-shrink-0"
                     title="Remove option"
                   >
                     <X size={14} />

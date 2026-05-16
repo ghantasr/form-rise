@@ -22,13 +22,13 @@ export function ResponseDetail({ response, onClose }: ResponseDetailProps) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E4] flex-shrink-0">
           <div>
             <p className="text-sm font-semibold text-[#1A1A18]">Response detail</p>
-            <p className="text-xs text-[#9C9C96] mt-0.5">
+            <p className="text-xs text-[#6B6B66] mt-0.5">
               {new Date(response.submittedAt).toLocaleString()}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-[#9C9C96] hover:text-[#1A1A18] transition-colors cursor-pointer p-1 rounded"
+            className="text-[#6B6B66] hover:text-[#1A1A18] transition-colors cursor-pointer p-1 rounded"
           >
             <X size={18} />
           </button>

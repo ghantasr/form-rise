@@ -46,7 +46,7 @@ export function FieldCard({ field, isSelected, onSelect, onDelete, dragHandlePro
             {field.label || 'Untitled field'}
           </p>
           {field.helpText && (
-            <p className="text-xs text-[#9C9C96] mt-0.5 truncate">{field.helpText}</p>
+            <p className="text-xs text-[#6B6B66] mt-0.5 truncate">{field.helpText}</p>
           )}
         </div>
 
@@ -55,7 +55,7 @@ export function FieldCard({ field, isSelected, onSelect, onDelete, dragHandlePro
             e.stopPropagation();
             onDelete();
           }}
-          className="opacity-0 group-hover:opacity-100 flex-shrink-0 text-[#9C9C96] hover:text-red-500 transition-all cursor-pointer p-0.5 rounded"
+          className="opacity-0 group-hover:opacity-100 flex-shrink-0 text-[#6B6B66] hover:text-red-500 transition-all cursor-pointer p-0.5 rounded"
           title="Delete field"
         >
           <Trash2 size={14} />

@@ -152,11 +152,11 @@ export function Templates() {
                 </div>
 
                 {template.description && (
-                  <p className="text-xs text-[#9C9C96] line-clamp-2 leading-relaxed -mt-1">{template.description}</p>
+                  <p className="text-xs text-[#6B6B66] line-clamp-2 leading-relaxed -mt-1">{template.description}</p>
                 )}
 
                 <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#F0F0EC]">
-                  <div className="flex items-center gap-1.5 text-xs text-[#9C9C96]">
+                  <div className="flex items-center gap-1.5 text-xs text-[#6B6B66]">
                     <GitFork size={11} />
                     <span>{template.forkCount} use{template.forkCount !== 1 ? 's' : ''}</span>
                   </div>

@@ -40,7 +40,7 @@ function ChoiceChart({ field, responses }: { field: FormField; responses: FormRe
   return (
     <div className="bg-white border border-[#E8E8E4] rounded-xl p-5">
       <p className="text-sm font-semibold text-[#1A1A18] mb-1">{field.label}</p>
-      <p className="text-xs text-[#9C9C96] mb-4">{total} response{total !== 1 ? 's' : ''}</p>
+      <p className="text-xs text-[#6B6B66] mb-4">{total} response{total !== 1 ? 's' : ''}</p>
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} barCategoryGap="30%">
           <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B6B66' }} axisLine={false} tickLine={false} />
@@ -84,7 +84,7 @@ function RatingChart({ field, responses }: { field: FormField; responses: FormRe
       <p className="text-sm font-semibold text-[#1A1A18] mb-1">{field.label}</p>
       <div className="flex items-baseline gap-2 mb-4">
         <span className="text-2xl font-bold text-[#1B6B4A]">{avg}</span>
-        <span className="text-xs text-[#9C9C96]">avg · {count} response{count !== 1 ? 's' : ''}</span>
+        <span className="text-xs text-[#6B6B66]">avg · {count} response{count !== 1 ? 's' : ''}</span>
       </div>
       <ResponsiveContainer width="100%" height={140}>
         <BarChart data={data} barCategoryGap="30%">
@@ -117,7 +117,7 @@ function NumberStats({ field, responses }: { field: FormField; responses: FormRe
     return (
       <div className="bg-white border border-[#E8E8E4] rounded-xl p-5">
         <p className="text-sm font-semibold text-[#1A1A18] mb-1">{field.label}</p>
-        <p className="text-xs text-[#9C9C96]">No responses yet</p>
+        <p className="text-xs text-[#6B6B66]">No responses yet</p>
       </div>
     );
   }
@@ -134,12 +134,12 @@ function NumberStats({ field, responses }: { field: FormField; responses: FormRe
   return (
     <div className="bg-white border border-[#E8E8E4] rounded-xl p-5">
       <p className="text-sm font-semibold text-[#1A1A18] mb-1">{field.label}</p>
-      <p className="text-xs text-[#9C9C96] mb-4">{nums.length} response{nums.length !== 1 ? 's' : ''}</p>
+      <p className="text-xs text-[#6B6B66] mb-4">{nums.length} response{nums.length !== 1 ? 's' : ''}</p>
       <div className="grid grid-cols-4 gap-3">
         {[['Min', min], ['Max', max], ['Avg', avg], ['Median', median]].map(([label, val]) => (
           <div key={label} className="bg-[#FAFAF8] rounded-lg p-3 text-center">
             <p className="text-lg font-bold text-[#1B6B4A]">{val}</p>
-            <p className="text-xs text-[#9C9C96] mt-0.5">{label}</p>
+            <p className="text-xs text-[#6B6B66] mt-0.5">{label}</p>
           </div>
         ))}
       </div>
@@ -154,7 +154,7 @@ export function ResponseChart({ fields, responses }: ResponseChartProps) {
 
   if (chartableFields.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center text-[#9C9C96]">
+      <div className="flex flex-col items-center justify-center py-20 text-center text-[#6B6B66]">
         <p className="text-sm">No chartable fields in this form.</p>
         <p className="text-xs mt-1">Add dropdown, radio, checkbox, rating, or number fields to see charts.</p>
       </div>

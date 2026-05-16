@@ -84,7 +84,7 @@ export function Dashboard() {
             </div>
             <div>
               <p className="text-2xl font-bold text-[#141412] leading-none tracking-[-0.02em]">{forms.length}</p>
-              <p className="text-xs text-[#9C9C96] mt-1">Total forms</p>
+              <p className="text-xs text-[#6B6B66] mt-1">Total forms</p>
             </div>
           </div>
           <div className="bg-white rounded-xl border border-[#E4E4E0] p-5 flex items-center gap-4">
@@ -93,7 +93,7 @@ export function Dashboard() {
             </div>
             <div>
               <p className="text-2xl font-bold text-[#141412] leading-none tracking-[-0.02em]">{activeForms}</p>
-              <p className="text-xs text-[#9C9C96] mt-1">Active forms</p>
+              <p className="text-xs text-[#6B6B66] mt-1">Active forms</p>
             </div>
           </div>
           <div className="bg-white rounded-xl border border-[#E4E4E0] p-5 flex items-center gap-4">
@@ -102,7 +102,7 @@ export function Dashboard() {
             </div>
             <div>
               <p className="text-2xl font-bold text-[#141412] leading-none tracking-[-0.02em]">{totalResponses}</p>
-              <p className="text-xs text-[#9C9C96] mt-1">Total responses</p>
+              <p className="text-xs text-[#6B6B66] mt-1">Total responses</p>
             </div>
           </div>
         </div>
@@ -148,17 +148,17 @@ export function Dashboard() {
                   {form.title}
                 </h3>
                 {form.description && (
-                  <p className="text-xs text-[#9C9C96] mb-3 line-clamp-2 leading-relaxed">{form.description}</p>
+                  <p className="text-xs text-[#6B6B66] mb-3 line-clamp-2 leading-relaxed">{form.description}</p>
                 )}
 
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[#F0F0EC]">
-                  <div className="flex items-center gap-1.5 text-xs text-[#9C9C96]">
+                  <div className="flex items-center gap-1.5 text-xs text-[#6B6B66]">
                     <BarChart2 size={12} />
                     <span>{form.responseCount} response{form.responseCount !== 1 ? 's' : ''}</span>
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate(`/forms/${form.id}/responses`); }}
-                    className="ml-auto flex items-center gap-1.5 text-xs text-[#9C9C96] hover:text-[#1B6B4A] cursor-pointer transition-colors"
+                    className="ml-auto flex items-center gap-1.5 text-xs text-[#6B6B66] hover:text-[#1B6B4A] cursor-pointer transition-colors"
                   >
                     <Eye size={12} />
                     Responses

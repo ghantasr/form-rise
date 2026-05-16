@@ -170,7 +170,7 @@ export function Login() {
                 </button>
                 <div className="flex items-center gap-3 my-5">
                   <div className="flex-1 h-px bg-[#E4E4E0]" />
-                  <span className="text-xs text-[#9C9C96]">or continue with email</span>
+                  <span className="text-xs text-[#6B6B66]">or continue with email</span>
                   <div className="flex-1 h-px bg-[#E4E4E0]" />
                 </div>
               </div>
@@ -219,7 +219,7 @@ export function Login() {
             )}
           </div>
 
-          <p className="text-xs text-center text-[#9C9C96] mt-5">
+          <p className="text-xs text-center text-[#6B6B66] mt-5">
             No password. No spam. Just forms.
           </p>
         </div>

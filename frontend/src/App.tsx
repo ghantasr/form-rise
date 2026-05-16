@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import axios from 'axios';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { setAccessToken } from './api/client';
@@ -7,14 +7,18 @@ import { useAuthStore } from './stores/authStore';
 import { useOfflineSync } from './hooks/useOfflineSync';
 import { AppLayout } from './components/layout/AppLayout';
 import { PageLoader } from './components/shared/LoadingSpinner';
-import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
-import { FormBuilder } from './pages/FormBuilder';
-import { FormResponses } from './pages/FormResponses';
-import { FormFill } from './pages/FormFill';
-import { ThankYou } from './pages/ThankYou';
-import { Templates } from './pages/Templates';
-import { Settings } from './pages/Settings';
+
+const Landing      = lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
+const Login        = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
+const Dashboard    = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const FormBuilder  = lazy(() => import('./pages/FormBuilder').then(m => ({ default: m.FormBuilder })));
+const FormResponses = lazy(() => import('./pages/FormResponses').then(m => ({ default: m.FormResponses })));
+const FormFill     = lazy(() => import('./pages/FormFill').then(m => ({ default: m.FormFill })));
+const ThankYou     = lazy(() => import('./pages/ThankYou').then(m => ({ default: m.ThankYou })));
+const Templates    = lazy(() => import('./pages/Templates').then(m => ({ default: m.Templates })));
+const Settings     = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
+
+const SESSION_HINT_KEY = 'fr_has_session';
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoading } = useAuthStore();
@@ -27,12 +31,21 @@ function AppInitializer() {
   const { login, setLoading } = useAuthStore();
 
   useEffect(() => {
+    // Only attempt refresh if we've previously stored a session hint.
+    // This prevents a guaranteed-to-fail 401 on every public page load.
+    if (!localStorage.getItem(SESSION_HINT_KEY)) {
+      setLoading(false);
+      return;
+    }
     axios.post('/api/auth/refresh', {}, { withCredentials: true })
       .then(({ data }) => {
         setAccessToken(data.accessToken);
         login(data.accessToken, data.user);
+        localStorage.setItem(SESSION_HINT_KEY, '1');
       })
-      .catch(() => {})
+      .catch(() => {
+        localStorage.removeItem(SESSION_HINT_KEY);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -43,29 +56,33 @@ function AppInitializer() {
   return null;
 }
 
+export { SESSION_HINT_KEY };
+
 export default function App() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
-    <BrowserRouter>
-      <AppInitializer />
-      <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/f/:slug" element={<FormFill />} />
-        <Route path="/f/:slug/thank-you" element={<ThankYou />} />
+      <BrowserRouter>
+        <AppInitializer />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/f/:slug" element={<FormFill />} />
+            <Route path="/f/:slug/thank-you" element={<ThankYou />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route element={<AppLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/forms/new" element={<FormBuilder />} />
-            <Route path="/forms/:id/edit" element={<FormBuilder />} />
-            <Route path="/forms/:id/responses" element={<FormResponses />} />
-            <Route path="/templates" element={<Templates />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/forms/new" element={<FormBuilder />} />
+                <Route path="/forms/:id/edit" element={<FormBuilder />} />
+                <Route path="/forms/:id/responses" element={<FormResponses />} />
+                <Route path="/templates" element={<Templates />} />
+                <Route path="/settings" element={<Settings />} />
+              </Route>
+            </Route>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
     </GoogleOAuthProvider>
   );
 }

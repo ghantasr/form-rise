@@ -9,7 +9,7 @@ interface FieldRendererProps {
 }
 
 const baseInputClass =
-  'w-full px-3 py-2 border rounded-lg text-sm text-[#1A1A18] bg-white placeholder:text-[#9C9C96] outline-none transition-colors focus:ring-1';
+  'w-full px-3 py-2 border rounded-lg text-sm text-[#1A1A18] bg-white placeholder:text-[#6B6B66] outline-none transition-colors focus:ring-1';
 
 const inputClass = (error?: string) =>
   `${baseInputClass} ${

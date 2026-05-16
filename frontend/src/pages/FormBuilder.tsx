@@ -130,7 +130,7 @@ export function FormBuilder() {
           placeholder="Untitled Form"
         />
 
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#9C9C96] flex-shrink-0">
+        <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#6B6B66] flex-shrink-0">
           {isSaving ? (
             <Loader2 size={12} className="animate-spin" />
           ) : !isDirty ? (
@@ -208,7 +208,7 @@ export function FormBuilder() {
               onChange={(updates: Partial<FormField>) => updateField(selectedField.id, updates)}
             />
           ) : (
-            <div className="lg:hidden flex-1 flex items-center justify-center text-sm text-[#9C9C96] p-8 text-center">
+            <div className="lg:hidden flex-1 flex items-center justify-center text-sm text-[#6B6B66] p-8 text-center">
               Select a field from the Canvas tab to edit it.
             </div>
           )}

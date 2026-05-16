@@ -96,7 +96,7 @@ export function QrShareModal({ isOpen, onClose, formId }: QrShareModalProps) {
             </Button>
           </div>
           {labelPrefix && (
-            <p className="text-xs text-[#9C9C96] mt-2">
+            <p className="text-xs text-[#6B6B66] mt-2">
               Will create: "{labelPrefix} 1", "{labelPrefix} 2", …
             </p>
           )}
@@ -105,10 +105,10 @@ export function QrShareModal({ isOpen, onClose, formId }: QrShareModalProps) {
         {/* QR list */}
         <div className="flex flex-col gap-0 max-h-[420px] overflow-y-auto">
           {loading && (
-            <p className="text-sm text-[#9C9C96] text-center py-8">Loading…</p>
+            <p className="text-sm text-[#6B6B66] text-center py-8">Loading…</p>
           )}
           {!loading && qrCodes.length === 0 && (
-            <p className="text-sm text-[#9C9C96] text-center py-8">No QR codes yet. Generate one above.</p>
+            <p className="text-sm text-[#6B6B66] text-center py-8">No QR codes yet. Generate one above.</p>
           )}
           {!loading && qrCodes.map((qr) => (
             <div key={qr.id} className="border-b border-[#F0F0EC] last:border-0">
@@ -120,11 +120,11 @@ export function QrShareModal({ isOpen, onClose, formId }: QrShareModalProps) {
                   {qr.status}
                 </span>
                 <span className="flex-1 text-sm text-[#1A1A18] truncate">
-                  {qr.label ?? <span className="text-[#9C9C96] font-mono text-xs">{qr.token.slice(0, 16)}…</span>}
+                  {qr.label ?? <span className="text-[#6B6B66] font-mono text-xs">{qr.token.slice(0, 16)}…</span>}
                 </span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleDelete(qr.id); }}
-                  className="text-[#9C9C96] hover:text-red-500 transition-colors cursor-pointer flex-shrink-0 p-1"
+                  className="text-[#6B6B66] hover:text-red-500 transition-colors cursor-pointer flex-shrink-0 p-1"
                 >
                   <Trash2 size={14} />
                 </button>

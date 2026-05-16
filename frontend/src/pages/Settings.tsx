@@ -59,7 +59,7 @@ export function Settings() {
           </div>
           <div className="min-w-0">
             <p className="font-semibold text-[#141412] text-sm truncate">{user?.displayName || 'No name set'}</p>
-            <p className="text-xs text-[#9C9C96] mt-0.5 truncate">{user?.email}</p>
+            <p className="text-xs text-[#6B6B66] mt-0.5 truncate">{user?.email}</p>
           </div>
         </div>
 
@@ -76,7 +76,7 @@ export function Settings() {
             <p className="text-sm text-[#141412] font-medium bg-[#F5F4F1] border border-[#E4E4E0] rounded-lg px-3 py-2.5 truncate">
               {user?.email ?? '—'}
             </p>
-            <p className="text-xs text-[#9C9C96] mt-1">Email cannot be changed.</p>
+            <p className="text-xs text-[#6B6B66] mt-1">Email cannot be changed.</p>
           </div>
         </div>
       </div>

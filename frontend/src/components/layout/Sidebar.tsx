@@ -3,6 +3,7 @@ import { LayoutDashboard, Layers, Settings, LogOut } from 'lucide-react';
 import { authApi } from '../../api/auth';
 import { useAuthStore } from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
+import { LogoMark } from '../shared/LogoMark';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -45,15 +46,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Logo */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-2.5">
-          <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: '#1B6B4A' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M9 12h6M9 16h4M7 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M9 4h6v4H9V4z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-            </svg>
-          </div>
+          <LogoMark size={28} variant="dark" />
           <span className="text-white font-semibold text-[15px] tracking-[-0.02em]">formrise</span>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { Sidebar } from './Sidebar';
+import { LogoMark } from '../shared/LogoMark';
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -28,17 +29,12 @@ export function AppLayout() {
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#1B6B4A' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <path d="M9 12h6M9 16h4M7 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M9 4h6v4H9V4z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
-              </svg>
-            </div>
+            <LogoMark size={24} variant="dark" />
             <span className="font-semibold text-[#141412] text-[15px] tracking-[-0.02em]">formrise</span>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </main>
       </div>
