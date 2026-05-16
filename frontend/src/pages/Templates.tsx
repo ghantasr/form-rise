@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GitFork, Layers } from 'lucide-react';
+import { ArrowLeft, GitFork, Layers } from 'lucide-react';
 import client from '../api/client';
 import { Button } from '../components/shared/Button';
 import { EmptyState } from '../components/shared/EmptyState';
 import { PageLoader } from '../components/shared/LoadingSpinner';
 import { useToast } from '../components/shared/Toast';
-import { useAuthStore } from '../stores/authStore';
-import { LogoMark } from '../components/shared/LogoMark';
 
 interface Template {
   id: string;
@@ -52,7 +50,6 @@ function getCategoryLabel(title: string): string {
 export function Templates() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isAuthenticated, isLoading: authLoading } = useAuthStore();
 
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,10 +65,6 @@ export function Templates() {
   }, []);
 
   const handleFork = async (slug: string) => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { next: '/templates' } });
-      return;
-    }
     setForkingId(slug);
     try {
       const { data } = await client.post<{ id: string }>(`/templates/${slug}/fork`);
@@ -92,105 +85,27 @@ export function Templates() {
     ? templates
     : templates.filter((t) => getCategoryLabel(t.title) === activeCategory);
 
-  if (loading || authLoading) return <PageLoader />;
+  if (loading) return <PageLoader />;
 
-  // When not authenticated, render with the public landing-style nav
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#F5F4F1]">
-        <header className="sticky top-0 z-50 bg-[#F5F4F1]/90 backdrop-blur border-b border-[#E4E4E0]">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-            <button onClick={() => navigate('/')} className="flex items-center gap-2 cursor-pointer">
-              <LogoMark size={28} variant="dark" />
-              <span className="font-semibold text-[15px] tracking-[-0.02em] text-[#141412]">formrise</span>
-            </button>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate('/login')}
-                className="text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer font-medium"
-              >
-                Sign in
-              </button>
-              <button
-                onClick={() => navigate('/login')}
-                className="px-4 py-1.5 rounded-lg text-sm font-semibold text-white cursor-pointer hover:opacity-90 transition-all"
-                style={{ background: '#1B6B4A' }}
-              >
-                Get started free
-              </button>
-            </div>
-          </div>
-        </header>
-        <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-          <TemplateGrid
-            filtered={filtered}
-            categories={categories}
-            activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
-            forkingId={forkingId}
-            handleFork={handleFork}
-            isAuthenticated={false}
-          />
-        </main>
+  return (
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl">
+      <button
+        onClick={() => navigate(-1)}
+        className="lg:hidden flex items-center gap-1.5 text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer mb-6"
+      >
+        <ArrowLeft size={14} />
+        Back
+      </button>
+
+      <div className="mb-7">
+        <h1 className="text-2xl font-bold text-[#141412] tracking-[-0.02em]">Templates</h1>
+        <p className="text-sm text-[#6B6B66] mt-0.5">
+          Start with a ready-made template and customize it to your needs.
+        </p>
       </div>
-    );
-  }
 
-  // Authenticated: full-page with a minimal app-style header
-  return (
-    <div className="min-h-screen bg-[#F5F4F1]">
-      <header className="sticky top-0 z-50 bg-[#F5F4F1]/90 backdrop-blur border-b border-[#E4E4E0]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 cursor-pointer">
-            <LogoMark size={28} variant="dark" />
-            <span className="font-semibold text-[15px] tracking-[-0.02em] text-[#141412]">formrise</span>
-          </button>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="text-sm text-[#6B6B66] hover:text-[#141412] transition-colors cursor-pointer font-medium"
-          >
-            ← Dashboard
-          </button>
-        </div>
-      </header>
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <TemplateGrid
-          filtered={filtered}
-          categories={categories}
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
-          forkingId={forkingId}
-          handleFork={handleFork}
-          isAuthenticated={true}
-        />
-      </main>
-    </div>
-  );
-}
-
-interface GridProps {
-  filtered: Template[];
-  categories: string[];
-  activeCategory: string;
-  setActiveCategory: (c: string) => void;
-  forkingId: string | null;
-  handleFork: (slug: string) => void;
-  isAuthenticated: boolean;
-}
-
-function TemplateGrid({ filtered, categories, activeCategory, setActiveCategory, forkingId, handleFork, isAuthenticated }: GridProps) {
-  return (
-    <>
-      {!isAuthenticated && (
-        <div className="mb-7">
-          <h1 className="text-2xl font-bold text-[#141412] tracking-[-0.02em]">Templates</h1>
-          <p className="text-sm text-[#6B6B66] mt-0.5">
-            Start with a ready-made template and customize it to your needs.
-          </p>
-        </div>
-      )}
-
-      {categories.length > 1 && (
+      {/* Category filter */}
+      {templates.length > 0 && (
         <div className="flex items-center gap-2 flex-wrap mb-7">
           {categories.map((cat) => (
             <button
@@ -222,16 +137,18 @@ function TemplateGrid({ filtered, categories, activeCategory, setActiveCategory,
             return (
               <div
                 key={template.id}
-                className="bg-white border border-[#E4E4E0] rounded-xl p-5 flex flex-col gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-150"
+                className="bg-white border border-[#E4E4E0] rounded-xl p-5 flex flex-col gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 group"
               >
-                <div className="min-w-0">
-                  <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full mb-2 ${style.bg} ${style.text}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-                    {catLabel}
-                  </span>
-                  <h3 className="font-semibold text-[#141412] line-clamp-2 text-[15px] tracking-[-0.01em]">
-                    {template.title}
-                  </h3>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full mb-2 ${style.bg} ${style.text}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                      {catLabel}
+                    </span>
+                    <h3 className="font-semibold text-[#141412] line-clamp-2 text-[15px] tracking-[-0.01em]">
+                      {template.title}
+                    </h3>
+                  </div>
                 </div>
 
                 {template.description && (
@@ -249,7 +166,7 @@ function TemplateGrid({ filtered, categories, activeCategory, setActiveCategory,
                     isLoading={forkingId === template.slug}
                     className="text-xs"
                   >
-                    {isAuthenticated ? 'Use template' : 'Use template →'}
+                    Use template
                   </Button>
                 </div>
               </div>
@@ -257,6 +174,6 @@ function TemplateGrid({ filtered, categories, activeCategory, setActiveCategory,
           })}
         </div>
       )}
-    </>
+    </div>
   );
 }
