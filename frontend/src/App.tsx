@@ -69,6 +69,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/f/:slug" element={<FormFill />} />
             <Route path="/f/:slug/thank-you" element={<ThankYou />} />
+            <Route path="/templates" element={<Templates />} />
 
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
@@ -76,7 +77,6 @@ export default function App() {
                 <Route path="/forms/new" element={<FormBuilder />} />
                 <Route path="/forms/:id/edit" element={<FormBuilder />} />
                 <Route path="/forms/:id/responses" element={<FormResponses />} />
-                <Route path="/templates" element={<Templates />} />
                 <Route path="/settings" element={<Settings />} />
               </Route>
             </Route>

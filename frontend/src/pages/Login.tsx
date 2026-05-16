@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { authApi } from '../api/auth';
 import { useAuthStore } from '../stores/authStore';
@@ -22,7 +22,9 @@ export function Login() {
   const [error, setError] = useState('');
   const login = useAuthStore((s) => s.login);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const next = (location.state as { next?: string } | null)?.next ?? '/dashboard';
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (response) => {
@@ -31,7 +33,7 @@ export function Login() {
       try {
         const { data } = await authApi.googleLogin(response.access_token);
         login(data.accessToken, data.user);
-        navigate('/dashboard');
+        navigate(next);
       } catch {
         setError('Google sign-in failed. Please try again.');
       } finally {
