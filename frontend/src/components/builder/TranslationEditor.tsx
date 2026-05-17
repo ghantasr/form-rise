@@ -84,20 +84,21 @@ export interface TranslationPayload {
 
 interface TranslationEditorProps {
   form: Form;
+  userEmail: string;
   onSave: (data: TranslationPayload) => Promise<void>;
 }
 
 const NO_PLACEHOLDER_TYPES = new Set(['checkbox', 'radio', 'dropdown', 'date', 'rating', 'nps']);
 const HAS_OPTIONS_TYPES    = new Set(['dropdown', 'radio', 'checkbox', 'picture_choice']);
 
-async function translateText(text: string, langCode: string): Promise<string> {
+async function translateText(text: string, langCode: string, userEmail: string): Promise<string> {
   if (!text.trim()) return text;
   try {
     const controller = new AbortController();
     const tid = setTimeout(() => controller.abort(), 10_000);
     const res = await fetch(
-      // de= email gives 10 000 words/day instead of 500 words/day on the free tier
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${langCode}&de=api@formrise.fyi`,
+      // de= user email gives 10,000 words/day per account instead of 500 words/day per IP
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${langCode}&de=${encodeURIComponent(userEmail)}`,
       { signal: controller.signal }
     );
     clearTimeout(tid);
@@ -109,7 +110,7 @@ async function translateText(text: string, langCode: string): Promise<string> {
   }
 }
 
-export function TranslationEditor({ form, onSave }: TranslationEditorProps) {
+export function TranslationEditor({ form, userEmail, onSave }: TranslationEditorProps) {
   // Single selected language — null means none chosen
   const [selectedLang, setSelectedLang] = useState<string | null>(
     (form.enabledLanguages ?? []).length > 0 ? (form.enabledLanguages ?? [])[0] : null
@@ -143,9 +144,9 @@ export function TranslationEditor({ form, onSave }: TranslationEditorProps) {
 
       // Translate form-level texts in parallel
       const [tTitle, tDesc, tThanks] = await Promise.all([
-        translateText(formTexts.title, langCode),
-        formTexts.description ? translateText(formTexts.description, langCode) : Promise.resolve(''),
-        translateText(formTexts.thankYouMsg, langCode),
+        translateText(formTexts.title, langCode, userEmail),
+        formTexts.description ? translateText(formTexts.description, langCode, userEmail) : Promise.resolve(''),
+        translateText(formTexts.thankYouMsg, langCode, userEmail),
       ]);
 
       setFormTranslations((prev) => ({
@@ -153,14 +154,12 @@ export function TranslationEditor({ form, onSave }: TranslationEditorProps) {
         [langCode]: { title: tTitle, description: tDesc, thankYouMsg: tThanks },
       }));
 
-      // Translate fields one at a time — MyMemory rate-limits burst requests.
-      // Small inter-field pause keeps us well inside the per-second quota.
-      // State update after each field shows live progress to the user.
+      // Translate fields one at a time — state update after each field shows live progress.
       for (const field of form.fields) {
         await new Promise((r) => setTimeout(r, 200));
-        const tLabel = await translateText(field.label, langCode);
-        const tPlaceholder = field.placeholder ? await translateText(field.placeholder, langCode) : '';
-        const tHelp = field.helpText ? await translateText(field.helpText, langCode) : '';
+        const tLabel = await translateText(field.label, langCode, userEmail);
+        const tPlaceholder = field.placeholder ? await translateText(field.placeholder, langCode, userEmail) : '';
+        const tHelp = field.helpText ? await translateText(field.helpText, langCode, userEmail) : '';
 
         let tOptions: string[] | undefined;
         if (HAS_OPTIONS_TYPES.has(field.fieldType) && (field.options ?? []).length > 0) {
@@ -168,7 +167,7 @@ export function TranslationEditor({ form, onSave }: TranslationEditorProps) {
           for (const opt of field.options ?? []) {
             const pipeIdx = opt.indexOf('|');
             const label = pipeIdx === -1 ? opt : opt.slice(0, pipeIdx);
-            tOptions.push(await translateText(label, langCode));
+            tOptions.push(await translateText(label, langCode, userEmail));
           }
         }
 

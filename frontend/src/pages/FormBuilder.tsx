@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Eye, Send, Check, Loader2, QrCode, Languages, Palette } from 'lucide-react';
 import { formsApi } from '../api/forms';
 import { useFormStore } from '../stores/formStore';
+import { useAuthStore } from '../stores/authStore';
 import { useToast } from '../components/shared/Toast';
 import { Button } from '../components/shared/Button';
 import { PageLoader } from '../components/shared/LoadingSpinner';
@@ -21,6 +22,7 @@ export function FormBuilder() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const userEmail = useAuthStore((s) => s.user?.email ?? '');
 
   const {
     form,
@@ -336,6 +338,7 @@ export function FormBuilder() {
             {form?.id && (
               <TranslationEditor
                 form={{ ...(form as Form), fields }}
+                userEmail={userEmail}
                 onSave={handleSaveTranslations}
               />
             )}
