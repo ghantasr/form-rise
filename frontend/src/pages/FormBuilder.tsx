@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Eye, Send, Check, Loader2, QrCode } from 'lucide-react';
+import { Eye, Send, Check, Loader2, QrCode, Languages } from 'lucide-react';
 import { formsApi } from '../api/forms';
 import { useFormStore } from '../stores/formStore';
 import { useToast } from '../components/shared/Toast';
@@ -11,7 +11,8 @@ import { FormCanvas } from '../components/builder/FormCanvas';
 import { FieldEditor } from '../components/builder/FieldEditor';
 import { PublishModal } from '../components/builder/PublishModal';
 import { QrShareModal } from '../components/qr/QrShareModal';
-import type { FieldType, FormField } from '../types/form';
+import { TranslationEditor, type TranslationPayload } from '../components/builder/TranslationEditor';
+import type { FieldType, Form, FormField } from '../types/form';
 
 export function FormBuilder() {
   const { id } = useParams<{ id: string }>();
@@ -41,6 +42,7 @@ export function FormBuilder() {
   const [publishedSlug, setPublishedSlug] = useState('');
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [mobilePanel, setMobilePanel] = useState<'fields' | 'canvas' | 'editor'>('canvas');
+  const [showTranslations, setShowTranslations] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -107,6 +109,16 @@ export function FormBuilder() {
     }
   };
 
+  const handleSaveTranslations = async (payload: TranslationPayload) => {
+    if (!form?.id) return;
+    try {
+      await formsApi.updateTranslations(form.id, payload);
+      toast('Translations saved', 'success');
+    } catch {
+      toast('Failed to save translations', 'error');
+    }
+  };
+
   const selectedField = fields.find((f) => f.id === selectedFieldId) ?? null;
 
   const saveStatusLabel = isSaving
@@ -161,6 +173,16 @@ export function FormBuilder() {
             <QrCode size={14} />
             QR Codes
           </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setShowTranslations((prev) => !prev)}
+            disabled={!form?.id}
+            className="hidden sm:flex"
+          >
+            <Languages size={14} />
+            Translations
+          </Button>
           <Button size="sm" onClick={handlePublish}>
             <Send size={14} />
             <span className="hidden sm:inline">Publish</span>
@@ -186,34 +208,60 @@ export function FormBuilder() {
       </div>
 
       {/* Main content — desktop: 3 columns, mobile: single panel */}
-      <div className="flex flex-1 overflow-hidden">
-        <div className={`${mobilePanel === 'fields' ? 'flex' : 'hidden'} lg:flex`}>
-          <FieldPicker onAdd={(type: FieldType) => { addField(type); setMobilePanel('canvas'); }} />
-        </div>
-
-        <div className={`${mobilePanel === 'canvas' ? 'flex flex-1' : 'hidden'} lg:flex lg:flex-1`}>
-          <FormCanvas
-            fields={fields}
-            selectedFieldId={selectedFieldId}
-            onSelect={(fieldId) => { selectField(fieldId); setMobilePanel('editor'); }}
-            onDelete={(fieldId) => removeField(fieldId)}
-            onReorder={(oldIndex, newIndex) => reorderFields(oldIndex, newIndex)}
-          />
-        </div>
-
-        <div className={`${mobilePanel === 'editor' ? 'flex flex-1' : 'hidden'} lg:flex lg:flex-none`}>
-          {selectedField ? (
-            <FieldEditor
-              field={selectedField}
-              onChange={(updates: Partial<FormField>) => updateField(selectedField.id, updates)}
-            />
-          ) : (
-            <div className="lg:hidden flex-1 flex items-center justify-center text-sm text-[#6B6B66] p-8 text-center">
-              Select a field from the Canvas tab to edit it.
+      {showTranslations ? (
+        <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-base font-semibold text-[#1A1A18]">Translations</h2>
+                <p className="text-sm text-[#6B6B66] mt-0.5">Add Indian language translations for your form</p>
+              </div>
+              <button
+                onClick={() => setShowTranslations(false)}
+                className="text-sm text-[#6B6B66] hover:text-[#1A1A18] transition-colors cursor-pointer"
+              >
+                ← Back to builder
+              </button>
             </div>
-          )}
+            {form?.id && (
+              <TranslationEditor
+                form={{ ...(form as Form), fields }}
+                onSave={handleSaveTranslations}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-1 overflow-hidden">
+          <div className={`${mobilePanel === 'fields' ? 'flex' : 'hidden'} lg:flex`}>
+            <FieldPicker onAdd={(type: FieldType) => { addField(type); setMobilePanel('canvas'); }} />
+          </div>
+
+          <div className={`${mobilePanel === 'canvas' ? 'flex flex-1' : 'hidden'} lg:flex lg:flex-1`}>
+            <FormCanvas
+              fields={fields}
+              selectedFieldId={selectedFieldId}
+              onSelect={(fieldId) => { selectField(fieldId); setMobilePanel('editor'); }}
+              onDelete={(fieldId) => removeField(fieldId)}
+              onReorder={(oldIndex, newIndex) => reorderFields(oldIndex, newIndex)}
+            />
+          </div>
+
+          <div className={`${mobilePanel === 'editor' ? 'flex flex-1' : 'hidden'} lg:flex lg:flex-none`}>
+            {selectedField ? (
+              <FieldEditor
+                field={selectedField}
+                allFields={fields}
+                onChange={(updates: Partial<FormField>) => updateField(selectedField.id, updates)}
+              />
+            ) : (
+              <div className="lg:hidden flex-1 flex items-center justify-center text-sm text-[#6B6B66] p-8 text-center">
+                Select a field from the Canvas tab to edit it.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <PublishModal
         isOpen={publishModalOpen}

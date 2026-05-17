@@ -1,4 +1,4 @@
-import { Type, AlignLeft, Mail, Hash, ChevronDown, Circle, CheckSquare, Calendar, Star, Link } from 'lucide-react';
+import { Type, AlignLeft, Mail, Hash, ChevronDown, Circle, CheckSquare, Calendar, Star, Link, Phone, BarChart2, Image } from 'lucide-react';
 import { FIELD_TYPES } from '../../utils/fieldTypes';
 import type { FieldType } from '../../types/form';
 
@@ -13,6 +13,9 @@ const iconMap: Record<string, React.ReactNode> = {
   Calendar: <Calendar size={16} />,
   Star: <Star size={16} />,
   Link: <Link size={16} />,
+  Phone: <Phone size={16} />,
+  BarChart2: <BarChart2 size={16} />,
+  Image: <Image size={16} />,
 };
 
 interface FieldPickerProps {

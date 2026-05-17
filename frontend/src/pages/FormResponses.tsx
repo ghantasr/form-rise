@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Download, ArrowLeft, BarChart2, Table } from 'lucide-react';
+import { Download, ArrowLeft, BarChart2, Table, TrendingDown } from 'lucide-react';
 import { formsApi } from '../api/forms';
 import { responsesApi } from '../api/responses';
 import { Button } from '../components/shared/Button';
@@ -30,6 +30,10 @@ export function FormResponses() {
   const [exporting, setExporting] = useState(false);
   const [tab, setTab] = useState<Tab>('responses');
   const [selectedResponse, setSelectedResponse] = useState<FormResponse | null>(null);
+  const [analytics, setAnalytics] = useState<{
+    viewCount: number;
+    fieldDropoffs: Array<{ fieldId: string; reachCount: number }>;
+  } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -40,6 +44,10 @@ export function FormResponses() {
       })
       .catch(() => toast('Failed to load responses', 'error'))
       .finally(() => setLoading(false));
+
+    formsApi.getAnalytics(id)
+      .then(({ data }) => setAnalytics(data))
+      .catch(() => {/* analytics are optional */});
   }, [id]);
 
   const handleExportCsv = async () => {
@@ -260,7 +268,49 @@ export function FormResponses() {
             description="Charts will appear here once responses are collected."
           />
         ) : (
-          <ResponseChart fields={fields} responses={responses} />
+          <>
+            <ResponseChart fields={fields} responses={responses} />
+
+            {/* Field reach funnel */}
+            {analytics && analytics.viewCount > 0 && (
+              <div className="mt-6 bg-white border border-[#E8E8E4] rounded-xl p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <TrendingDown size={16} className="text-[#1B6B4A]" />
+                  <h3 className="text-sm font-semibold text-[#1A1A18]">Field reach funnel</h3>
+                  <span className="text-xs text-[#6B6B66] ml-auto">
+                    {analytics.viewCount} total view{analytics.viewCount !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-3">
+                  {fields.map((field) => {
+                    const dropoff = analytics.fieldDropoffs.find(
+                      (d) => d.fieldId === field.id
+                    );
+                    const reachCount = dropoff?.reachCount ?? 0;
+                    const pct = analytics.viewCount > 0
+                      ? Math.round((reachCount / analytics.viewCount) * 100)
+                      : 0;
+                    return (
+                      <div key={field.id} className="flex items-center gap-3">
+                        <span className="text-sm text-[#1A1A18] w-36 shrink-0 truncate" title={field.label}>
+                          {field.label}
+                        </span>
+                        <div className="flex-1 h-5 bg-[#F0F0EC] rounded-full overflow-hidden relative">
+                          <div
+                            className="h-full bg-[#1B6B4A] rounded-full transition-all duration-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-[#6B6B66] w-16 text-right shrink-0">
+                          {reachCount} ({pct}%)
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </>
         )
       )}
 

@@ -104,7 +104,8 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
                 SortOrder = f.SortOrder != 0 ? f.SortOrder : i,
                 Options = f.Options,
                 Validation = f.Validation,
-                Conditional = f.Conditional
+                Conditional = f.Conditional,
+                Translations = f.Translations
             }).ToList();
             db.FormFields.AddRange(newFields);
             form.Fields = newFields;
@@ -154,11 +155,13 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
         form.IsPublic, form.AllowAnonymous, form.CollectEmail,
         form.LimitOneResponse, form.ShuffleFields, form.ShowProgress,
         form.AcceptFrom, form.AcceptUntil, form.AllowedEmails, form.ThankYouMsg,
-        form.ForkedFromId, form.ForkCount, form.ResponseCount,
+        form.ForkedFromId, form.ForkCount, form.ResponseCount, form.ViewCount,
         form.CreatedAt, form.UpdatedAt,
         form.Fields.OrderBy(f => f.SortOrder).Select(ff => new FormFieldDto(
             ff.Id, ff.FieldType, ff.Label, ff.Placeholder, ff.HelpText,
-            ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional
-        )).ToList()
+            ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations
+        )).ToList(),
+        form.EnabledLanguages,
+        form.Translations
     );
 }

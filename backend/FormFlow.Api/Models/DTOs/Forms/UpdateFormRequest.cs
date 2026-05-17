@@ -29,5 +29,6 @@ public record FieldUpdateDto(
     int SortOrder,
     JsonDocument? Options,
     JsonDocument? Validation,
-    JsonDocument? Conditional
+    JsonDocument? Conditional,
+    JsonDocument? Translations
 );

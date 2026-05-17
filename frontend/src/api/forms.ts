@@ -1,5 +1,11 @@
 import client from './client';
-import type { Form, FormListItem } from '../types/form';
+import type { Form, FormListItem, FormTranslations, FieldTranslations } from '../types/form';
+
+export interface UpdateTranslationsPayload {
+  enabledLanguages: string[];
+  formTranslations: FormTranslations;
+  fieldTranslations: Record<string, FieldTranslations>;
+}
 
 export const formsApi = {
   list: () =>
@@ -31,4 +37,18 @@ export const formsApi = {
 
   verifyAccess: (slug: string, email: string) =>
     client.get<{ allowed: boolean }>(`/f/${slug}/verify-access`, { params: { email } }),
+
+  updateTranslations: (id: string, payload: UpdateTranslationsPayload) =>
+    client.put<{ success: boolean }>(`/forms/${id}/translations`, payload),
+
+  recordView: (slug: string) =>
+    client.post<{ success: boolean }>(`/f/${slug}/analytics/view`),
+
+  recordFieldReach: (slug: string, fieldIds: string[]) =>
+    client.post<{ success: boolean }>(`/f/${slug}/analytics/field-reach`, { fieldIds }),
+
+  getAnalytics: (id: string) =>
+    client.get<{ viewCount: number; fieldDropoffs: Array<{ fieldId: string; reachCount: number }> }>(
+      `/forms/${id}/analytics`
+    ),
 };

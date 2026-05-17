@@ -188,6 +188,80 @@ export function FieldRenderer({ field, value, onChange, error }: FieldRendererPr
           </div>
         );
 
+      case 'phone':
+        return (
+          <input
+            id={field.id}
+            type="tel"
+            value={strValue}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={field.placeholder ?? '+1 (555) 000-0000'}
+            className={inputClass(error)}
+          />
+        );
+
+      case 'nps':
+        return (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1 flex-wrap">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => onChange(n)}
+                  className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors cursor-pointer focus:outline-none border ${
+                    numValue === n && value !== undefined && value !== null && value !== ''
+                      ? 'bg-[#1B6B4A] text-white border-[#1B6B4A]'
+                      : 'bg-white text-[#1A1A18] border-[#E8E8E4] hover:border-[#1B6B4A] hover:text-[#1B6B4A]'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center justify-between text-xs text-[#6B6B66]">
+              <span>Not likely</span>
+              <span>Very likely</span>
+            </div>
+          </div>
+        );
+
+      case 'picture_choice': {
+        const opts = field.options ?? [];
+        const colorSwatches = [
+          'bg-[#E8F5EE]', 'bg-[#FFF8E6]', 'bg-[#E8F0FF]', 'bg-[#FFE8E8]',
+          'bg-[#F0E8FF]', 'bg-[#E8FFFC]', 'bg-[#FFF3E8]', 'bg-[#E8F8FF]',
+        ];
+        return (
+          <div className="grid grid-cols-2 gap-3">
+            {opts.map((opt, i) => {
+              const isSelected = strValue === opt;
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => onChange(opt)}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all cursor-pointer focus:outline-none ${
+                    isSelected
+                      ? 'border-[#1B6B4A] bg-[#E8F5EE]'
+                      : 'border-[#E8E8E4] bg-white hover:border-[#1B6B4A]/40'
+                  }`}
+                >
+                  <div
+                    className={`w-full h-20 rounded-lg ${colorSwatches[i % colorSwatches.length]} flex items-center justify-center`}
+                  >
+                    <span className="text-2xl text-[#6B6B66]">🖼</span>
+                  </div>
+                  <span className={`text-sm font-medium ${isSelected ? 'text-[#1B6B4A]' : 'text-[#1A1A18]'}`}>
+                    {opt}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        );
+      }
+
       default:
         return null;
     }

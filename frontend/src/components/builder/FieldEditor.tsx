@@ -4,15 +4,38 @@ import { Input } from '../shared/Input';
 
 interface FieldEditorProps {
   field: FormField;
+  allFields: FormField[];
   onChange: (updates: Partial<FormField>) => void;
 }
 
-const NO_PLACEHOLDER_TYPES = new Set(['checkbox', 'radio', 'dropdown', 'date', 'rating']);
-const HAS_OPTIONS_TYPES = new Set(['dropdown', 'radio', 'checkbox']);
+const NO_PLACEHOLDER_TYPES = new Set(['checkbox', 'radio', 'dropdown', 'date', 'rating', 'nps']);
+const HAS_OPTIONS_TYPES = new Set(['dropdown', 'radio', 'checkbox', 'picture_choice']);
 
-export function FieldEditor({ field, onChange }: FieldEditorProps) {
+export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
   const showPlaceholder = !NO_PLACEHOLDER_TYPES.has(field.fieldType);
   const showOptions = HAS_OPTIONS_TYPES.has(field.fieldType);
+
+  const showConditionally = !!field.conditional?.showIf;
+  const conditionalFieldId = field.conditional?.showIf?.fieldId ?? '';
+  const conditionalEquals = field.conditional?.showIf?.equals ?? '';
+
+  const otherFields = allFields.filter((f) => f.id !== field.id);
+
+  const handleConditionalToggle = () => {
+    if (showConditionally) {
+      onChange({ conditional: undefined });
+    } else {
+      onChange({ conditional: { showIf: { fieldId: '', equals: '' } } });
+    }
+  };
+
+  const handleConditionalFieldChange = (fieldId: string) => {
+    onChange({ conditional: { showIf: { fieldId, equals: conditionalEquals } } });
+  };
+
+  const handleConditionalEqualsChange = (equals: string) => {
+    onChange({ conditional: { showIf: { fieldId: conditionalFieldId, equals } } });
+  };
 
   const handleOptionChange = (index: number, value: string) => {
     const options = [...(field.options ?? [])];
@@ -85,6 +108,61 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
               }`}
             />
           </button>
+        </div>
+
+        {/* Conditional logic */}
+        <div className="flex flex-col gap-3 border-t border-[#E8E8E4] pt-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-[#1A1A18]">Show conditionally</p>
+              <p className="text-xs text-[#6B6B66]">Only show based on another field</p>
+            </div>
+            <button
+              onClick={handleConditionalToggle}
+              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
+                showConditionally ? 'bg-[#1B6B4A]' : 'bg-[#E8E8E4]'
+              }`}
+            >
+              <span
+                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                  showConditionally ? 'translate-x-4.5' : 'translate-x-0.5'
+                }`}
+              />
+            </button>
+          </div>
+
+          {showConditionally && (
+            <div className="flex flex-col gap-2 bg-[#FAFAF8] rounded-lg p-3 border border-[#E8E8E4]">
+              <p className="text-xs font-medium text-[#6B6B66] uppercase tracking-wider">Show this field if...</p>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-[#6B6B66]">Field</label>
+                <select
+                  value={conditionalFieldId}
+                  onChange={(e) => handleConditionalFieldChange(e.target.value)}
+                  className="w-full px-2.5 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
+                    outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE] cursor-pointer"
+                >
+                  <option value="">Select a field...</option>
+                  {otherFields.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.label || `Field (${f.fieldType})`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-[#6B6B66]">Equals</label>
+                <input
+                  type="text"
+                  value={conditionalEquals}
+                  onChange={(e) => handleConditionalEqualsChange(e.target.value)}
+                  placeholder="Enter value..."
+                  className="w-full px-2.5 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
+                    placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {showOptions && (

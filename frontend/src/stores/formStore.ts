@@ -38,7 +38,7 @@ export const useFormStore = create<FormBuilderState>((set, get) => ({
       label: `New ${type.replace('_', ' ')} field`,
       isRequired: false,
       sortOrder: get().fields.length,
-      options: ['dropdown', 'radio', 'checkbox'].includes(type) ? ['Option 1', 'Option 2'] : undefined,
+      options: ['dropdown', 'radio', 'checkbox', 'picture_choice'].includes(type) ? ['Option 1', 'Option 2'] : undefined,
     };
     set((s) => ({
       fields: [...s.fields, newField],

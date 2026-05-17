@@ -53,6 +53,28 @@ namespace FormFlow.Api.Migrations
                     b.ToTable("FieldAnswers");
                 });
 
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.FieldDropoff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("FieldId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FormId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ReachCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormId", "FieldId");
+
+                    b.ToTable("FieldDropoffs");
+                });
+
             modelBuilder.Entity("FormFlow.Api.Models.Entities.Form", b =>
                 {
                     b.Property<Guid>("Id")
@@ -79,6 +101,10 @@ namespace FormFlow.Api.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.PrimitiveCollection<string[]>("EnabledLanguages")
+                        .IsRequired()
+                        .HasColumnType("text[]");
 
                     b.Property<int>("ForkCount")
                         .HasColumnType("integer");
@@ -120,11 +146,17 @@ namespace FormFlow.Api.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 
+                    b.Property<JsonDocument>("Translations")
+                        .HasColumnType("jsonb");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -179,6 +211,9 @@ namespace FormFlow.Api.Migrations
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
+
+                    b.Property<JsonDocument>("Translations")
+                        .HasColumnType("jsonb");
 
                     b.Property<JsonDocument>("Validation")
                         .HasColumnType("jsonb");
@@ -359,6 +394,17 @@ namespace FormFlow.Api.Migrations
                     b.Navigation("Response");
                 });
 
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.FieldDropoff", b =>
+                {
+                    b.HasOne("FormFlow.Api.Models.Entities.Form", "Form")
+                        .WithMany("FieldDropoffs")
+                        .HasForeignKey("FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+                });
+
             modelBuilder.Entity("FormFlow.Api.Models.Entities.Form", b =>
                 {
                     b.HasOne("FormFlow.Api.Models.Entities.Form", "ForkedFrom")
@@ -429,6 +475,8 @@ namespace FormFlow.Api.Migrations
 
             modelBuilder.Entity("FormFlow.Api.Models.Entities.Form", b =>
                 {
+                    b.Navigation("FieldDropoffs");
+
                     b.Navigation("Fields");
 
                     b.Navigation("QrTokens");
