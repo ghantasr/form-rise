@@ -315,6 +315,17 @@ export function Landing() {
             <span className="text-sm font-semibold text-[#141412]">formrise</span>
           </div>
           <p className="text-xs text-[#6B6B66]">© {new Date().getFullYear()} formrise. Built for everyone, free for always.</p>
+          <p className="text-xs text-[#6B6B66]">
+            Built by{' '}
+            <a
+              href="https://www.linkedin.com/in/sai-reddy-ghanta"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-[#1B6B4A] hover:underline"
+            >
+              Venkata Siva Sai Nadha Reddy Ghanta
+            </a>
+          </p>
         </div>
       </footer>
     </div>
