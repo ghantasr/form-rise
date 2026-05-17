@@ -16,6 +16,7 @@ public record UpdateFormRequest(
     DateTime? AcceptUntil,
     string[]? AllowedEmails,
     string? ThankYouMsg,
+    [MaxLength(50)] string? ThemeId,
     List<FieldUpdateDto>? Fields
 );
 
@@ -29,5 +30,6 @@ public record FieldUpdateDto(
     int SortOrder,
     JsonDocument? Options,
     JsonDocument? Validation,
-    JsonDocument? Conditional
+    JsonDocument? Conditional,
+    JsonDocument? Translations
 );

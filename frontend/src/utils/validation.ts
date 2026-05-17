@@ -16,6 +16,9 @@ export function validateField(field: FormField, value: unknown): string | null {
   if (field.fieldType === 'url' && str && !/^https?:\/\/.+/.test(str)) {
     return 'Invalid URL (must start with http:// or https://)';
   }
+  if (field.fieldType === 'phone' && str && !/^[\+]?[\d\s\-\(\)]{7,15}$/.test(str)) {
+    return 'Invalid phone number';
+  }
 
   const v = field.validation;
   if (!v) return null;

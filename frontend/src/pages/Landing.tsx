@@ -1,27 +1,27 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Zap, WifiOff, QrCode, Layers, CheckCircle2, Star } from 'lucide-react';
+import { ArrowRight, Zap, WifiOff, GitBranch, Globe, CheckCircle2, Star } from 'lucide-react';
 import { LogoMark } from '../components/shared/LogoMark';
 
 const features = [
   {
     icon: Zap,
     title: 'Build in minutes',
-    desc: 'Drag-and-drop builder with 10+ field types. No coding required.',
+    desc: '13+ field types — short text, NPS, picture choice, rating and more. No coding required.',
+  },
+  {
+    icon: GitBranch,
+    title: 'Conditional logic',
+    desc: 'Show or hide fields based on previous answers. Build smart, branching forms effortlessly.',
+  },
+  {
+    icon: Globe,
+    title: '40+ languages',
+    desc: 'Translate any form into Hindi, Telugu, Tamil and 37 more languages with one click.',
   },
   {
     icon: WifiOff,
     title: 'Works offline',
-    desc: 'Collect responses with no internet. Answers sync when reconnected.',
-  },
-  {
-    icon: QrCode,
-    title: 'QR code sharing',
-    desc: 'Generate a QR code instantly. Perfect for events and physical spaces.',
-  },
-  {
-    icon: Layers,
-    title: 'Ready-made templates',
-    desc: 'Start from a community template and customize in seconds.',
+    desc: 'Collect responses with no internet. Answers sync automatically when reconnected.',
   },
 ];
 
@@ -32,13 +32,13 @@ const steps = [
 ];
 
 const freeFeatures = [
-  'Unlimited forms',
-  'Unlimited responses',
-  '10+ field types',
-  'QR code sharing',
-  'Offline submissions',
-  'Charts & CSV export',
-  'Community templates',
+  'Unlimited forms & responses',
+  '13+ field types incl. NPS & picture choice',
+  'Conditional logic & smart branching',
+  '40+ language translations',
+  '25+ custom themes',
+  'QR code sharing & offline ready',
+  'Drop-off analytics',
   'No credit card required',
 ];
 
@@ -77,10 +77,10 @@ export function Landing() {
 
         {/* ── Hero ── */}
         <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 lg:pt-20 pb-12">
-          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
 
             {/* Left: copy */}
-            <div className="flex-1 text-center lg:text-left">
+            <div className="flex-1 text-center md:text-left">
               <div
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-5 border"
                 style={{ background: '#E8F5EE', color: '#1B6B4A', borderColor: '#B8DFC9' }}
@@ -89,18 +89,18 @@ export function Landing() {
                 100% free — no credit card needed
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-bold tracking-[-0.03em] leading-[1.08] mb-4 lg:max-w-xl">
+              <h1 className="text-4xl sm:text-5xl md:text-[56px] font-bold tracking-[-0.03em] leading-[1.08] mb-4 md:max-w-xl">
                 The form builder that{' '}
                 <span style={{ color: '#1B6B4A' }}>actually works</span>
                 {' '}everywhere
               </h1>
 
-              <p className="text-base sm:text-lg text-[#6B6B66] mb-7 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Build beautiful forms in minutes. Share via link or QR code.
-                Collect responses — even offline. No fluff, no paywalls.
+              <p className="text-base sm:text-lg text-[#6B6B66] mb-7 leading-relaxed max-w-lg mx-auto md:mx-0">
+                Build smart forms with conditional logic and picture choices. Translate into 40+ languages.
+                Collect responses even offline. No fluff, no paywalls.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3">
                 <button
                   onClick={() => navigate('/login')}
                   className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all cursor-pointer hover:opacity-90 active:scale-95 shadow-sm"
@@ -118,11 +118,11 @@ export function Landing() {
               </div>
 
               {/* Trust row */}
-              <div className="flex items-center justify-center lg:justify-start gap-5 mt-7">
+              <div className="flex items-center justify-center md:justify-start gap-5 mt-7">
                 {[
-                  { val: '10+', label: 'Field types' },
+                  { val: '13+', label: 'Field types' },
+                  { val: '40+', label: 'Languages' },
                   { val: '∞', label: 'Free responses' },
-                  { val: 'Offline', label: 'Ready' },
                 ].map(({ val, label }) => (
                   <div key={label} className="text-center">
                     <div className="text-lg font-bold text-[#141412] tracking-[-0.03em]">{val}</div>
@@ -133,7 +133,7 @@ export function Landing() {
             </div>
 
             {/* Right: mock form */}
-            <div className="flex-1 w-full max-w-md lg:max-w-none">
+            <div className="flex-1 w-full max-w-md md:max-w-none">
               <div className="bg-white border border-[#E4E4E0] rounded-2xl shadow-xl overflow-hidden">
                 {/* Browser bar */}
                 <div className="flex items-center gap-1.5 px-4 py-3 border-b border-[#E4E4E0] bg-[#F5F4F1]">
@@ -211,7 +211,7 @@ export function Landing() {
         <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] mb-2">Everything you need, nothing you don't</h2>
-            <p className="text-[#6B6B66] text-sm sm:text-base">Built for speed. Designed to get out of your way.</p>
+            <p className="text-[#6B6B66] text-sm sm:text-base">13 field types. Conditional logic. 40+ languages. All free.</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {features.map(({ icon: Icon, title, desc }) => (

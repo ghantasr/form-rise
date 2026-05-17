@@ -73,12 +73,15 @@ public class ForkService(AppDbContext db, IDistributedCache cache) : IForkServic
             forked.IsPublic, forked.AllowAnonymous, forked.CollectEmail,
             forked.LimitOneResponse, forked.ShuffleFields, forked.ShowProgress,
             forked.AcceptFrom, forked.AcceptUntil, forked.AllowedEmails, forked.ThankYouMsg,
-            forked.ForkedFromId, forked.ForkCount, forked.ResponseCount,
+            forked.ForkedFromId, forked.ForkCount, forked.ResponseCount, forked.ViewCount,
             forked.CreatedAt, forked.UpdatedAt,
             forked.Fields.Select(ff => new FormFieldDto(
                 ff.Id, ff.FieldType, ff.Label, ff.Placeholder, ff.HelpText,
-                ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional
-            )).ToList()
+                ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations
+            )).ToList(),
+            forked.EnabledLanguages,
+            forked.Translations,
+            forked.Theme  // serializes as "themeId"
         );
     }
 

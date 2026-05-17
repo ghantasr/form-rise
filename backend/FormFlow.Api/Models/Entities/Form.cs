@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace FormFlow.Api.Models.Entities;
 
@@ -34,6 +35,14 @@ public class Form
     public Guid? ForkedFromId { get; set; }
     public int ForkCount { get; set; } = 0;
     public int ResponseCount { get; set; } = 0;
+    public int ViewCount { get; set; } = 0;
+
+    [MaxLength(50)]
+    public string? Theme { get; set; }
+
+    // Translation support
+    public string[] EnabledLanguages { get; set; } = [];
+    public JsonDocument? Translations { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
@@ -43,4 +52,5 @@ public class Form
     public ICollection<FormField> Fields { get; set; } = [];
     public ICollection<FormResponse> Responses { get; set; } = [];
     public ICollection<QrToken> QrTokens { get; set; } = [];
+    public ICollection<FieldDropoff> FieldDropoffs { get; set; } = [];
 }

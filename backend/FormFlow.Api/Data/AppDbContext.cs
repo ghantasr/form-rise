@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<FieldAnswer> FieldAnswers => Set<FieldAnswer>();
     public DbSet<QrToken> QrTokens => Set<QrToken>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<FieldDropoff> FieldDropoffs => Set<FieldDropoff>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,10 +30,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasIndex(f => f.Slug).IsUnique();
             e.HasIndex(f => f.UserId);
             e.Property(f => f.AllowedEmails).HasColumnType("text[]");
+            e.Property(f => f.EnabledLanguages).HasColumnType("text[]");
+            e.Property(f => f.Translations).HasColumnType("jsonb");
             e.HasMany(f => f.Fields).WithOne(ff => ff.Form).HasForeignKey(ff => ff.FormId).OnDelete(DeleteBehavior.Cascade);
             e.HasMany(f => f.Responses).WithOne(r => r.Form).HasForeignKey(r => r.FormId).OnDelete(DeleteBehavior.Cascade);
             e.HasMany(f => f.QrTokens).WithOne(q => q.Form).HasForeignKey(q => q.FormId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne(f => f.ForkedFrom).WithMany().HasForeignKey(f => f.ForkedFromId).OnDelete(DeleteBehavior.SetNull);
+            e.HasMany(f => f.FieldDropoffs).WithOne(d => d.Form).HasForeignKey(d => d.FormId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<FormField>(e =>
@@ -41,7 +45,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(ff => ff.Options).HasColumnType("jsonb");
             e.Property(ff => ff.Validation).HasColumnType("jsonb");
             e.Property(ff => ff.Conditional).HasColumnType("jsonb");
+            e.Property(ff => ff.Translations).HasColumnType("jsonb");
             e.HasMany(ff => ff.Answers).WithOne(a => a.Field).HasForeignKey(a => a.FieldId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<FieldDropoff>(e =>
+        {
+            e.HasIndex(d => new { d.FormId, d.FieldId });
         });
 
         modelBuilder.Entity<FormResponse>(e =>

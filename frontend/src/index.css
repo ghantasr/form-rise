@@ -39,3 +39,48 @@ body {
     display: flex;
   }
 }
+
+/* ── Themed form fill ── */
+.form-themed input:not([type=radio]):not([type=checkbox]),
+.form-themed textarea,
+.form-themed select {
+  border-color: var(--f-border) !important;
+  background-color: var(--f-card-bg) !important;
+  color: var(--f-text) !important;
+}
+
+.form-themed input:not([type=radio]):not([type=checkbox]):focus,
+.form-themed textarea:focus,
+.form-themed select:focus {
+  border-color: var(--f-primary) !important;
+  box-shadow: 0 0 0 1px var(--f-primary-light) !important;
+  outline: none !important;
+}
+
+.form-themed input[type=radio],
+.form-themed input[type=checkbox] {
+  accent-color: var(--f-primary);
+}
+
+.form-themed label,
+.form-themed h1 {
+  color: var(--f-text) !important;
+}
+
+/* ── Step-by-step form animations ── */
+@keyframes stepSlideForward {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes stepSlideBack {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fieldShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+.step-forward { animation: stepSlideForward 0.22s ease-out forwards; }
+.step-back    { animation: stepSlideBack    0.22s ease-out forwards; }
+.field-shake  { animation: fieldShake 0.35s ease-in-out; }

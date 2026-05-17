@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, BarChart2, Eye, Trash2, FileText, Zap, TrendingUp } from 'lucide-react';
+import { Plus, BarChart2, Eye, Trash2, FileText, Zap, TrendingUp, MousePointerClick, Palette, Share2, X } from 'lucide-react';
 import { formsApi } from '../api/forms';
 import type { FormListItem } from '../types/form';
 import { Button } from '../components/shared/Button';
-import { EmptyState } from '../components/shared/EmptyState';
 import { PageLoader } from '../components/shared/LoadingSpinner';
 import { useToast } from '../components/shared/Toast';
+
+const HINT_DISMISSED_KEY = 'fr_dashboard_hint_dismissed';
 
 const statusConfig: Record<string, { label: string; color: string; dot: string }> = {
   draft:  { label: 'Draft',  color: 'bg-[#F0F0EC] text-[#6B6B66]', dot: 'bg-[#C0C0BB]' },
@@ -25,8 +26,14 @@ const statusBorder: Record<string, string> = {
 export function Dashboard() {
   const [forms, setForms] = useState<FormListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hintDismissed, setHintDismissed] = useState(() => !!localStorage.getItem(HINT_DISMISSED_KEY));
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const dismissHint = () => {
+    localStorage.setItem(HINT_DISMISSED_KEY, '1');
+    setHintDismissed(true);
+  };
 
   useEffect(() => {
     formsApi.list()
@@ -108,18 +115,104 @@ export function Dashboard() {
         </div>
       )}
 
+      {/* How-it-works hint banner — shown for new users who have forms */}
+      {forms.length > 0 && !hintDismissed && (
+        <div className="mb-6 bg-white border border-[#E4E4E0] rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#F0F0EC]">
+            <div>
+              <p className="text-sm font-semibold text-[#1A1A18]">Quick start guide</p>
+              <p className="text-xs text-[#6B6B66] mt-0.5">Follow these steps to get the most out of FormRise</p>
+            </div>
+            <button onClick={dismissHint} className="text-[#C0C0BB] hover:text-[#6B6B66] transition-colors cursor-pointer">
+              <X size={15} />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#F0F0EC]">
+            <div className="flex items-start gap-3 p-5">
+              <div className="w-8 h-8 rounded-xl bg-[#E8F5EE] flex items-center justify-center shrink-0">
+                <MousePointerClick size={15} className="text-[#1B6B4A]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[#1A1A18]">1. Add your fields</p>
+                <p className="text-xs text-[#6B6B66] mt-1 leading-relaxed">Pick field types from the left panel — text, dropdowns, ratings, images and more.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-5">
+              <div className="w-8 h-8 rounded-xl bg-[#E8F5EE] flex items-center justify-center shrink-0">
+                <Palette size={15} className="text-[#1B6B4A]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[#1A1A18]">2. Style & customise</p>
+                <p className="text-xs text-[#6B6B66] mt-1 leading-relaxed">Choose a colour theme, add conditional logic, and preview how it looks to respondents.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-5">
+              <div className="w-8 h-8 rounded-xl bg-[#E8F5EE] flex items-center justify-center shrink-0">
+                <Share2 size={15} className="text-[#1B6B4A]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[#1A1A18]">3. Publish & collect</p>
+                <p className="text-xs text-[#6B6B66] mt-1 leading-relaxed">Publish to get a shareable link and QR code. Track responses from this dashboard.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {forms.length === 0 ? (
-        <EmptyState
-          icon={<FileText size={44} />}
-          title="No forms yet"
-          description="Create your first form and start collecting responses in minutes."
-          action={
-            <Button onClick={handleCreate} size="lg">
+        /* Rich empty state for first-time users */
+        <div className="flex flex-col items-center text-center py-12 gap-10">
+          <div>
+            <div className="w-16 h-16 rounded-2xl bg-[#E8F5EE] flex items-center justify-center mx-auto mb-4">
+              <FileText size={28} className="text-[#1B6B4A]" />
+            </div>
+            <h2 className="text-xl font-bold text-[#141412] tracking-tight mb-2">Create your first form</h2>
+            <p className="text-sm text-[#6B6B66] max-w-sm mx-auto leading-relaxed">
+              Build beautiful forms in minutes — add fields, apply a theme, and share with a link or QR code.
+            </p>
+            <Button onClick={handleCreate} size="lg" className="mt-5 mx-auto">
               <Plus size={16} />
               Create your first form
             </Button>
-          }
-        />
+          </div>
+
+          {/* How it works steps */}
+          <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+            <div className="bg-white rounded-2xl border border-[#E4E4E0] p-5 flex flex-col gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#E8F5EE] flex items-center justify-center">
+                <MousePointerClick size={18} className="text-[#1B6B4A]" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-[#1A1A18]">Add fields</p>
+                <p className="text-xs text-[#6B6B66] mt-1 leading-relaxed">
+                  Short text, dropdowns, ratings, picture choices — pick from a rich library of field types.
+                </p>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl border border-[#E4E4E0] p-5 flex flex-col gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#E8F5EE] flex items-center justify-center">
+                <Palette size={18} className="text-[#1B6B4A]" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-[#1A1A18]">Style & logic</p>
+                <p className="text-xs text-[#6B6B66] mt-1 leading-relaxed">
+                  Choose a colour theme and add conditional logic to show fields based on previous answers.
+                </p>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl border border-[#E4E4E0] p-5 flex flex-col gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#E8F5EE] flex items-center justify-center">
+                <Share2 size={18} className="text-[#1B6B4A]" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-[#1A1A18]">Share & collect</p>
+                <p className="text-xs text-[#6B6B66] mt-1 leading-relaxed">
+                  Publish your form to get a shareable link and QR code. View responses here on your dashboard.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {forms.map((form) => {

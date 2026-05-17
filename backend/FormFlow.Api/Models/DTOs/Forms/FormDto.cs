@@ -21,9 +21,13 @@ public record FormDto(
     Guid? ForkedFromId,
     int ForkCount,
     int ResponseCount,
+    int ViewCount,
     DateTime CreatedAt,
     DateTime UpdatedAt,
-    List<FormFieldDto> Fields
+    List<FormFieldDto> Fields,
+    string[] EnabledLanguages,
+    JsonDocument? Translations,
+    string? ThemeId
 );
 
 public record FormFieldDto(
@@ -36,7 +40,8 @@ public record FormFieldDto(
     int SortOrder,
     JsonDocument? Options,
     JsonDocument? Validation,
-    JsonDocument? Conditional
+    JsonDocument? Conditional,
+    JsonDocument? Translations
 );
 
 public record FormListItemDto(
