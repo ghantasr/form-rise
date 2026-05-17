@@ -1,4 +1,4 @@
-const CACHE = 'formrise-v4';
+const CACHE = 'formrise-v5';
 
 // Install: skip waiting immediately — no shell pre-cache to avoid stale HTML after deploys
 self.addEventListener('install', () => self.skipWaiting());

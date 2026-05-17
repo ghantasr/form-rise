@@ -77,7 +77,12 @@ builder.Services.AddScoped<IQrService, QrService>();
 builder.Services.AddScoped<IForkService, ForkService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        opts.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

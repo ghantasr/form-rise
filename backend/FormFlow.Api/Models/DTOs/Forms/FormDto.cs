@@ -26,7 +26,8 @@ public record FormDto(
     DateTime UpdatedAt,
     List<FormFieldDto> Fields,
     string[] EnabledLanguages,
-    JsonDocument? Translations
+    JsonDocument? Translations,
+    string? ThemeId
 );
 
 public record FormFieldDto(

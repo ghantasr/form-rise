@@ -68,6 +68,7 @@ export interface Form {
   fields: FormField[];
   translations?: FormTranslations;
   enabledLanguages?: string[];
+  themeId?: string;
 }
 
 export interface FormListItem {

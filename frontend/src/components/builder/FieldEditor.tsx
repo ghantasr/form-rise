@@ -21,6 +21,16 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
 
   const otherFields = allFields.filter((f) => f.id !== field.id);
 
+  // The field being used as the condition source
+  const conditionalSourceField = otherFields.find((f) => f.id === conditionalFieldId);
+  // Options of the source field (label only, strips |url for picture_choice)
+  const conditionalSourceOptions = conditionalSourceField
+    ? (conditionalSourceField.options ?? []).map((o) => {
+        const p = o.indexOf('|');
+        return p === -1 ? o : o.slice(0, p);
+      })
+    : [];
+
   const handleConditionalToggle = () => {
     if (showConditionally) {
       onChange({ conditional: undefined });
@@ -30,11 +40,19 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
   };
 
   const handleConditionalFieldChange = (fieldId: string) => {
-    onChange({ conditional: { showIf: { fieldId, equals: conditionalEquals } } });
+    // Reset equals when source field changes — old value is semantically invalid for new field
+    onChange({ conditional: { showIf: { fieldId, equals: '' } } });
   };
 
   const handleConditionalEqualsChange = (equals: string) => {
     onChange({ conditional: { showIf: { fieldId: conditionalFieldId, equals } } });
+  };
+
+  const isPictureChoice = field.fieldType === 'picture_choice';
+
+  const parsePictureOption = (opt: string) => {
+    const i = opt.indexOf('|');
+    return i === -1 ? { label: opt, url: '' } : { label: opt.slice(0, i), url: opt.slice(i + 1) };
   };
 
   const handleOptionChange = (index: number, value: string) => {
@@ -43,9 +61,15 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
     onChange({ options });
   };
 
+  const handlePictureOptionChange = (index: number, label: string, url: string) => {
+    const options = [...(field.options ?? [])];
+    options[index] = `${label}|${url}`;
+    onChange({ options });
+  };
+
   const addOption = () => {
     const options = [...(field.options ?? [])];
-    options.push(`Option ${options.length + 1}`);
+    options.push(isPictureChoice ? `Option ${options.length + 1}|` : `Option ${options.length + 1}`);
     onChange({ options });
   };
 
@@ -55,8 +79,15 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
     onChange({ options });
   };
 
+  const handlePictureCountChange = (count: number) => {
+    const options = [...(field.options ?? [])];
+    while (options.length < count) options.push(`Option ${options.length + 1}|`);
+    while (options.length > count) options.pop();
+    onChange({ options });
+  };
+
   return (
-    <div className="w-72 bg-white border-l border-[#E8E8E4] flex flex-col h-full overflow-y-auto">
+    <div className="w-full lg:w-72 bg-white border-l border-[#E8E8E4] flex flex-col h-full overflow-y-auto">
       <div className="px-4 py-3 border-b border-[#E8E8E4]">
         <p className="text-xs font-semibold text-[#6B6B66] uppercase tracking-wider">Field Properties</p>
       </div>
@@ -97,6 +128,9 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
             <p className="text-xs text-[#6B6B66]">Respondents must answer</p>
           </div>
           <button
+            role="switch"
+            aria-checked={field.isRequired}
+            aria-label="Required"
             onClick={() => onChange({ isRequired: !field.isRequired })}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
               field.isRequired ? 'bg-[#1B6B4A]' : 'bg-[#E8E8E4]'
@@ -118,6 +152,9 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
               <p className="text-xs text-[#6B6B66]">Only show based on another field</p>
             </div>
             <button
+              role="switch"
+              aria-checked={showConditionally}
+              aria-label="Show conditionally"
               onClick={handleConditionalToggle}
               className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
                 showConditionally ? 'bg-[#1B6B4A]' : 'bg-[#E8E8E4]'
@@ -152,14 +189,28 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-xs text-[#6B6B66]">Equals</label>
-                <input
-                  type="text"
-                  value={conditionalEquals}
-                  onChange={(e) => handleConditionalEqualsChange(e.target.value)}
-                  placeholder="Enter value..."
-                  className="w-full px-2.5 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
-                    placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
-                />
+                {conditionalSourceOptions.length > 0 ? (
+                  <select
+                    value={conditionalEquals}
+                    onChange={(e) => handleConditionalEqualsChange(e.target.value)}
+                    className="w-full px-2.5 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
+                      outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE] cursor-pointer"
+                  >
+                    <option value="">Select a value...</option>
+                    {conditionalSourceOptions.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={conditionalEquals}
+                    onChange={(e) => handleConditionalEqualsChange(e.target.value)}
+                    placeholder="Enter value..."
+                    className="w-full px-2.5 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
+                      placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
+                  />
+                )}
               </div>
             </div>
           )}
@@ -168,34 +219,93 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
         {showOptions && (
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium text-[#1A1A18]">Options</p>
-            <div className="flex flex-col gap-1.5">
-              {(field.options ?? []).map((option, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={option}
-                    onChange={(e) => handleOptionChange(index, e.target.value)}
-                    className="flex-1 px-3 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
-                      placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
-                    placeholder={`Option ${index + 1}`}
-                  />
-                  <button
-                    onClick={() => removeOption(index)}
-                    className="text-[#6B6B66] hover:text-red-500 transition-colors cursor-pointer flex-shrink-0"
-                    title="Remove option"
-                  >
-                    <X size={14} />
-                  </button>
+
+            {isPictureChoice && (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-[#6B6B66]">Number of images</label>
+                <div className="flex gap-1.5">
+                  {[2, 3, 4, 5, 6].map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => handlePictureCountChange(n)}
+                      className={`flex-1 py-1.5 rounded-lg text-sm font-medium border transition-all cursor-pointer ${
+                        (field.options ?? []).length === n
+                          ? 'bg-[#1B6B4A] text-white border-[#1B6B4A]'
+                          : 'bg-white text-[#6B6B66] border-[#E8E8E4] hover:border-[#1B6B4A]/40'
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  ))}
                 </div>
-              ))}
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              {(field.options ?? []).map((option, index) => {
+                if (isPictureChoice) {
+                  const { label, url } = parsePictureOption(option);
+                  return (
+                    <div key={`${option}-${index}`} className="flex flex-col gap-1 p-2.5 border border-[#E8E8E4] rounded-lg bg-[#FAFAF8]">
+                      <p className="text-xs font-medium text-[#6B6B66]">Image {index + 1}</p>
+                      <input
+                        type="text"
+                        value={label}
+                        onChange={(e) => handlePictureOptionChange(index, e.target.value, url)}
+                        className="w-full px-2.5 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
+                          placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
+                        placeholder={`Label ${index + 1}`}
+                      />
+                      <input
+                        type="url"
+                        value={url}
+                        onChange={(e) => handlePictureOptionChange(index, label, e.target.value)}
+                        className="w-full px-2.5 py-1.5 border border-[#E8E8E4] rounded-lg text-xs text-[#1A1A18] bg-white
+                          placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
+                        placeholder="Image URL (https://...)"
+                      />
+                      {url && (
+                        <img
+                          src={url}
+                          alt={label}
+                          className="w-full h-40 object-cover rounded-md border border-[#E8E8E4]"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      )}
+                    </div>
+                  );
+                }
+                return (
+                  <div key={`${option}-${index}`} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={option}
+                      onChange={(e) => handleOptionChange(index, e.target.value)}
+                      className="flex-1 px-3 py-1.5 border border-[#E8E8E4] rounded-lg text-sm text-[#1A1A18] bg-white
+                        placeholder:text-[#6B6B66] outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE]"
+                      placeholder={`Option ${index + 1}`}
+                    />
+                    <button
+                      onClick={() => removeOption(index)}
+                      className="text-[#6B6B66] hover:text-red-500 transition-colors cursor-pointer flex-shrink-0"
+                      title="Remove option"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
-            <button
-              onClick={addOption}
-              className="flex items-center gap-1.5 text-sm text-[#1B6B4A] hover:text-[#134F36] transition-colors cursor-pointer mt-1"
-            >
-              <Plus size={14} />
-              Add option
-            </button>
+
+            {!isPictureChoice && (
+              <button
+                onClick={addOption}
+                className="flex items-center gap-1.5 text-sm text-[#1B6B4A] hover:text-[#134F36] transition-colors cursor-pointer mt-1"
+              >
+                <Plus size={14} />
+                Add option
+              </button>
+            )}
           </div>
         )}
       </div>

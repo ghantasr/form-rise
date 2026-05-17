@@ -55,7 +55,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "5000:8080"
+      - "5001:8080"
 
   frontend:
     build:

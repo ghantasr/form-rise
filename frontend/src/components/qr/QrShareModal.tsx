@@ -71,8 +71,8 @@ export function QrShareModal({ isOpen, onClose, formId }: QrShareModalProps) {
         {/* Generate section */}
         <div className="bg-[#FAFAF8] border border-[#E8E8E4] rounded-xl p-4">
           <p className="text-xs font-semibold text-[#6B6B66] uppercase tracking-wider mb-3">Generate New</p>
-          <div className="flex items-end gap-3">
-            <div className="w-24">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3">
+            <div className="w-full sm:w-24">
               <Input
                 label="Count"
                 type="number"
@@ -90,7 +90,7 @@ export function QrShareModal({ isOpen, onClose, formId }: QrShareModalProps) {
                 placeholder="e.g. Table, Chair, Seat"
               />
             </div>
-            <Button onClick={handleGenerate} isLoading={generating} className="flex-shrink-0">
+            <Button onClick={handleGenerate} isLoading={generating} className="flex-shrink-0 w-full sm:w-auto justify-center">
               <RefreshCw size={14} />
               Generate
             </Button>

@@ -88,6 +88,7 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
         if (req.AcceptUntil is not null) form.AcceptUntil = req.AcceptUntil;
         if (req.AllowedEmails is not null) form.AllowedEmails = req.AllowedEmails;
         if (req.ThankYouMsg is not null) form.ThankYouMsg = req.ThankYouMsg;
+        if (req.ThemeId is not null) form.Theme = req.ThemeId;
 
         if (req.Fields is not null)
         {
@@ -162,6 +163,7 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
             ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations
         )).ToList(),
         form.EnabledLanguages,
-        form.Translations
+        form.Translations,
+        form.Theme  // serializes as "themeId" via camelCase policy
     );
 }

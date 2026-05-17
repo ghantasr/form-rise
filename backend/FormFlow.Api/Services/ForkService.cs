@@ -80,7 +80,8 @@ public class ForkService(AppDbContext db, IDistributedCache cache) : IForkServic
                 ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations
             )).ToList(),
             forked.EnabledLanguages,
-            forked.Translations
+            forked.Translations,
+            forked.Theme  // serializes as "themeId"
         );
     }
 

@@ -202,24 +202,27 @@ export function FormResponses() {
             {/* Desktop: table layout */}
             <div className="hidden md:block bg-white border border-[#E8E8E4] rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="text-sm table-fixed" style={{ minWidth: `${160 + 176 + fields.length * 176 + 56}px` }}>
+                  <colgroup>
+                    <col style={{ width: 160 }} />
+                    <col style={{ width: 176 }} />
+                    {fields.map((f) => <col key={f.id} style={{ width: 176 }} />)}
+                    <col style={{ width: 56 }} />
+                  </colgroup>
                   <thead>
                     <tr className="border-b border-[#E8E8E4] bg-[#FAFAF8]">
-                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap">
+                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">
                         Submitted at
                       </th>
-                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap">
+                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">
                         Email
                       </th>
                       {fields.map((f) => (
-                        <th
-                          key={f.id}
-                          className="text-left px-4 py-3 font-semibold text-[#6B6B66] whitespace-nowrap max-w-[180px]"
-                        >
-                          {truncate(f.label, 30)}
+                        <th key={f.id} className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate" title={f.label}>
+                          {f.label}
                         </th>
                       ))}
-                      <th className="w-16" />
+                      <th />
                     </tr>
                   </thead>
                   <tbody>
@@ -231,14 +234,14 @@ export function FormResponses() {
                           i % 2 === 0 ? '' : 'bg-[#FAFAF8]'
                         } ${selectedResponse?.id === response.id ? 'bg-[#E8F5EE]' : ''}`}
                       >
-                        <td className="px-4 py-3 text-[#1A1A18] whitespace-nowrap">
+                        <td className="px-4 py-3 text-[#1A1A18] truncate">
                           {new Date(response.submittedAt).toLocaleString()}
                         </td>
-                        <td className="px-4 py-3 text-[#6B6B66] whitespace-nowrap">
+                        <td className="px-4 py-3 text-[#6B6B66] truncate">
                           {response.respondentEmail ?? '—'}
                         </td>
                         {fields.map((f) => (
-                          <td key={f.id} className="px-4 py-3 text-[#1A1A18] max-w-[180px] truncate">
+                          <td key={f.id} className="px-4 py-3 text-[#1A1A18] truncate" title={getAnswerDisplay(response, f.id)}>
                             {getAnswerDisplay(response, f.id)}
                           </td>
                         ))}

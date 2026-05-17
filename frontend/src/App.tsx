@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, Component, type ReactNode, type ErrorInfo } from 'react';
 import axios from 'axios';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { setAccessToken } from './api/client';
@@ -7,6 +7,28 @@ import { useAuthStore } from './stores/authStore';
 import { useOfflineSync } from './hooks/useOfflineSync';
 import { AppLayout } from './components/layout/AppLayout';
 import { PageLoader } from './components/shared/LoadingSpinner';
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  componentDidCatch(error: Error, info: ErrorInfo) { console.error('[FormRise] Uncaught error:', error, info); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: '2rem', fontFamily: 'system-ui', color: '#333' }}>
+          <h2 style={{ color: '#c0392b' }}>Something went wrong</h2>
+          <pre style={{ fontSize: '0.8rem', background: '#f5f5f5', padding: '1rem', borderRadius: '4px', overflow: 'auto' }}>
+            {(this.state.error as Error).message}
+          </pre>
+          <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer' }}>
+            Reload page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const Landing      = lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
 const Login        = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
@@ -71,6 +93,7 @@ export { SESSION_HINT_KEY };
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
       <BrowserRouter>
         <AppInitializer />
@@ -97,5 +120,6 @@ export default function App() {
         </Suspense>
       </BrowserRouter>
     </GoogleOAuthProvider>
+    </ErrorBoundary>
   );
 }

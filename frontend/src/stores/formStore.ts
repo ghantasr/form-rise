@@ -15,6 +15,7 @@ interface FormBuilderState {
   updateField: (id: string, updates: Partial<FormField>) => void;
   reorderFields: (oldIndex: number, newIndex: number) => void;
   selectField: (id: string | null) => void;
+  setThemeId: (themeId: string) => void;
   setDirty: (dirty: boolean) => void;
   setSaving: (saving: boolean) => void;
   reset: () => void;
@@ -69,6 +70,7 @@ export const useFormStore = create<FormBuilderState>((set, get) => ({
     }),
 
   selectField: (id) => set({ selectedFieldId: id }),
+  setThemeId: (themeId) => set((s) => ({ form: { ...s.form, themeId }, isDirty: true })),
   setDirty: (isDirty) => set({ isDirty }),
   setSaving: (isSaving) => set({ isSaving }),
   reset: () => set({ form: null, fields: [], selectedFieldId: null, isDirty: false }),

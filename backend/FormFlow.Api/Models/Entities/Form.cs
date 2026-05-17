@@ -37,6 +37,9 @@ public class Form
     public int ResponseCount { get; set; } = 0;
     public int ViewCount { get; set; } = 0;
 
+    [MaxLength(50)]
+    public string? Theme { get; set; }
+
     // Translation support
     public string[] EnabledLanguages { get; set; } = [];
     public JsonDocument? Translations { get; set; }

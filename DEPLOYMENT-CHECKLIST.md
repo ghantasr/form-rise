@@ -14,7 +14,8 @@ Come back to Claude anytime you get stuck — just say which step you're on.
 
 ## PART 2 — Set Up Cloudflare (Free DNS + SSL)
 
-- [ ] Go to **cloudflare.com** and create a free account
+- [ ] Go to **
+** and create a free account
 - [ ] Click **Add a Site** → type your domain → choose **Free plan**
 - [ ] Cloudflare scans your DNS — click **Continue**
 - [ ] Cloudflare gives you 2 nameservers, e.g.:

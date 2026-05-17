@@ -16,6 +16,7 @@ public record UpdateFormRequest(
     DateTime? AcceptUntil,
     string[]? AllowedEmails,
     string? ThankYouMsg,
+    [MaxLength(50)] string? ThemeId,
     List<FieldUpdateDto>? Fields
 );
 
