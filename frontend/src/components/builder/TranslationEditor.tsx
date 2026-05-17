@@ -93,9 +93,14 @@ const HAS_OPTIONS_TYPES    = new Set(['dropdown', 'radio', 'checkbox', 'picture_
 async function translateText(text: string, langCode: string): Promise<string> {
   if (!text.trim()) return text;
   try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 10_000);
     const res = await fetch(
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${langCode}`
+      // de= email gives 10 000 words/day instead of 500 words/day on the free tier
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${langCode}&de=api@formrise.fyi`,
+      { signal: controller.signal }
     );
+    clearTimeout(tid);
     const data = await res.json();
     if (data.responseStatus !== 200) return text;
     return (data.responseData?.translatedText as string) || text;
@@ -148,9 +153,11 @@ export function TranslationEditor({ form, onSave }: TranslationEditorProps) {
         [langCode]: { title: tTitle, description: tDesc, thankYouMsg: tThanks },
       }));
 
-      // Translate fields one at a time — MyMemory free tier rate-limits burst requests.
-      // Updating state after each field lets the user see progress as it happens.
+      // Translate fields one at a time — MyMemory rate-limits burst requests.
+      // Small inter-field pause keeps us well inside the per-second quota.
+      // State update after each field shows live progress to the user.
       for (const field of form.fields) {
+        await new Promise((r) => setTimeout(r, 200));
         const tLabel = await translateText(field.label, langCode);
         const tPlaceholder = field.placeholder ? await translateText(field.placeholder, langCode) : '';
         const tHelp = field.helpText ? await translateText(field.helpText, langCode) : '';
