@@ -148,37 +148,36 @@ export function TranslationEditor({ form, onSave }: TranslationEditorProps) {
         [langCode]: { title: tTitle, description: tDesc, thankYouMsg: tThanks },
       }));
 
-      // Translate all fields in parallel
-      const fieldEntries = await Promise.all(form.fields.map(async (field) => {
-        const [tLabel, tPlaceholder, tHelp] = await Promise.all([
-          translateText(field.label, langCode),
-          field.placeholder ? translateText(field.placeholder, langCode) : Promise.resolve(''),
-          field.helpText ? translateText(field.helpText, langCode) : Promise.resolve(''),
-        ]);
+      // Translate fields one at a time — MyMemory free tier rate-limits burst requests.
+      // Updating state after each field lets the user see progress as it happens.
+      for (const field of form.fields) {
+        const tLabel = await translateText(field.label, langCode);
+        const tPlaceholder = field.placeholder ? await translateText(field.placeholder, langCode) : '';
+        const tHelp = field.helpText ? await translateText(field.helpText, langCode) : '';
 
-        const tOptions = HAS_OPTIONS_TYPES.has(field.fieldType) && (field.options ?? []).length > 0
-          ? await Promise.all((field.options ?? []).map((opt) => {
-              const pipeIdx = opt.indexOf('|');
-              const label = pipeIdx === -1 ? opt : opt.slice(0, pipeIdx);
-              return translateText(label, langCode);
-            }))
-          : undefined;
+        let tOptions: string[] | undefined;
+        if (HAS_OPTIONS_TYPES.has(field.fieldType) && (field.options ?? []).length > 0) {
+          tOptions = [];
+          for (const opt of field.options ?? []) {
+            const pipeIdx = opt.indexOf('|');
+            const label = pipeIdx === -1 ? opt : opt.slice(0, pipeIdx);
+            tOptions.push(await translateText(label, langCode));
+          }
+        }
 
-        return [field.id, {
-          ...(fieldTranslations[field.id] ?? {}),
-          [langCode]: {
-            label:       tLabel,
-            placeholder: tPlaceholder || undefined,
-            helpText:    tHelp || undefined,
-            options:     tOptions,
+        setFieldTranslations((prev) => ({
+          ...prev,
+          [field.id]: {
+            ...(prev[field.id] ?? {}),
+            [langCode]: {
+              label:       tLabel,
+              placeholder: tPlaceholder || undefined,
+              helpText:    tHelp || undefined,
+              options:     tOptions,
+            },
           },
-        }] as const;
-      }));
-
-      setFieldTranslations((prev) => ({
-        ...prev,
-        ...Object.fromEntries(fieldEntries.map(([id, perLang]) => [id, { ...prev[id], ...perLang }])),
-      }));
+        }));
+      }
     } finally {
       setTranslating((p) => ({ ...p, [langCode]: false }));
     }
