@@ -92,6 +92,7 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
 
         if (req.Fields is not null)
         {
+            var existingById = form.Fields.ToDictionary(f => f.Id);
             db.FormFields.RemoveRange(form.Fields);
             var newFields = req.Fields.Select((f, i) => new FormField
             {
@@ -106,7 +107,8 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
                 Options = f.Options,
                 Validation = f.Validation,
                 Conditional = f.Conditional,
-                Translations = f.Translations
+                // Preserve saved translations when the client doesn't send any (auto-save never carries them)
+                Translations = f.Translations ?? (f.Id.HasValue && existingById.TryGetValue(f.Id.Value, out var prev) ? prev.Translations : null)
             }).ToList();
             db.FormFields.AddRange(newFields);
             form.Fields = newFields;

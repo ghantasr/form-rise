@@ -147,16 +147,15 @@ export function FormBuilder() {
     }
 
     try {
-      // Save translations and any pending field/title changes atomically
-      await Promise.all([
-        formsApi.updateTranslations(form.id, payload),
-        formsApi.update(form.id, {
-          title: form.title,
-          description: form.description,
-          themeId: form.themeId,
-          fields,
-        }),
-      ]);
+      // Flush any pending field/title changes first, then write translations on top.
+      // Sequential order matters: update recreates field rows, translations must come after.
+      await formsApi.update(form.id, {
+        title: form.title,
+        description: form.description,
+        themeId: form.themeId,
+        fields,
+      });
+      await formsApi.updateTranslations(form.id, payload);
 
       // Sync local store so future auto-saves carry the correct enabledLanguages
       setForm({ ...form, enabledLanguages: payload.enabledLanguages } as Form);

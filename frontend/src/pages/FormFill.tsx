@@ -149,12 +149,18 @@ export function FormFill() {
     if (!activeLang) return field;
     const tr = field.translations?.[activeLang];
     let options = field.options;
-    if (tr?.options?.length && field.fieldType === 'picture_choice') {
-      options = tr.options.map((lbl, i) => {
-        const orig = field.options?.[i] ?? '';
-        const p = orig.indexOf('|');
-        return `${lbl}|${p === -1 ? '' : orig.slice(p + 1)}`;
-      });
+    if (tr?.options?.length) {
+      if (field.fieldType === 'picture_choice') {
+        // Preserve the |imageUrl suffix from the original option
+        options = tr.options.map((lbl, i) => {
+          const orig = field.options?.[i] ?? '';
+          const p = orig.indexOf('|');
+          return `${lbl}|${p === -1 ? '' : orig.slice(p + 1)}`;
+        });
+      } else {
+        // radio / checkbox / dropdown — plain label replacement
+        options = tr.options;
+      }
     }
     return { ...field, label: tr?.label || field.label, placeholder: tr?.placeholder || field.placeholder, helpText: tr?.helpText || field.helpText, options };
   };
