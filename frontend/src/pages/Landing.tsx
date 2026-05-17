@@ -53,7 +53,7 @@ export function Landing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <LogoMark size={26} variant="dark" />
-            <span className="font-semibold text-[15px] tracking-[-0.02em]">formrise</span>
+            <span className="font-semibold text-[15px] tracking-[-0.02em]">formrise™</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
@@ -312,9 +312,9 @@ export function Landing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <LogoMark size={22} variant="dark" />
-            <span className="text-sm font-semibold text-[#141412]">formrise</span>
+            <span className="text-sm font-semibold text-[#141412]">formrise™</span>
           </div>
-          <p className="text-xs text-[#6B6B66]">© {new Date().getFullYear()} formrise. Built for everyone, free for always.</p>
+          <p className="text-xs text-[#6B6B66]">© {new Date().getFullYear()} formrise™. Built for everyone, free for always.</p>
           <p className="text-xs text-[#6B6B66]">
             Built by{' '}
             <a

@@ -102,7 +102,7 @@ export function Templates() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
               <LogoMark size={28} variant="dark" />
-              <span className="font-semibold text-[15px] tracking-[-0.02em] text-[#141412]">formrise</span>
+              <span className="font-semibold text-[15px] tracking-[-0.02em] text-[#141412]">formrise™</span>
             </div>
             <div className="flex items-center gap-3">
               <button

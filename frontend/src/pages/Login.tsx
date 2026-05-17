@@ -101,7 +101,7 @@ export function Login() {
                 <path d="M9 4h6v4H9V4z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span className="text-white font-semibold text-xl tracking-[-0.02em]">formrise</span>
+            <span className="text-white font-semibold text-xl tracking-[-0.02em]">formrise™</span>
           </div>
 
           <div className="mb-12">
@@ -125,7 +125,7 @@ export function Login() {
           </div>
         </div>
 
-        <p className="relative z-10 text-white/25 text-xs">© 2026 formrise.</p>
+        <p className="relative z-10 text-white/25 text-xs">© 2026 formrise™.</p>
       </div>
 
       {/* Right panel — form */}
@@ -139,7 +139,7 @@ export function Login() {
                 <path d="M9 4h6v4H9V4z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span className="font-semibold text-[#141412] text-xl tracking-[-0.02em]">formrise</span>
+            <span className="font-semibold text-[#141412] text-xl tracking-[-0.02em]">formrise™</span>
           </div>
 
           <div className="bg-white rounded-2xl border border-[#E4E4E0] shadow-sm p-8">

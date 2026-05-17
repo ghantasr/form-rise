@@ -47,7 +47,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-2.5">
           <LogoMark size={28} variant="dark" />
-          <span className="text-white font-semibold text-[15px] tracking-[-0.02em]">formrise</span>
+          <span className="text-white font-semibold text-[15px] tracking-[-0.02em]">formrise™</span>
         </div>
       </div>
 

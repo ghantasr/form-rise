@@ -31,7 +31,7 @@ export function AppLayout() {
           </button>
           <div className="flex items-center gap-2">
             <LogoMark size={24} variant="dark" />
-            <span className="font-semibold text-[#141412] text-[15px] tracking-[-0.02em]">formrise</span>
+            <span className="font-semibold text-[#141412] text-[15px] tracking-[-0.02em]">formrise™</span>
           </div>
         </header>
 
