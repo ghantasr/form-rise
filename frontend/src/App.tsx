@@ -22,14 +22,15 @@ function isChunkLoadError(err: unknown): boolean {
   );
 }
 
-// Wraps lazy() with one auto-reload on chunk error.
-// sessionStorage flag prevents infinite reload loops if the chunk is genuinely missing.
+// Wraps lazy() with one auto-reload on chunk error caused by a new deploy.
+// Offline chunk errors are NOT retried — they surface to ErrorBoundary as-is
+// so the user sees an "offline" message instead of a reload loop.
 function lazyWithRetry<T extends React.ComponentType<unknown>>(
   factory: () => Promise<{ default: T }>
 ): React.LazyExoticComponent<T> {
   return lazy(() =>
     factory().catch((err) => {
-      if (isChunkLoadError(err) && !sessionStorage.getItem('chunk_reloaded')) {
+      if (isChunkLoadError(err) && navigator.onLine && !sessionStorage.getItem('chunk_reloaded')) {
         sessionStorage.setItem('chunk_reloaded', '1');
         window.location.reload();
         return new Promise<never>(() => {}); // stays pending while reload happens
@@ -53,18 +54,23 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
     if (!error) return this.props.children;
 
     if (isChunkLoadError(error)) {
+      const offline = !navigator.onLine;
       return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem', fontFamily: 'system-ui', color: '#333', gap: '1rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem' }}>🔄</div>
-          <h2 style={{ margin: 0, color: '#1A1A18' }}>New version available</h2>
+          <div style={{ fontSize: '2.5rem' }}>{offline ? '📡' : '🔄'}</div>
+          <h2 style={{ margin: 0, color: '#1A1A18' }}>
+            {offline ? "You're offline" : 'New version available'}
+          </h2>
           <p style={{ margin: 0, color: '#6B6B66', maxWidth: '320px' }}>
-            The app was updated. Reload to get the latest version.
+            {offline
+              ? 'This page isn\'t available offline. Connect to the internet and try again.'
+              : 'The app was updated. Reload to get the latest version.'}
           </p>
           <button
             onClick={() => { sessionStorage.removeItem('chunk_reloaded'); window.location.reload(); }}
             style={{ padding: '0.625rem 1.5rem', background: '#1B6B4A', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '0.875rem' }}
           >
-            Reload
+            {offline ? 'Try again' : 'Reload'}
           </button>
         </div>
       );
@@ -157,19 +163,25 @@ function AppInitializer({ onUpdateAvailable }: { onUpdateAvailable: () => void }
   }, []);
 
   // Global unhandled rejection handler — catches chunk errors outside React render
-  // (e.g. in event handlers or async code that isn't wrapped by ErrorBoundary)
+  // Only reloads when online; offline chunk errors are suppressed (not retried).
   useEffect(() => {
     const handle = (e: PromiseRejectionEvent) => {
       if (isChunkLoadError(e.reason)) {
         e.preventDefault();
-        if (!sessionStorage.getItem('chunk_reloaded')) {
+        if (navigator.onLine && !sessionStorage.getItem('chunk_reloaded')) {
           sessionStorage.setItem('chunk_reloaded', '1');
           window.location.reload();
         }
       }
     };
+    // Clear the reload flag when connectivity returns so future deploys can still trigger a reload
+    const clearFlag = () => sessionStorage.removeItem('chunk_reloaded');
     window.addEventListener('unhandledrejection', handle);
-    return () => window.removeEventListener('unhandledrejection', handle);
+    window.addEventListener('online', clearFlag);
+    return () => {
+      window.removeEventListener('unhandledrejection', handle);
+      window.removeEventListener('online', clearFlag);
+    };
   }, []);
 
   // Service worker update notifications — show banner when a new SW activates
