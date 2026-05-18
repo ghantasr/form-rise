@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { lazy, Suspense, useEffect, Component, type ReactNode, type ErrorInfo } from 'react';
 import axios from 'axios';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { setAccessToken } from './api/client';
 import { useAuthStore, USER_CACHE_KEY } from './stores/authStore';
 import { useOfflineSync } from './hooks/useOfflineSync';
 import { AppLayout } from './components/layout/AppLayout';
