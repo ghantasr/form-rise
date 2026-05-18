@@ -210,8 +210,8 @@ export function FieldRenderer({
             className={`${inputClass(error)} cursor-pointer`}
           >
             <option value="">Select an option</option>
-            {(field.options ?? []).map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
+            {(field.options ?? []).map((opt, i) => (
+              <option key={i} value={opt}>{opt}</option>
             ))}
           </select>
         );
@@ -224,7 +224,7 @@ export function FieldRenderer({
               const englishOpt = altOptions?.[i];
               return (
                 <label
-                  key={opt}
+                  key={i}
                   className="flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-xl border cursor-pointer transition-all touch-manipulation"
                   style={isChecked
                     ? { borderColor: primary, backgroundColor: primaryLight }
@@ -263,7 +263,7 @@ export function FieldRenderer({
               const englishOpt = altOptions?.[i];
               return (
                 <label
-                  key={opt}
+                  key={i}
                   className="flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-xl border cursor-pointer transition-all touch-manipulation"
                   style={isChecked
                     ? { borderColor: primary, backgroundColor: primaryLight }

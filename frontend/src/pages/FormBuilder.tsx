@@ -390,7 +390,7 @@ export function FormBuilder() {
         />
       )}
 
-      {showTour && <GuidedTour onDone={() => setShowTour(false)} />}
+      {showTour && <GuidedTour onDone={() => setShowTour(false)} onMobilePanel={setMobilePanel} />}
 
       <OnboardingChecklist
         hasFields={fields.length > 0}

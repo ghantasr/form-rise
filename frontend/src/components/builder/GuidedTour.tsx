@@ -8,6 +8,7 @@ interface Step {
   title: string;
   description: string;
   position: 'top' | 'bottom' | 'left' | 'right';
+  mobilePanel?: 'fields' | 'canvas' | 'editor';
 }
 
 const STEPS: Step[] = [
@@ -16,18 +17,21 @@ const STEPS: Step[] = [
     title: 'Step 1 — Add fields',
     description: 'Click any field type here to add it to your form canvas. Try "Short text" or "Picture choice" to start.',
     position: 'right',
+    mobilePanel: 'fields',
   },
   {
     target: 'form-canvas',
     title: 'Step 2 — Your canvas',
     description: 'Fields you add appear here. Click a field to select it, drag the handle to reorder.',
     position: 'right',
+    mobilePanel: 'canvas',
   },
   {
     target: 'field-editor',
     title: 'Step 3 — Edit properties',
     description: 'With a field selected, customise its label, placeholder, options, and conditional logic here.',
     position: 'left',
+    mobilePanel: 'editor',
   },
   {
     target: 'style-btn',
@@ -98,14 +102,16 @@ function tooltipStyle(rect: Rect, position: Step['position']): React.CSSProperti
   }
 
   top = Math.max(8, Math.min(top, vh - TIP_H - 8));
+  left = Math.max(8, Math.min(left, vw - TIP_W - 8));
   return { top, left, width: TIP_W };
 }
 
 interface GuidedTourProps {
   onDone: () => void;
+  onMobilePanel?: (panel: 'fields' | 'canvas' | 'editor') => void;
 }
 
-export function GuidedTour({ onDone }: GuidedTourProps) {
+export function GuidedTour({ onDone, onMobilePanel }: GuidedTourProps) {
   const [step, setStep] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
   const stepRef = useRef(step);
@@ -117,14 +123,16 @@ export function GuidedTour({ onDone }: GuidedTourProps) {
   const dismissLockRef = useRef(false);
 
   useEffect(() => {
-    const el = document.querySelector(`[data-tour="${STEPS[step].target}"]`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      const t = setTimeout(() => setRect(getRect(STEPS[step].target)), 320);
-      return () => clearTimeout(t);
-    } else {
-      setRect(null);
-    }
+    const currentStep = STEPS[step];
+    setRect(null); // center tooltip while panel re-renders
+    if (currentStep.mobilePanel) onMobilePanel?.(currentStep.mobilePanel);
+    // Delay rect calculation to allow mobile panel re-render to complete
+    const t = setTimeout(() => {
+      const el = document.querySelector(`[data-tour="${currentStep.target}"]`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      setRect(getRect(currentStep.target));
+    }, 350);
+    return () => clearTimeout(t);
   }, [step]);
 
   const finish = () => {

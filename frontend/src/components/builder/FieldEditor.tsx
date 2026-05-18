@@ -197,8 +197,8 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
                       outline-none focus:border-[#1B6B4A] focus:ring-1 focus:ring-[#E8F5EE] cursor-pointer"
                   >
                     <option value="">Select a value...</option>
-                    {conditionalSourceOptions.map((opt) => (
-                      <option key={opt} value={opt}>{opt}</option>
+                    {conditionalSourceOptions.map((opt, i) => (
+                      <option key={i} value={opt}>{opt}</option>
                     ))}
                   </select>
                 ) : (
@@ -246,7 +246,7 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
                 if (isPictureChoice) {
                   const { label, url } = parsePictureOption(option);
                   return (
-                    <div key={`${option}-${index}`} className="flex flex-col gap-1 p-2.5 border border-[#E8E8E4] rounded-lg bg-[#FAFAF8]">
+                    <div key={index} className="flex flex-col gap-1 p-2.5 border border-[#E8E8E4] rounded-lg bg-[#FAFAF8]">
                       <p className="text-xs font-medium text-[#6B6B66]">Image {index + 1}</p>
                       <input
                         type="text"
@@ -276,7 +276,7 @@ export function FieldEditor({ field, allFields, onChange }: FieldEditorProps) {
                   );
                 }
                 return (
-                  <div key={`${option}-${index}`} className="flex items-center gap-2">
+                  <div key={index} className="flex items-center gap-2">
                     <input
                       type="text"
                       value={option}
