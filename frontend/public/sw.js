@@ -1,14 +1,25 @@
 const CACHE = 'formrise-v6';
 
-// Install: skip waiting immediately — no shell pre-cache to avoid stale HTML after deploys
-self.addEventListener('install', () => self.skipWaiting());
+let isUpdate = false;
 
-// Activate: remove old caches
+// Install: track whether this is an update (existing SW was active) or a fresh install
+self.addEventListener('install', () => {
+  isUpdate = Boolean(self.registration.active);
+  self.skipWaiting();
+});
+
+// Activate: remove old caches, claim clients, notify open tabs if this is an update
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
+      .then(() => {
+        if (!isUpdate) return;
+        return self.clients
+          .matchAll({ includeUncontrolled: true, type: 'window' })
+          .then((clients) => clients.forEach((c) => c.postMessage({ type: 'SW_UPDATED' })));
+      })
   );
 });
 

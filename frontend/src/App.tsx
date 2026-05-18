@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { lazy, Suspense, useEffect, Component, type ReactNode, type ErrorInfo } from 'react';
+import { lazy, Suspense, useEffect, useState, Component, type ReactNode, type ErrorInfo } from 'react';
 import axios from 'axios';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useAuthStore, USER_CACHE_KEY } from './stores/authStore';
@@ -7,42 +7,101 @@ import { useOfflineSync } from './hooks/useOfflineSync';
 import { AppLayout } from './components/layout/AppLayout';
 import { PageLoader } from './components/shared/LoadingSpinner';
 
+// ---------------------------------------------------------------------------
+// Chunk-load error detection
+// Happens when a new deploy invalidates old hashed bundles while the app is open
+// ---------------------------------------------------------------------------
+function isChunkLoadError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const msg = err.message ?? '';
+  return (
+    msg.includes('Failed to fetch dynamically imported module') ||
+    msg.includes('Importing a module script failed') ||
+    msg.includes('error loading dynamically imported module') ||
+    err.name === 'ChunkLoadError'
+  );
+}
+
+// Wraps lazy() with one auto-reload on chunk error.
+// sessionStorage flag prevents infinite reload loops if the chunk is genuinely missing.
+function lazyWithRetry<T extends React.ComponentType<unknown>>(
+  factory: () => Promise<{ default: T }>
+): React.LazyExoticComponent<T> {
+  return lazy(() =>
+    factory().catch((err) => {
+      if (isChunkLoadError(err) && !sessionStorage.getItem('chunk_reloaded')) {
+        sessionStorage.setItem('chunk_reloaded', '1');
+        window.location.reload();
+        return new Promise<never>(() => {}); // stays pending while reload happens
+      }
+      throw err;
+    })
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Error boundary — chunk errors get a friendly "new version" screen;
+// other errors get the generic crash screen
+// ---------------------------------------------------------------------------
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state = { error: null };
   static getDerivedStateFromError(error: Error) { return { error }; }
   componentDidCatch(error: Error, info: ErrorInfo) { console.error('[FormRise] Uncaught error:', error, info); }
+
   render() {
-    if (this.state.error) {
+    const { error } = this.state;
+    if (!error) return this.props.children;
+
+    if (isChunkLoadError(error)) {
       return (
-        <div style={{ padding: '2rem', fontFamily: 'system-ui', color: '#333' }}>
-          <h2 style={{ color: '#c0392b' }}>Something went wrong</h2>
-          <pre style={{ fontSize: '0.8rem', background: '#f5f5f5', padding: '1rem', borderRadius: '4px', overflow: 'auto' }}>
-            {(this.state.error as Error).message}
-          </pre>
-          <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer' }}>
-            Reload page
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem', fontFamily: 'system-ui', color: '#333', gap: '1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '2.5rem' }}>🔄</div>
+          <h2 style={{ margin: 0, color: '#1A1A18' }}>New version available</h2>
+          <p style={{ margin: 0, color: '#6B6B66', maxWidth: '320px' }}>
+            The app was updated. Reload to get the latest version.
+          </p>
+          <button
+            onClick={() => { sessionStorage.removeItem('chunk_reloaded'); window.location.reload(); }}
+            style={{ padding: '0.625rem 1.5rem', background: '#1B6B4A', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '0.875rem' }}
+          >
+            Reload
           </button>
         </div>
       );
     }
-    return this.props.children;
+
+    return (
+      <div style={{ padding: '2rem', fontFamily: 'system-ui', color: '#333' }}>
+        <h2 style={{ color: '#c0392b' }}>Something went wrong</h2>
+        <pre style={{ fontSize: '0.8rem', background: '#f5f5f5', padding: '1rem', borderRadius: '4px', overflow: 'auto' }}>
+          {error.message}
+        </pre>
+        <button
+          onClick={() => window.location.reload()}
+          style={{ marginTop: '1rem', padding: '0.5rem 1rem', cursor: 'pointer' }}
+        >
+          Reload page
+        </button>
+      </div>
+    );
   }
 }
 
-const Landing      = lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
-const Login        = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
-const Dashboard    = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
-const FormBuilder  = lazy(() => import('./pages/FormBuilder').then(m => ({ default: m.FormBuilder })));
-const FormResponses = lazy(() => import('./pages/FormResponses').then(m => ({ default: m.FormResponses })));
-const FormFill     = lazy(() => import('./pages/FormFill').then(m => ({ default: m.FormFill })));
-const ThankYou     = lazy(() => import('./pages/ThankYou').then(m => ({ default: m.ThankYou })));
-const Templates    = lazy(() => import('./pages/Templates').then(m => ({ default: m.Templates })));
-const Settings     = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
+// ---------------------------------------------------------------------------
+// Lazy page imports — all wrapped with retry-on-chunk-error
+// ---------------------------------------------------------------------------
+const Landing       = lazyWithRetry(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
+const Login         = lazyWithRetry(() => import('./pages/Login').then(m => ({ default: m.Login })));
+const Dashboard     = lazyWithRetry(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const FormBuilder   = lazyWithRetry(() => import('./pages/FormBuilder').then(m => ({ default: m.FormBuilder })));
+const FormResponses = lazyWithRetry(() => import('./pages/FormResponses').then(m => ({ default: m.FormResponses })));
+const FormFill      = lazyWithRetry(() => import('./pages/FormFill').then(m => ({ default: m.FormFill })));
+const ThankYou      = lazyWithRetry(() => import('./pages/ThankYou').then(m => ({ default: m.ThankYou })));
+const Templates     = lazyWithRetry(() => import('./pages/Templates').then(m => ({ default: m.Templates })));
+const Settings      = lazyWithRetry(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
 
 const SESSION_HINT_KEY = 'fr_has_session';
 
-// Single shell for all "app" routes — renders AppLayout (with sidebar) for
-// authenticated users, or a bare Outlet (no sidebar) for public routes.
 function AppShell() {
   const { isAuthenticated, isLoading } = useAuthStore();
   if (isLoading) return <PageLoader />;
@@ -50,27 +109,22 @@ function AppShell() {
   return <Outlet />;
 }
 
-// Auth guard used inside AppShell — AppLayout is already mounted by AppShell
-// so this just blocks access without re-mounting any layout.
 function RequireAuth() {
   const { isAuthenticated } = useAuthStore();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 
-
-function AppInitializer() {
+function AppInitializer({ onUpdateAvailable }: { onUpdateAvailable: () => void }) {
   const { login, logout, setLoading } = useAuthStore();
 
+  // Auth bootstrap
   useEffect(() => {
-    // No prior session — skip refresh entirely
     if (!localStorage.getItem(SESSION_HINT_KEY)) {
       setLoading(false);
       return;
     }
 
-    // Offline: restore the cached user so the UI stays usable. A real token
-    // will be obtained once connectivity returns via the 'online' handler below.
     if (!navigator.onLine) {
       const raw = localStorage.getItem(USER_CACHE_KEY);
       if (raw) {
@@ -81,15 +135,9 @@ function AppInitializer() {
     }
 
     axios.post('/api/auth/refresh', {}, { withCredentials: true })
-      .then(({ data }) => {
-        login(data.accessToken, data.user);
-      })
+      .then(({ data }) => login(data.accessToken, data.user))
       .catch((err) => {
-        // Only log out on an explicit auth rejection — not on a network error.
-        // A network error here means the user is offline; their session is still valid.
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          logout();
-        }
+        if (err.response?.status === 401 || err.response?.status === 403) logout();
       })
       .finally(() => setLoading(false));
   }, []);
@@ -108,6 +156,32 @@ function AppInitializer() {
     return () => window.removeEventListener('online', handleOnline);
   }, []);
 
+  // Global unhandled rejection handler — catches chunk errors outside React render
+  // (e.g. in event handlers or async code that isn't wrapped by ErrorBoundary)
+  useEffect(() => {
+    const handle = (e: PromiseRejectionEvent) => {
+      if (isChunkLoadError(e.reason)) {
+        e.preventDefault();
+        if (!sessionStorage.getItem('chunk_reloaded')) {
+          sessionStorage.setItem('chunk_reloaded', '1');
+          window.location.reload();
+        }
+      }
+    };
+    window.addEventListener('unhandledrejection', handle);
+    return () => window.removeEventListener('unhandledrejection', handle);
+  }, []);
+
+  // Service worker update notifications — show banner when a new SW activates
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    const handle = (e: MessageEvent) => {
+      if (e.data?.type === 'SW_UPDATED') onUpdateAvailable();
+    };
+    navigator.serviceWorker.addEventListener('message', handle);
+    return () => navigator.serviceWorker.removeEventListener('message', handle);
+  }, []);
+
   useOfflineSync((count) => {
     console.info(`[FormRise] Synced ${count} offline submission(s).`);
   });
@@ -115,37 +189,62 @@ function AppInitializer() {
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Update banner — shown when a new SW version activates in the background
+// ---------------------------------------------------------------------------
+function UpdateBanner({ onDismiss }: { onDismiss: () => void }) {
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, background: '#1B6B4A', color: 'white', padding: '0.625rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontSize: '0.875rem' }}>
+      <span>A new version is available.</span>
+      <button
+        onClick={() => { sessionStorage.removeItem('chunk_reloaded'); window.location.reload(); }}
+        style={{ padding: '0.25rem 0.875rem', background: 'white', color: '#1B6B4A', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '0.8rem' }}
+      >
+        Reload
+      </button>
+      <button
+        onClick={onDismiss}
+        style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.75)', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, padding: '0 0.25rem' }}
+        aria-label="Dismiss"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
 export { SESSION_HINT_KEY };
 
 export default function App() {
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
   return (
     <ErrorBoundary>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
-      <BrowserRouter>
-        <AppInitializer />
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/f/:slug" element={<FormFill />} />
-            <Route path="/f/:slug/thank-you" element={<ThankYou />} />
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
+        <BrowserRouter>
+          <AppInitializer onUpdateAvailable={() => setUpdateAvailable(true)} />
+          {updateAvailable && <UpdateBanner onDismiss={() => setUpdateAvailable(false)} />}
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/f/:slug" element={<FormFill />} />
+              <Route path="/f/:slug/thank-you" element={<ThankYou />} />
 
-            {/* All app routes share one AppShell (= one AppLayout instance).
-                Templates is public; the rest require auth via RequireAuth. */}
-            <Route element={<AppShell />}>
-              <Route path="/templates" element={<Templates />} />
-              <Route element={<RequireAuth />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/forms/new" element={<FormBuilder />} />
-                <Route path="/forms/:id/edit" element={<FormBuilder />} />
-                <Route path="/forms/:id/responses" element={<FormResponses />} />
-                <Route path="/settings" element={<Settings />} />
+              <Route element={<AppShell />}>
+                <Route path="/templates" element={<Templates />} />
+                <Route element={<RequireAuth />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/forms/new" element={<FormBuilder />} />
+                  <Route path="/forms/:id/edit" element={<FormBuilder />} />
+                  <Route path="/forms/:id/responses" element={<FormResponses />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </GoogleOAuthProvider>
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </GoogleOAuthProvider>
     </ErrorBoundary>
   );
 }
