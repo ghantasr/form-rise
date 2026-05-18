@@ -44,7 +44,7 @@ function lazyWithRetry<T extends React.ComponentType<unknown>>(
 // other errors get the generic crash screen
 // ---------------------------------------------------------------------------
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
-  state = { error: null };
+  state: { error: Error | null } = { error: null };
   static getDerivedStateFromError(error: Error) { return { error }; }
   componentDidCatch(error: Error, info: ErrorInfo) { console.error('[FormRise] Uncaught error:', error, info); }
 
