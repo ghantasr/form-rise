@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, Component, type ReactNode, type ErrorInfo } 
 import axios from 'axios';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { setAccessToken } from './api/client';
-import { useAuthStore } from './stores/authStore';
+import { useAuthStore, USER_CACHE_KEY } from './stores/authStore';
 import { useOfflineSync } from './hooks/useOfflineSync';
 import { AppLayout } from './components/layout/AppLayout';
 import { PageLoader } from './components/shared/LoadingSpinner';
@@ -61,25 +61,52 @@ function RequireAuth() {
 
 
 function AppInitializer() {
-  const { login, setLoading } = useAuthStore();
+  const { login, logout, setLoading } = useAuthStore();
 
   useEffect(() => {
-    // Only attempt refresh if we've previously stored a session hint.
-    // This prevents a guaranteed-to-fail 401 on every public page load.
+    // No prior session — skip refresh entirely
     if (!localStorage.getItem(SESSION_HINT_KEY)) {
       setLoading(false);
       return;
     }
+
+    // Offline: restore the cached user so the UI stays usable. A real token
+    // will be obtained once connectivity returns via the 'online' handler below.
+    if (!navigator.onLine) {
+      const raw = localStorage.getItem(USER_CACHE_KEY);
+      if (raw) {
+        try { login('', JSON.parse(raw)); } catch {}
+      }
+      setLoading(false);
+      return;
+    }
+
     axios.post('/api/auth/refresh', {}, { withCredentials: true })
       .then(({ data }) => {
-        setAccessToken(data.accessToken);
         login(data.accessToken, data.user);
-        localStorage.setItem(SESSION_HINT_KEY, '1');
       })
-      .catch(() => {
-        localStorage.removeItem(SESSION_HINT_KEY);
+      .catch((err) => {
+        // Only log out on an explicit auth rejection — not on a network error.
+        // A network error here means the user is offline; their session is still valid.
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          logout();
+        }
       })
       .finally(() => setLoading(false));
+  }, []);
+
+  // Re-authenticate with a real token as soon as connectivity returns
+  useEffect(() => {
+    const handleOnline = () => {
+      if (!localStorage.getItem(SESSION_HINT_KEY)) return;
+      axios.post('/api/auth/refresh', {}, { withCredentials: true })
+        .then(({ data }) => login(data.accessToken, data.user))
+        .catch((err) => {
+          if (err.response?.status === 401 || err.response?.status === 403) logout();
+        });
+    };
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
   }, []);
 
   useOfflineSync((count) => {
