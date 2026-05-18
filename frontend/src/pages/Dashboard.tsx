@@ -26,6 +26,7 @@ const statusBorder: Record<string, string> = {
 export function Dashboard() {
   const [forms, setForms] = useState<FormListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [hintDismissed, setHintDismissed] = useState(() => !!localStorage.getItem(HINT_DISMISSED_KEY));
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -35,11 +36,32 @@ export function Dashboard() {
     setHintDismissed(true);
   };
 
-  useEffect(() => {
+  const fetchForms = () => {
+    setLoading(true);
     formsApi.list()
       .then((r) => setForms(r.data))
       .catch(() => toast('Failed to load forms', 'error'))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (!navigator.onLine) {
+      setLoading(false);
+      return;
+    }
+    fetchForms();
+  }, []);
+
+  // Re-fetch automatically when connectivity returns
+  useEffect(() => {
+    const handleOnline = () => { setIsOffline(false); fetchForms(); };
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const handleCreate = async () => {
@@ -159,7 +181,18 @@ export function Dashboard() {
         </div>
       )}
 
-      {forms.length === 0 ? (
+      {isOffline && forms.length === 0 ? (
+        /* Offline state — don't show "create your first form" when we simply can't fetch */
+        <div className="flex flex-col items-center text-center py-16 gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#F5F4F1] flex items-center justify-center mx-auto">
+            <span className="text-3xl">📡</span>
+          </div>
+          <h2 className="text-xl font-bold text-[#141412] tracking-tight">You're offline</h2>
+          <p className="text-sm text-[#6B6B66] max-w-sm leading-relaxed">
+            Your dashboard isn't available offline. Connect to the internet and it will reload automatically.
+          </p>
+        </div>
+      ) : forms.length === 0 ? (
         /* Rich empty state for first-time users */
         <div className="flex flex-col items-center text-center py-12 gap-10">
           <div>
@@ -261,7 +294,7 @@ export function Dashboard() {
             );
           })}
         </div>
-      )}
+      ) }
     </div>
   );
 }
