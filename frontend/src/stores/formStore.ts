@@ -16,6 +16,8 @@ interface FormBuilderState {
   reorderFields: (oldIndex: number, newIndex: number) => void;
   selectField: (id: string | null) => void;
   setThemeId: (themeId: string) => void;
+  setQuizMode: (enabled: boolean) => void;
+  setPassMark: (mark: number) => void;
   setDirty: (dirty: boolean) => void;
   setSaving: (saving: boolean) => void;
   reset: () => void;
@@ -71,6 +73,8 @@ export const useFormStore = create<FormBuilderState>((set, get) => ({
 
   selectField: (id) => set({ selectedFieldId: id }),
   setThemeId: (themeId) => set((s) => ({ form: { ...s.form, themeId }, isDirty: true })),
+  setQuizMode: (isQuizMode) => set((s) => ({ form: { ...s.form, isQuizMode }, isDirty: true })),
+  setPassMark: (passMark) => set((s) => ({ form: { ...s.form, passMark }, isDirty: true })),
   setDirty: (isDirty) => set({ isDirty }),
   setSaving: (isSaving) => set({ isSaving }),
   reset: () => set({ form: null, fields: [], selectedFieldId: null, isDirty: false }),

@@ -7,22 +7,30 @@ const AUTH_FILE = path.join(__dirname, '.auth/user.json');
 
 setup('authenticate test user', async ({ request, page }) => {
   // Create/refresh the playwright test user via dev-only endpoint
-  const res = await request.post('http://localhost:5000/api/auth/dev-login');
+  const res = await request.post('http://localhost:5001/api/auth/dev-login');
   expect(res.ok(), `dev-login failed: ${await res.text()}`).toBeTruthy();
+  const { accessToken, user } = await res.json();
 
-  // The refresh cookie is now set on localhost:5000 (backend).
-  // We need the app (localhost:5173) to have it — drive the browser through the proxy.
+  // Seed the session hint so AppInitializer attempts the refresh call
   await page.goto('/login');
-
-  // Hit the dev-login via the Vite proxy so the cookie lands on localhost:5173
-  await page.evaluate(async () => {
-    await fetch('/api/auth/dev-login', { method: 'POST', credentials: 'include' });
+  await page.evaluate(() => {
+    localStorage.setItem('fr_has_session', '1');
+    localStorage.setItem('fr_tour_done', '1');
+    localStorage.setItem('fr_checklist_dismissed', '1');
   });
 
-  // Let the app initializer detect the session
-  await page.waitForTimeout(1500);
+  // Mock /api/auth/refresh so the app's AppInitializer succeeds without needing
+  // the HttpOnly cookie (which can't reliably cross the Vite proxy in this setup)
+  await page.route('**/api/auth/refresh', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ accessToken, user }),
+    })
+  );
+
   await page.goto('/dashboard');
-  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 8000 });
 
   await page.context().storageState({ path: AUTH_FILE });
 });

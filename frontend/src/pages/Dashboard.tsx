@@ -287,7 +287,7 @@ export function Dashboard() {
                     className="ml-auto flex items-center gap-1.5 text-xs text-[#6B6B66] hover:text-[#1B6B4A] cursor-pointer transition-colors"
                   >
                     <Eye size={12} />
-                    Responses
+                    View responses
                   </button>
                 </div>
               </div>

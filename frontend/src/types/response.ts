@@ -4,6 +4,8 @@ export interface Answer {
   value?: string;
   valuesArray?: string[];
   numericValue?: number;
+  isCorrect?: boolean;
+  explanation?: string;
 }
 
 export interface FormResponse {
@@ -13,4 +15,7 @@ export interface FormResponse {
   isComplete: boolean;
   submittedAt: string;
   answers: Answer[];
+  totalScore?: number;
+  maxScore?: number;
+  isPassed?: boolean;
 }

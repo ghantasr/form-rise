@@ -42,6 +42,17 @@ export function ResponseDetail({ response, onClose }: ResponseDetailProps) {
             </div>
           )}
 
+          {response.totalScore !== undefined && (
+            <div>
+              <p className="text-xs font-semibold text-[#6B6B66] uppercase tracking-wider mb-1">Quiz Score</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-bold text-[#1A1A18]">{response.totalScore}/{response.maxScore}</p>
+                {response.isPassed === true && <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Passed</span>}
+                {response.isPassed === false && <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Failed</span>}
+              </div>
+            </div>
+          )}
+
           {response.answers.map((answer) => {
             const displayValue =
               answer.valuesArray && answer.valuesArray.length > 0

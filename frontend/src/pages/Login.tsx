@@ -145,7 +145,7 @@ export function Login() {
           <div className="bg-white rounded-2xl border border-[#E4E4E0] shadow-sm p-8">
             <div className="mb-6">
               <h1 className="text-[22px] font-bold text-[#141412] leading-tight tracking-[-0.02em] mb-1">
-                {step === 'email' ? 'Welcome back' : 'Check your email'}
+                {step === 'email' ? 'Sign in to FormRise' : 'Enter your code'}
               </h1>
               <p className="text-sm text-[#6B6B66]">
                 {step === 'email'
@@ -222,7 +222,8 @@ export function Login() {
           </div>
 
           <p className="text-xs text-center text-[#6B6B66] mt-5">
-            No password. No spam. Just forms.
+            No password. No spam. Just forms. ·{' '}
+            <a href="/privacy" className="hover:text-[#1B6B4A] transition-colors">Privacy Policy</a>
           </p>
         </div>
       </div>

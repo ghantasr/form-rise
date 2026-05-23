@@ -21,6 +21,10 @@ public class FormResponse
     public bool IsComplete { get; set; } = true;
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
 
+    public int? TotalScore { get; set; }
+    public int? MaxScore { get; set; }
+    public bool? IsPassed { get; set; }
+
     public Form Form { get; set; } = null!;
     public QrToken? QrToken { get; set; }
     public ICollection<FieldAnswer> Answers { get; set; } = [];

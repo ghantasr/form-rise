@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Eye, Send, Check, Loader2, QrCode, Languages, Palette } from 'lucide-react';
+import { Eye, Send, Check, Loader2, QrCode, Languages, Palette, Trophy, Users, Trash2, Plus } from 'lucide-react';
 import { formsApi } from '../api/forms';
+import { orgsApi, assignmentsApi } from '../api/orgs';
 import { useFormStore } from '../stores/formStore';
 import { useAuthStore } from '../stores/authStore';
 import { useToast } from '../components/shared/Toast';
@@ -17,6 +18,7 @@ import { GuidedTour, shouldShowTour } from '../components/builder/GuidedTour';
 import { OnboardingChecklist } from '../components/builder/OnboardingChecklist';
 import { FORM_THEMES } from '../utils/formThemes';
 import type { FieldType, Form, FormField } from '../types/form';
+import type { OrgGroup, FormAssignment, Organization } from '../types/org';
 
 export function FormBuilder() {
   const { id } = useParams<{ id: string }>();
@@ -33,6 +35,8 @@ export function FormBuilder() {
     setForm,
     setTitle,
     setThemeId,
+    setQuizMode,
+    setPassMark,
     addField,
     removeField,
     updateField,
@@ -50,6 +54,15 @@ export function FormBuilder() {
   const [mobilePanel, setMobilePanel] = useState<'fields' | 'canvas' | 'editor'>('canvas');
   const [showTranslations, setShowTranslations] = useState(false);
   const [showThemes, setShowThemes] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [showAssign, setShowAssign] = useState(false);
+  const [org, setOrg] = useState<Organization | null>(null);
+  const [orgGroups, setOrgGroups] = useState<OrgGroup[]>([]);
+  const [assignments, setAssignments] = useState<FormAssignment[]>([]);
+  const [accessMode, setAccessMode] = useState<string>('public');
+  const [savingAccessMode, setSavingAccessMode] = useState(false);
+  const [newAssignment, setNewAssignment] = useState({ groupId: '', opensAt: '', closesAt: '', mode: 'attempt_once' as 'attempt_once' | 'unlimited' });
+  const [creatingAssignment, setCreatingAssignment] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [hasPreviewed, setHasPreviewed] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -104,6 +117,8 @@ export function FormBuilder() {
           title: form.title,
           description: form.description,
           themeId: form.themeId,
+          isQuizMode: form.isQuizMode,
+          passMark: form.passMark,
           fields,
         });
         setDirty(false);
@@ -155,6 +170,8 @@ export function FormBuilder() {
         title: form.title,
         description: form.description,
         themeId: form.themeId,
+        isQuizMode: form.isQuizMode,
+        passMark: form.passMark,
         fields,
       });
       await formsApi.updateTranslations(form.id, payload);
@@ -165,6 +182,80 @@ export function FormBuilder() {
       toast('Translations saved', 'success');
     } catch {
       toast('Failed to save translations', 'error');
+    }
+  };
+
+  // Sync accessMode from form once loaded
+  useEffect(() => {
+    if (form?.accessMode) setAccessMode(form.accessMode);
+  }, [form?.accessMode]);
+
+  // Close assign panel if quiz mode is turned off or form is unpublished
+  useEffect(() => {
+    if (showAssign && (!form?.isQuizMode || form?.status !== 'active')) {
+      setShowAssign(false);
+    }
+  }, [form?.isQuizMode, form?.status, showAssign]);
+
+  // Load org + groups + assignments when assign panel opens
+  useEffect(() => {
+    if (!showAssign || !form?.id) return;
+    orgsApi.getMy().then(({ data }) => {
+      setOrg(data);
+      if (data?.id) {
+        orgsApi.listGroups(data.id).then(({ data: groups }) => setOrgGroups(groups)).catch(() => {});
+      }
+    }).catch(() => {});
+    assignmentsApi.list(form.id).then(({ data }) => setAssignments(data)).catch(() => {});
+  }, [showAssign, form?.id]);
+
+  const handleSaveAccessMode = async (mode: string) => {
+    if (!form?.id) return;
+    setAccessMode(mode);
+    setSavingAccessMode(true);
+    try {
+      await formsApi.update(form.id, {
+        accessMode: mode,
+        orgId: mode === 'org' || mode === 'group' ? (org?.id ?? undefined) : undefined,
+      });
+      toast('Access settings saved', 'success');
+    } catch {
+      toast('Failed to save access settings', 'error');
+    } finally {
+      setSavingAccessMode(false);
+    }
+  };
+
+  const handleCreateAssignment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form?.id || !newAssignment.groupId) return;
+    setCreatingAssignment(true);
+    try {
+      const { data } = await assignmentsApi.create(form.id, {
+        groupId: newAssignment.groupId,
+        opensAt: newAssignment.opensAt || undefined,
+        closesAt: newAssignment.closesAt || undefined,
+        mode: newAssignment.mode,
+      });
+      setAssignments((prev) => [...prev, data]);
+      setNewAssignment({ groupId: '', opensAt: '', closesAt: '', mode: 'attempt_once' });
+      toast('Assignment created', 'success');
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { error?: string } } };
+      toast(axiosErr.response?.data?.error ?? 'Failed to create assignment', 'error');
+    } finally {
+      setCreatingAssignment(false);
+    }
+  };
+
+  const handleDeleteAssignment = async (assignmentId: string) => {
+    if (!form?.id) return;
+    if (!confirm('Delete this assignment?')) return;
+    try {
+      await assignmentsApi.delete(form.id, assignmentId);
+      setAssignments((prev) => prev.filter((a) => a.id !== assignmentId));
+    } catch {
+      toast('Failed to delete assignment', 'error');
     }
   };
 
@@ -235,7 +326,7 @@ export function FormBuilder() {
               data-tour="style-btn"
               variant="secondary"
               size="sm"
-              onClick={() => { setShowThemes((prev) => !prev); setShowTranslations(false); }}
+              onClick={() => { setShowThemes((prev) => !prev); setShowTranslations(false); setShowQuiz(false); setShowAssign(false); }}
               disabled={!form?.id}
               title="Style"
             >
@@ -245,12 +336,32 @@ export function FormBuilder() {
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => { setShowTranslations((prev) => !prev); setShowThemes(false); }}
+              onClick={() => { setShowTranslations((prev) => !prev); setShowThemes(false); setShowQuiz(false); setShowAssign(false); }}
               disabled={!form?.id}
               title="Translations"
             >
               <Languages size={14} />
               <span className="hidden sm:inline">Translations</span>
+            </Button>
+            <Button
+              variant={form?.isQuizMode ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => { setShowQuiz((prev) => !prev); setShowThemes(false); setShowTranslations(false); setShowAssign(false); }}
+              disabled={!form?.id}
+              title="Quiz Mode"
+            >
+              <Trophy size={14} />
+              <span className="hidden sm:inline">Quiz</span>
+            </Button>
+            <Button
+              variant={showAssign ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => { setShowAssign((prev) => !prev); setShowQuiz(false); setShowThemes(false); setShowTranslations(false); }}
+              disabled={!form?.isQuizMode || form?.status !== 'active'}
+              title={!form?.isQuizMode ? 'Enable quiz mode first to assign' : form?.status !== 'active' ? 'Publish the quiz first to assign' : 'Assign'}
+            >
+              <Users size={14} />
+              <span className="hidden sm:inline">Assign</span>
             </Button>
             <Button data-tour="publish-btn" size="sm" onClick={handlePublish}>
               <Send size={14} />
@@ -344,6 +455,240 @@ export function FormBuilder() {
             )}
           </div>
         </div>
+      ) : showAssign ? (
+        <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-base font-semibold text-[#1A1A18]">Assign Form</h2>
+                <p className="text-sm text-[#6B6B66] mt-0.5">Control who can access this form</p>
+              </div>
+              <button
+                onClick={() => setShowAssign(false)}
+                className="text-sm text-[#6B6B66] hover:text-[#1A1A18] transition-colors cursor-pointer"
+              >
+                ← Back to builder
+              </button>
+            </div>
+
+            {/* Access mode selector */}
+            <div className="bg-white border border-[#E8E8E4] rounded-xl p-5 mb-4">
+              <p className="text-sm font-medium text-[#1A1A18] mb-3">Access mode</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {([
+                  { value: 'public', label: 'Public', desc: 'Anyone with the link' },
+                  { value: 'org', label: 'Organisation', desc: 'Any member of your org' },
+                  { value: 'group', label: 'Group', desc: 'Only specific groups' },
+                  { value: 'invite_only', label: 'Invite only', desc: 'Email allowlist' },
+                ] as const).map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleSaveAccessMode(opt.value)}
+                    disabled={savingAccessMode}
+                    className={`flex flex-col items-start gap-0.5 p-3 rounded-xl border-2 text-left transition-all cursor-pointer focus:outline-none ${
+                      accessMode === opt.value
+                        ? 'border-[#1B6B4A] bg-[#E8F5EE]'
+                        : 'border-[#E8E8E4] hover:border-[#1B6B4A]/40'
+                    }`}
+                  >
+                    <span className="text-sm font-medium text-[#1A1A18]">{opt.label}</span>
+                    <span className="text-xs text-[#6B6B66]">{opt.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Org mode info */}
+            {accessMode === 'org' && (
+              <div className="bg-[#E8F5EE] border border-[#1B6B4A]/20 rounded-xl p-4 mb-4">
+                {org ? (
+                  <p className="text-xs text-[#1B6B4A] font-medium">
+                    Linked to: <span className="font-semibold">{org.name}</span>. Only org members can fill this form.
+                  </p>
+                ) : (
+                  <p className="text-xs text-[#1B6B4A]">
+                    You don't have an organisation yet. <a href="/org" className="font-semibold underline">Create one</a> to use org-restricted access.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Group mode assignments */}
+            {accessMode === 'group' && (
+              <div className="flex flex-col gap-4">
+                {/* Existing assignments */}
+                {assignments.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm font-medium text-[#1A1A18]">Existing assignments</p>
+                    {assignments.map((a) => (
+                      <div key={a.id} className="bg-white border border-[#E8E8E4] rounded-xl px-4 py-3 flex items-center gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[#1A1A18] truncate">{a.groupName}</p>
+                          <p className="text-xs text-[#6B6B66]">
+                            {a.opensAt ? new Date(a.opensAt).toLocaleDateString() : 'No start'} — {a.closesAt ? new Date(a.closesAt).toLocaleDateString() : 'No end'}
+                            {' · '}{a.mode === 'attempt_once' ? 'One attempt' : 'Unlimited'}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteAssignment(a.id)}
+                          className="p-1.5 rounded-lg text-[#6B6B66] hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add assignment form */}
+                <div className="bg-white border border-[#E8E8E4] rounded-xl p-5">
+                  <p className="text-sm font-medium text-[#1A1A18] mb-3 flex items-center gap-1.5">
+                    <Plus size={14} /> Add assignment
+                  </p>
+                  {!org ? (
+                    <p className="text-xs text-[#6B6B66]">
+                      You need an organisation to assign groups. <a href="/org" className="text-[#1B6B4A] font-medium underline">Create one</a>
+                    </p>
+                  ) : orgGroups.length === 0 ? (
+                    <p className="text-xs text-[#6B6B66]">
+                      No groups found. <a href="/org" className="text-[#1B6B4A] font-medium underline">Create a group</a> first.
+                    </p>
+                  ) : (
+                    <form onSubmit={handleCreateAssignment} className="flex flex-col gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-[#6B6B66] mb-1 block">Assign to</label>
+                        <select
+                          value={newAssignment.groupId}
+                          onChange={(e) => setNewAssignment((p) => ({ ...p, groupId: e.target.value }))}
+                          required
+                          className="w-full border border-[#E8E8E4] rounded-lg px-3 py-2 text-sm text-[#1A1A18] bg-white focus:outline-none focus:ring-1 focus:ring-[#1B6B4A]"
+                        >
+                          <option value="">Select audience...</option>
+                          {orgGroups.filter((g) => g.isDefault).map((g) => (
+                            <option key={g.id} value={g.id}>All org members</option>
+                          ))}
+                          {orgGroups.filter((g) => !g.isDefault).length > 0 && (
+                            <optgroup label="Groups">
+                              {orgGroups.filter((g) => !g.isDefault).map((g) => (
+                                <option key={g.id} value={g.id}>{g.name}</option>
+                              ))}
+                            </optgroup>
+                          )}
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-medium text-[#6B6B66] mb-1 block">Opens at (optional)</label>
+                          <input
+                            type="datetime-local"
+                            value={newAssignment.opensAt}
+                            onChange={(e) => setNewAssignment((p) => ({ ...p, opensAt: e.target.value }))}
+                            className="w-full border border-[#E8E8E4] rounded-lg px-3 py-2 text-sm text-[#1A1A18] bg-white focus:outline-none focus:ring-1 focus:ring-[#1B6B4A]"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-[#6B6B66] mb-1 block">Closes at (optional)</label>
+                          <input
+                            type="datetime-local"
+                            value={newAssignment.closesAt}
+                            onChange={(e) => setNewAssignment((p) => ({ ...p, closesAt: e.target.value }))}
+                            className="w-full border border-[#E8E8E4] rounded-lg px-3 py-2 text-sm text-[#1A1A18] bg-white focus:outline-none focus:ring-1 focus:ring-[#1B6B4A]"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-[#6B6B66] mb-1 block">Attempt mode</label>
+                        <div className="flex gap-2">
+                          {(['attempt_once', 'unlimited'] as const).map((m) => (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => setNewAssignment((p) => ({ ...p, mode: m }))}
+                              className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all cursor-pointer ${
+                                newAssignment.mode === m
+                                  ? 'border-[#1B6B4A] bg-[#E8F5EE] text-[#1B6B4A]'
+                                  : 'border-[#E8E8E4] text-[#6B6B66] hover:border-[#1B6B4A]/40'
+                              }`}
+                            >
+                              {m === 'attempt_once' ? 'One attempt' : 'Unlimited'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <Button type="submit" isLoading={creatingAssignment} size="sm" className="w-full justify-center">
+                        Assign
+                      </Button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : showQuiz ? (
+        <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-base font-semibold text-[#1A1A18]">Quiz Mode</h2>
+                <p className="text-sm text-[#6B6B66] mt-0.5">Auto-score respondents and show results instantly</p>
+              </div>
+              <button
+                onClick={() => setShowQuiz(false)}
+                className="text-sm text-[#6B6B66] hover:text-[#1A1A18] transition-colors cursor-pointer"
+              >
+                ← Back to builder
+              </button>
+            </div>
+
+            {/* Toggle */}
+            <div className="bg-white border border-[#E8E8E4] rounded-xl p-5 flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-medium text-[#1A1A18]">Enable Quiz Mode</p>
+                <p className="text-xs text-[#6B6B66] mt-0.5">Scores are calculated server-side on submission</p>
+              </div>
+              <button
+                role="switch"
+                aria-checked={form?.isQuizMode ?? false}
+                onClick={() => setQuizMode(!(form?.isQuizMode ?? false))}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
+                  form?.isQuizMode ? 'bg-[#1B6B4A]' : 'bg-[#E8E8E4]'
+                }`}
+              >
+                <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform ${
+                  form?.isQuizMode ? 'translate-x-[18px]' : 'translate-x-0.5'
+                }`} />
+              </button>
+            </div>
+
+            {/* Pass mark */}
+            {form?.isQuizMode && (
+              <div className="bg-white border border-[#E8E8E4] rounded-xl p-5 mb-4">
+                <label className="text-sm font-medium text-[#1A1A18] block mb-2">
+                  Pass mark: <span className="text-[#1B6B4A] font-semibold">{form.passMark ?? 60}%</span>
+                </label>
+                <input
+                  type="range"
+                  min={0} max={100} step={5}
+                  value={form.passMark ?? 60}
+                  onChange={(e) => setPassMark(Number(e.target.value))}
+                  className="w-full accent-[#1B6B4A]"
+                />
+                <p className="text-xs text-[#6B6B66] mt-1.5">
+                  Respondents scoring at or above this threshold pass
+                </p>
+              </div>
+            )}
+
+            {form?.isQuizMode && (
+              <div className="bg-[#E8F5EE] border border-[#1B6B4A]/20 rounded-xl p-4">
+                <p className="text-xs text-[#1B6B4A] font-medium">
+                  💡 To mark correct answers and set point values, select a Radio, Checkbox, or Dropdown field in the canvas and edit it in the Field Properties panel.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">
           <div data-tour="field-picker" className={`${mobilePanel === 'fields' ? 'flex flex-1' : 'hidden'} lg:flex lg:flex-none`}>
@@ -365,6 +710,7 @@ export function FormBuilder() {
               <FieldEditor
                 field={selectedField}
                 allFields={fields}
+                isQuizMode={form?.isQuizMode ?? false}
                 onChange={(updates: Partial<FormField>) => updateField(selectedField.id, updates)}
               />
             ) : (

@@ -87,6 +87,10 @@ namespace FormFlow.Api.Migrations
                     b.Property<DateTime?>("AcceptUntil")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("AccessMode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("AllowAnonymous")
                         .HasColumnType("boolean");
 
@@ -115,8 +119,17 @@ namespace FormFlow.Api.Migrations
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsQuizMode")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("LimitOneResponse")
                         .HasColumnType("boolean");
+
+                    b.Property<Guid?>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("PassMark")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ResponseCount")
                         .HasColumnType("integer");
@@ -166,12 +179,52 @@ namespace FormFlow.Api.Migrations
 
                     b.HasIndex("ForkedFromId");
 
+                    b.HasIndex("OrgId");
+
                     b.HasIndex("Slug")
                         .IsUnique();
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Forms");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.FormAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ClosesAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FormId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("OpensAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("FormId", "GroupId")
+                        .IsUnique();
+
+                    b.ToTable("FormAssignments");
                 });
 
             modelBuilder.Entity("FormFlow.Api.Models.Entities.FormField", b =>
@@ -213,6 +266,9 @@ namespace FormFlow.Api.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 
+                    b.Property<JsonDocument>("QuizConfig")
+                        .HasColumnType("jsonb");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
@@ -245,6 +301,12 @@ namespace FormFlow.Api.Migrations
                     b.Property<bool>("IsComplete")
                         .HasColumnType("boolean");
 
+                    b.Property<bool?>("IsPassed")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("MaxScore")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("QrTokenId")
                         .HasColumnType("uuid");
 
@@ -254,6 +316,9 @@ namespace FormFlow.Api.Migrations
 
                     b.Property<DateTime>("SubmittedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("TotalScore")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserAgent")
                         .HasMaxLength(500)
@@ -266,6 +331,151 @@ namespace FormFlow.Api.Migrations
                     b.HasIndex("FormId", "SubmittedAt");
 
                     b.ToTable("FormResponses");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.GroupMember", b =>
+                {
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("GroupId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GroupMembers");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.OrgGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrgId");
+
+                    b.ToTable("OrgGroups");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.OrgInvite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrgId");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("OrgInvites");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.OrgMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("OrgId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("OrgMembers");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Organizations");
                 });
 
             modelBuilder.Entity("FormFlow.Api.Models.Entities.QrToken", b =>
@@ -416,6 +626,10 @@ namespace FormFlow.Api.Migrations
                         .HasForeignKey("ForkedFromId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("FormFlow.Api.Models.Entities.Organization", "Org")
+                        .WithMany()
+                        .HasForeignKey("OrgId");
+
                     b.HasOne("FormFlow.Api.Models.Entities.User", "User")
                         .WithMany("Forms")
                         .HasForeignKey("UserId")
@@ -424,7 +638,28 @@ namespace FormFlow.Api.Migrations
 
                     b.Navigation("ForkedFrom");
 
+                    b.Navigation("Org");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.FormAssignment", b =>
+                {
+                    b.HasOne("FormFlow.Api.Models.Entities.Form", "Form")
+                        .WithMany()
+                        .HasForeignKey("FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FormFlow.Api.Models.Entities.OrgGroup", "Group")
+                        .WithMany("Assignments")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("FormFlow.Api.Models.Entities.FormField", b =>
@@ -453,6 +688,77 @@ namespace FormFlow.Api.Migrations
                     b.Navigation("Form");
 
                     b.Navigation("QrToken");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.GroupMember", b =>
+                {
+                    b.HasOne("FormFlow.Api.Models.Entities.OrgGroup", "Group")
+                        .WithMany("Members")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FormFlow.Api.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.OrgGroup", b =>
+                {
+                    b.HasOne("FormFlow.Api.Models.Entities.Organization", "Org")
+                        .WithMany("Groups")
+                        .HasForeignKey("OrgId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Org");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.OrgInvite", b =>
+                {
+                    b.HasOne("FormFlow.Api.Models.Entities.Organization", "Org")
+                        .WithMany()
+                        .HasForeignKey("OrgId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Org");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.OrgMember", b =>
+                {
+                    b.HasOne("FormFlow.Api.Models.Entities.Organization", "Org")
+                        .WithMany("Members")
+                        .HasForeignKey("OrgId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FormFlow.Api.Models.Entities.User", "User")
+                        .WithMany("OrgMemberships")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Org");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.Organization", b =>
+                {
+                    b.HasOne("FormFlow.Api.Models.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("FormFlow.Api.Models.Entities.QrToken", b =>
@@ -498,6 +804,20 @@ namespace FormFlow.Api.Migrations
                     b.Navigation("Answers");
                 });
 
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.OrgGroup", b =>
+                {
+                    b.Navigation("Assignments");
+
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("FormFlow.Api.Models.Entities.Organization", b =>
+                {
+                    b.Navigation("Groups");
+
+                    b.Navigation("Members");
+                });
+
             modelBuilder.Entity("FormFlow.Api.Models.Entities.QrToken", b =>
                 {
                     b.Navigation("Responses");
@@ -506,6 +826,8 @@ namespace FormFlow.Api.Migrations
             modelBuilder.Entity("FormFlow.Api.Models.Entities.User", b =>
                 {
                     b.Navigation("Forms");
+
+                    b.Navigation("OrgMemberships");
 
                     b.Navigation("RefreshTokens");
                 });

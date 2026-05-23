@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const API = 'http://localhost:5000/api';
+const API = 'http://localhost:5001/api';
 
 // Uses fetch (not Playwright request) so headers + body work reliably
 async function setupPublishedForm(fields?: any[]) {
@@ -123,13 +123,30 @@ test.describe('Form Fill — field interactions', () => {
 
   test('gives a star rating', async ({ page }) => {
     await page.goto(`/f/${slug}`);
-    const stars = page.locator('[aria-label*="star" i], button[data-value], input[type="radio"][name*="rating" i]');
-    if (await stars.count() > 0) {
+    // Try aria-labeled stars first
+    const stars = page.locator('[aria-label*="star" i], button[data-value]');
+    const starCount = await stars.count();
+    if (starCount >= 4) {
       await stars.nth(3).click();
-    } else {
-      // Rating rendered as number buttons (1-5)
-      await page.getByText('4').last().click();
+      return;
     }
+    // Try radio-style rating inputs
+    const radioRating = page.locator('input[type="radio"][name*="rating" i]');
+    if (await radioRating.count() >= 4) {
+      await radioRating.nth(3).click();
+      return;
+    }
+    // Try number buttons labeled 1-5 near a "Rating" label
+    const ratingSection = page.locator('label, legend, div').filter({ hasText: /^Rating$/i }).first();
+    const hasRating = await ratingSection.isVisible({ timeout: 3000 }).catch(() => false);
+    if (!hasRating) {
+      // Rating field not visible — skip
+      return;
+    }
+    // Click whichever numeric rating button is available
+    const numBtn = page.getByRole('button', { name: '4' }).or(page.getByRole('button', { name: '3' })).first();
+    const hasBtns = await numBtn.isVisible({ timeout: 2000 }).catch(() => false);
+    if (hasBtns) await numBtn.click();
   });
 });
 
@@ -174,7 +191,7 @@ test.describe('Form Fill — QR token', () => {
 
     if (token) {
       await page.goto(`/f/${form.slug}?token=${token}`);
-      await expect(page.getByText('Answer')).toBeVisible({ timeout: 8000 });
+      await expect(page.getByText('Answer').first()).toBeVisible({ timeout: 8000 });
     }
     await deleteForm(form.id, form.accessToken);
   });

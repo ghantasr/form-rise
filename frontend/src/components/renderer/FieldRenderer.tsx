@@ -300,6 +300,7 @@ export function FieldRenderer({
               <button
                 key={star}
                 type="button"
+                aria-label={`${star} star`}
                 onClick={() => onChange(star)}
                 className="cursor-pointer transition-transform hover:scale-110 active:scale-95 focus:outline-none touch-manipulation p-1"
               >
