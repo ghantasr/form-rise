@@ -13,6 +13,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<QrToken> QrTokens => Set<QrToken>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<FieldDropoff> FieldDropoffs => Set<FieldDropoff>();
+    public DbSet<Organization> Organizations => Set<Organization>();
+    public DbSet<OrgMember> OrgMembers => Set<OrgMember>();
+    public DbSet<OrgGroup> OrgGroups => Set<OrgGroup>();
+    public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
+    public DbSet<FormAssignment> FormAssignments => Set<FormAssignment>();
+    public DbSet<OrgInvite> OrgInvites => Set<OrgInvite>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,6 +52,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(ff => ff.Validation).HasColumnType("jsonb");
             e.Property(ff => ff.Conditional).HasColumnType("jsonb");
             e.Property(ff => ff.Translations).HasColumnType("jsonb");
+            e.Property(ff => ff.QuizConfig).HasColumnType("jsonb");
             e.HasMany(ff => ff.Answers).WithOne(a => a.Field).HasForeignKey(a => a.FieldId).OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -76,6 +83,50 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<RefreshToken>(e =>
         {
             e.HasIndex(r => r.UserId);
+        });
+
+        // Organization
+        modelBuilder.Entity<Organization>(e =>
+        {
+            e.HasIndex(o => o.Slug).IsUnique();
+            e.HasOne(o => o.Creator).WithMany().HasForeignKey(o => o.CreatedBy).OnDelete(DeleteBehavior.Restrict);
+            e.HasMany(o => o.Members).WithOne(m => m.Org).HasForeignKey(m => m.OrgId).OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(o => o.Groups).WithOne(g => g.Org).HasForeignKey(g => g.OrgId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // OrgMember — unique per org+user
+        modelBuilder.Entity<OrgMember>(e =>
+        {
+            e.HasIndex(m => new { m.OrgId, m.UserId }).IsUnique();
+            e.HasOne(m => m.User).WithMany(u => u.OrgMemberships).HasForeignKey(m => m.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // OrgGroup
+        modelBuilder.Entity<OrgGroup>(e =>
+        {
+            e.HasMany(g => g.Members).WithOne(gm => gm.Group).HasForeignKey(gm => gm.GroupId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // GroupMember — composite PK
+        modelBuilder.Entity<GroupMember>(e =>
+        {
+            e.HasKey(gm => new { gm.GroupId, gm.UserId });
+            e.HasOne(gm => gm.User).WithMany().HasForeignKey(gm => gm.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // FormAssignment
+        modelBuilder.Entity<FormAssignment>(e =>
+        {
+            e.HasOne(a => a.Form).WithMany().HasForeignKey(a => a.FormId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(a => a.Group).WithMany(g => g.Assignments).HasForeignKey(a => a.GroupId).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(a => new { a.FormId, a.GroupId }).IsUnique();
+        });
+
+        // OrgInvite
+        modelBuilder.Entity<OrgInvite>(e =>
+        {
+            e.HasIndex(i => i.Token).IsUnique();
+            e.HasOne(i => i.Org).WithMany().HasForeignKey(i => i.OrgId).OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

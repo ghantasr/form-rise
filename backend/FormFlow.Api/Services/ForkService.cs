@@ -46,6 +46,8 @@ public class ForkService(AppDbContext db, IDistributedCache cache) : IForkServic
             AllowAnonymous = original.AllowAnonymous,
             CollectEmail = original.CollectEmail,
             ThankYouMsg = original.ThankYouMsg,
+            IsQuizMode = original.IsQuizMode,
+            PassMark = original.PassMark,
             ForkedFromId = original.Id,
             Fields = original.Fields.Select(f => new FormField
             {
@@ -57,7 +59,8 @@ public class ForkService(AppDbContext db, IDistributedCache cache) : IForkServic
                 SortOrder = f.SortOrder,
                 Options = f.Options,
                 Validation = f.Validation,
-                Conditional = f.Conditional
+                Conditional = f.Conditional,
+                QuizConfig = f.QuizConfig
             }).ToList()
         };
 
@@ -72,16 +75,19 @@ public class ForkService(AppDbContext db, IDistributedCache cache) : IForkServic
             forked.Id, forked.Slug, forked.Title, forked.Description, forked.Status,
             forked.IsPublic, forked.AllowAnonymous, forked.CollectEmail,
             forked.LimitOneResponse, forked.ShuffleFields, forked.ShowProgress,
+            forked.IsQuizMode, forked.PassMark,
             forked.AcceptFrom, forked.AcceptUntil, forked.AllowedEmails, forked.ThankYouMsg,
             forked.ForkedFromId, forked.ForkCount, forked.ResponseCount, forked.ViewCount,
             forked.CreatedAt, forked.UpdatedAt,
             forked.Fields.Select(ff => new FormFieldDto(
                 ff.Id, ff.FieldType, ff.Label, ff.Placeholder, ff.HelpText,
-                ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations
+                ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations, ff.QuizConfig
             )).ToList(),
             forked.EnabledLanguages,
             forked.Translations,
-            forked.Theme  // serializes as "themeId"
+            forked.Theme,  // serializes as "themeId"
+            forked.AccessMode,
+            forked.OrgId
         );
     }
 

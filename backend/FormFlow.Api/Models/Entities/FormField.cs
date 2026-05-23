@@ -27,6 +27,7 @@ public class FormField
     public JsonDocument? Validation { get; set; }
     public JsonDocument? Conditional { get; set; }
     public JsonDocument? Translations { get; set; }
+    public JsonDocument? QuizConfig { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

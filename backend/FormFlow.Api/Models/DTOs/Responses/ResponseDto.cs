@@ -6,7 +6,10 @@ public record ResponseDto(
     string? RespondentEmail,
     bool IsComplete,
     DateTime SubmittedAt,
-    List<AnswerDto> Answers
+    List<AnswerDto> Answers,
+    int? TotalScore,
+    int? MaxScore,
+    bool? IsPassed
 );
 
 public record AnswerDto(
@@ -14,5 +17,7 @@ public record AnswerDto(
     string? FieldLabel,
     string? Value,
     string[]? ValuesArray,
-    double? NumericValue
+    double? NumericValue,
+    bool? IsCorrect,
+    string? Explanation
 );

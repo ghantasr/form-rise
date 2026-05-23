@@ -22,4 +22,5 @@ public class User
 
     public ICollection<Form> Forms { get; set; } = [];
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+    public ICollection<OrgMember> OrgMemberships { get; set; } = [];
 }

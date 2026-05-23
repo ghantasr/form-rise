@@ -25,12 +25,18 @@ public class Form
     public bool LimitOneResponse { get; set; } = false;
     public bool ShuffleFields { get; set; } = false;
     public bool ShowProgress { get; set; } = true;
+    public bool IsQuizMode { get; set; } = false;
+    public int PassMark { get; set; } = 60;
 
     public DateTime? AcceptFrom { get; set; }
     public DateTime? AcceptUntil { get; set; }
     public string[]? AllowedEmails { get; set; }
 
     public string ThankYouMsg { get; set; } = "Thank you for your response!";
+
+    public Guid? OrgId { get; set; }
+    public Organization? Org { get; set; }
+    public string AccessMode { get; set; } = "public"; // "public" | "org" | "group" | "invite_only"
 
     public Guid? ForkedFromId { get; set; }
     public int ForkCount { get; set; } = 0;

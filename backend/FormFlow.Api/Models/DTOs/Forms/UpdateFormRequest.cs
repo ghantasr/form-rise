@@ -12,12 +12,16 @@ public record UpdateFormRequest(
     bool? LimitOneResponse,
     bool? ShuffleFields,
     bool? ShowProgress,
+    bool? IsQuizMode,
+    int? PassMark,
     DateTime? AcceptFrom,
     DateTime? AcceptUntil,
     string[]? AllowedEmails,
     string? ThankYouMsg,
     [MaxLength(50)] string? ThemeId,
-    List<FieldUpdateDto>? Fields
+    List<FieldUpdateDto>? Fields,
+    string? AccessMode,
+    Guid? OrgId
 );
 
 public record FieldUpdateDto(
@@ -31,5 +35,6 @@ public record FieldUpdateDto(
     JsonDocument? Options,
     JsonDocument? Validation,
     JsonDocument? Conditional,
-    JsonDocument? Translations
+    JsonDocument? Translations,
+    JsonDocument? QuizConfig
 );

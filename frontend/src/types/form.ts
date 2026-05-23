@@ -22,6 +22,16 @@ export interface FormTranslations {
   };
 }
 
+export type QuizMatchType = 'exact' | 'normalized' | 'contains' | 'startsWith' | 'pattern';
+
+export interface QuizConfig {
+  correctAnswers: string[];   // option labels / text values / numeric strings / date strings
+  points: number;
+  explanation?: string;
+  matchType?: QuizMatchType;  // text fields only, default 'exact'
+  tolerance?: number;         // number fields only, ±tolerance (default 0)
+}
+
 export interface FormField {
   id: string;
   fieldType: FieldType;
@@ -42,12 +52,15 @@ export interface FormField {
     showIf?: { fieldId: string; equals: string };
   };
   translations?: FieldTranslations;
+  quizConfig?: QuizConfig;
 }
 
 export interface Form {
   id: string;
   slug: string;
   title: string;
+  accessMode: string;
+  orgId?: string;
   description?: string;
   status: 'draft' | 'active' | 'paused' | 'closed';
   isPublic: boolean;
@@ -56,6 +69,8 @@ export interface Form {
   limitOneResponse: boolean;
   shuffleFields: boolean;
   showProgress: boolean;
+  isQuizMode: boolean;
+  passMark: number;
   acceptFrom?: string;
   acceptUntil?: string;
   allowedEmails?: string[];

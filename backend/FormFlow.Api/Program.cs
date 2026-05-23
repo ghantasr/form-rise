@@ -76,6 +76,8 @@ builder.Services.AddScoped<IResponseService, ResponseService>();
 builder.Services.AddScoped<IQrService, QrService>();
 builder.Services.AddScoped<IForkService, ForkService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddScoped<IOrgService, OrgService>();
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>

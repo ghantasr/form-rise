@@ -176,6 +176,13 @@ export function FormResponses() {
                           {response.respondentEmail}
                         </p>
                       )}
+                      {form?.isQuizMode && response.totalScore !== undefined && (
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="text-sm font-medium text-[#1A1A18]">{response.totalScore}/{response.maxScore}</span>
+                          {response.isPassed === true && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 text-green-700">Passed</span>}
+                          {response.isPassed === false && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Failed</span>}
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDeleteResponse(response.id); }}
@@ -202,21 +209,21 @@ export function FormResponses() {
             {/* Desktop: table layout */}
             <div className="hidden md:block bg-white border border-[#E8E8E4] rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="text-sm table-fixed" style={{ minWidth: `${160 + 176 + fields.length * 176 + 56}px` }}>
+                <table className="text-sm table-fixed" style={{ minWidth: `${160 + 176 + (form?.isQuizMode ? 180 : 0) + fields.length * 176 + 56}px` }}>
                   <colgroup>
                     <col style={{ width: 160 }} />
                     <col style={{ width: 176 }} />
+                    {form?.isQuizMode && <col style={{ width: 90 }} />}
+                    {form?.isQuizMode && <col style={{ width: 90 }} />}
                     {fields.map((f) => <col key={f.id} style={{ width: 176 }} />)}
                     <col style={{ width: 56 }} />
                   </colgroup>
                   <thead>
                     <tr className="border-b border-[#E8E8E4] bg-[#FAFAF8]">
-                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">
-                        Submitted at
-                      </th>
-                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">
-                        Email
-                      </th>
+                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">Submitted at</th>
+                      <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">Email</th>
+                      {form?.isQuizMode && <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">Score</th>}
+                      {form?.isQuizMode && <th className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate">Result</th>}
                       {fields.map((f) => (
                         <th key={f.id} className="text-left px-4 py-3 font-semibold text-[#6B6B66] truncate" title={f.label}>
                           {f.label}
@@ -234,12 +241,20 @@ export function FormResponses() {
                           i % 2 === 0 ? '' : 'bg-[#FAFAF8]'
                         } ${selectedResponse?.id === response.id ? 'bg-[#E8F5EE]' : ''}`}
                       >
-                        <td className="px-4 py-3 text-[#1A1A18] truncate">
-                          {new Date(response.submittedAt).toLocaleString()}
-                        </td>
-                        <td className="px-4 py-3 text-[#6B6B66] truncate">
-                          {response.respondentEmail ?? '—'}
-                        </td>
+                        <td className="px-4 py-3 text-[#1A1A18] truncate">{new Date(response.submittedAt).toLocaleString()}</td>
+                        <td className="px-4 py-3 text-[#6B6B66] truncate">{response.respondentEmail ?? '—'}</td>
+                        {form?.isQuizMode && (
+                          <td className="px-4 py-3 text-[#1A1A18] font-medium">
+                            {response.totalScore !== undefined ? `${response.totalScore}/${response.maxScore}` : '—'}
+                          </td>
+                        )}
+                        {form?.isQuizMode && (
+                          <td className="px-4 py-3">
+                            {response.isPassed === true && <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Passed</span>}
+                            {response.isPassed === false && <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Failed</span>}
+                            {response.isPassed === undefined && '—'}
+                          </td>
+                        )}
                         {fields.map((f) => (
                           <td key={f.id} className="px-4 py-3 text-[#1A1A18] truncate" title={getAnswerDisplay(response, f.id)}>
                             {getAnswerDisplay(response, f.id)}

@@ -96,15 +96,21 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
 // ---------------------------------------------------------------------------
 // Lazy page imports — all wrapped with retry-on-chunk-error
 // ---------------------------------------------------------------------------
-const Landing       = lazyWithRetry(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
-const Login         = lazyWithRetry(() => import('./pages/Login').then(m => ({ default: m.Login })));
-const Dashboard     = lazyWithRetry(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
-const FormBuilder   = lazyWithRetry(() => import('./pages/FormBuilder').then(m => ({ default: m.FormBuilder })));
-const FormResponses = lazyWithRetry(() => import('./pages/FormResponses').then(m => ({ default: m.FormResponses })));
-const FormFill      = lazyWithRetry(() => import('./pages/FormFill').then(m => ({ default: m.FormFill })));
-const ThankYou      = lazyWithRetry(() => import('./pages/ThankYou').then(m => ({ default: m.ThankYou })));
-const Templates     = lazyWithRetry(() => import('./pages/Templates').then(m => ({ default: m.Templates })));
-const Settings      = lazyWithRetry(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
+const Landing             = lazyWithRetry(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
+const Login               = lazyWithRetry(() => import('./pages/Login').then(m => ({ default: m.Login })));
+const Dashboard           = lazyWithRetry(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const FormBuilder         = lazyWithRetry(() => import('./pages/FormBuilder').then(m => ({ default: m.FormBuilder })));
+const FormResponses       = lazyWithRetry(() => import('./pages/FormResponses').then(m => ({ default: m.FormResponses })));
+const FormFill            = lazyWithRetry(() => import('./pages/FormFill').then(m => ({ default: m.FormFill })));
+const ThankYou            = lazyWithRetry(() => import('./pages/ThankYou').then(m => ({ default: m.ThankYou })));
+const Templates           = lazyWithRetry(() => import('./pages/Templates').then(m => ({ default: m.Templates })));
+const Settings            = lazyWithRetry(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
+const JoinOrg             = lazyWithRetry(() => import('./pages/JoinOrg').then(m => ({ default: m.JoinOrg })));
+const OrgDashboard        = lazyWithRetry(() => import('./pages/OrgDashboard').then(m => ({ default: m.OrgDashboard })));
+const AssignmentResults   = lazyWithRetry(() => import('./pages/AssignmentResults').then(m => ({ default: m.AssignmentResults })));
+const MyResults           = lazyWithRetry(() => import('./pages/MyResults').then(m => ({ default: m.MyResults })));
+const MyAssignments       = lazyWithRetry(() => import('./pages/MyAssignments').then(m => ({ default: m.MyAssignments })));
+const Privacy             = lazyWithRetry(() => import('./pages/Privacy').then(m => ({ default: m.Privacy })));
 
 const SESSION_HINT_KEY = 'fr_has_session';
 
@@ -240,17 +246,23 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/f/:slug" element={<FormFill />} />
               <Route path="/f/:slug/thank-you" element={<ThankYou />} />
+              <Route path="/join/:token" element={<JoinOrg />} />
 
               <Route element={<AppShell />}>
-                <Route path="/templates" element={<Templates />} />
                 <Route element={<RequireAuth />}>
+                  <Route path="/templates" element={<Templates />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/forms/new" element={<FormBuilder />} />
                   <Route path="/forms/:id/edit" element={<FormBuilder />} />
                   <Route path="/forms/:id/responses" element={<FormResponses />} />
+                  <Route path="/forms/:formId/assignments/:assignmentId" element={<AssignmentResults />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="/org" element={<OrgDashboard />} />
+                  <Route path="/my-results" element={<MyResults />} />
+                  <Route path="/my-assignments" element={<MyAssignments />} />
                 </Route>
               </Route>
             </Routes>

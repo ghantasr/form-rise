@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Layers, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Layers, Settings, LogOut, Building2, Trophy, ClipboardList } from 'lucide-react';
 import { authApi } from '../../api/auth';
 import { useAuthStore } from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,13 @@ import { LogoMark } from '../shared/LogoMark';
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/templates', icon: Layers, label: 'Templates' },
+  { to: '/org', icon: Building2, label: 'My Organisation' },
   { to: '/settings', icon: Settings, label: 'Settings' },
+];
+
+const authNavItems = [
+  { to: '/my-assignments', icon: ClipboardList, label: 'My Assignments' },
+  { to: '/my-results', icon: Trophy, label: 'My Results' },
 ];
 
 interface SidebarProps {
@@ -54,6 +60,23 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Nav */}
       <nav className="flex-1 px-2.5 flex flex-col gap-0.5">
         {navItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            onClick={handleNavClick}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all ${
+                isActive
+                  ? 'text-white bg-white/10'
+                  : 'text-white/40 hover:text-white/75 hover:bg-white/[0.06]'
+              }`
+            }
+          >
+            <Icon size={15} strokeWidth={1.8} />
+            {label}
+          </NavLink>
+        ))}
+        {user && authNavItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}

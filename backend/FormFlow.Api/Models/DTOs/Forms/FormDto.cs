@@ -14,6 +14,8 @@ public record FormDto(
     bool LimitOneResponse,
     bool ShuffleFields,
     bool ShowProgress,
+    bool IsQuizMode,
+    int PassMark,
     DateTime? AcceptFrom,
     DateTime? AcceptUntil,
     string[]? AllowedEmails,
@@ -27,7 +29,9 @@ public record FormDto(
     List<FormFieldDto> Fields,
     string[] EnabledLanguages,
     JsonDocument? Translations,
-    string? ThemeId
+    string? ThemeId,
+    string AccessMode,
+    Guid? OrgId
 );
 
 public record FormFieldDto(
@@ -41,7 +45,8 @@ public record FormFieldDto(
     JsonDocument? Options,
     JsonDocument? Validation,
     JsonDocument? Conditional,
-    JsonDocument? Translations
+    JsonDocument? Translations,
+    JsonDocument? QuizConfig
 );
 
 public record FormListItemDto(

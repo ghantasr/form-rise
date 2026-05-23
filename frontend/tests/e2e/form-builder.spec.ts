@@ -38,9 +38,9 @@ test.describe('Form Builder — adding fields', () => {
 
   for (const { btn } of FIELD_BUTTONS) {
     test(`can add "${btn}" field`, async ({ page }) => {
-      await page.getByRole('button', { name: btn }).click();
+      await page.getByRole('button', { name: btn }).first().click();
       // Field appears in canvas — check the button is still visible (field added)
-      await expect(page.getByRole('button', { name: btn })).toBeVisible();
+      await expect(page.getByRole('button', { name: btn }).first()).toBeVisible();
     });
   }
 });
@@ -69,7 +69,7 @@ test.describe('Form Builder — field editing', () => {
 
   test('required toggle marks field as required', async ({ page }) => {
     await page.locator('text=Short text').last().click();
-    await page.getByText('Required').click();
+    await page.getByText('Required', { exact: true }).first().click();
     await expect(page.getByText('Respondents must answer')).toBeVisible();
   });
 

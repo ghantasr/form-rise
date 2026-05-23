@@ -81,7 +81,7 @@ public class AuthService(
         var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user is null)
         {
-            user = new User { Email = email, IsVerified = true };
+            user = new User { Email = email, DisplayName = DeriveDisplayName(email), IsVerified = true };
             db.Users.Add(user);
         }
         else
@@ -209,6 +209,13 @@ public class AuthService(
             jwt.GenerateAccessToken(user),
             rawRefreshToken,
             new UserDto(user.Id, user.Email, user.DisplayName, user.AvatarUrl));
+    }
+
+    private static string DeriveDisplayName(string email)
+    {
+        var local = email.Split('@')[0];
+        var words = local.Split(['.', '_', '-'], StringSplitOptions.RemoveEmptyEntries);
+        return string.Join(" ", words.Select(w => char.ToUpper(w[0]) + w[1..]));
     }
 
     private static string GenerateOtp()

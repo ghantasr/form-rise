@@ -73,9 +73,12 @@ export function Settings() {
 
           <div>
             <p className="text-xs font-medium text-[#6B6B66] mb-1.5">Email address</p>
-            <p className="text-sm text-[#141412] font-medium bg-[#F5F4F1] border border-[#E4E4E0] rounded-lg px-3 py-2.5 truncate">
-              {user?.email ?? '—'}
-            </p>
+            <input
+              type="email"
+              readOnly
+              value={user?.email ?? ''}
+              className="w-full px-3 py-2.5 border border-[#E4E4E0] rounded-xl text-sm text-[#6B6B66] bg-[#F7F7F5] cursor-not-allowed"
+            />
             <p className="text-xs text-[#6B6B66] mt-1">Email cannot be changed.</p>
           </div>
         </div>
@@ -84,6 +87,11 @@ export function Settings() {
       <Button onClick={handleSave} isLoading={saving}>
         Save changes
       </Button>
+
+      <p className="text-xs text-[#6B6B66] mt-6">
+        <a href="/privacy" className="hover:text-[#1B6B4A] transition-colors">Privacy Policy</a>
+        {' '}· FormRise does not sell your data or use advertising cookies.
+      </p>
     </div>
   );
 }

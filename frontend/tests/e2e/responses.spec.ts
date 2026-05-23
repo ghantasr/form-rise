@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures/index';
 
-const API = 'http://localhost:5000/api';
+const API = 'http://localhost:5001/api';
 
 async function submitResponse(slug: string, answers: any[] = []) {
   return fetch(`${API}/f/${slug}/submit`, {
@@ -21,7 +21,7 @@ test.describe('Responses — table view', () => {
     const form = await createTestForm('Has Responses Form', true);
     await submitResponse(form.slug!, []);
     await page.goto(`/forms/${form.id}/responses`);
-    await expect(page.getByText('respondent@example.com')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('cell', { name: 'respondent@example.com' })).toBeVisible({ timeout: 5000 });
   });
 
   test('clicking a response row opens slide-out detail panel', async ({ page, createTestForm }) => {
@@ -84,7 +84,7 @@ test.describe('Responses — pagination', () => {
       await submitResponse(form.slug!, []);
     }
     await page.goto(`/forms/${form.id}/responses`);
-    await expect(page.getByText('respondent@example.com').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('cell', { name: 'respondent@example.com' }).first()).toBeVisible({ timeout: 5000 });
   });
 });
 

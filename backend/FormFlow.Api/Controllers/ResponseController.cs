@@ -12,6 +12,7 @@ namespace FormFlow.Api.Controllers;
 public class ResponseController(IResponseService responseService) : ControllerBase
 {
     private Guid UserId => Guid.Parse(User.FindFirstValue("sub")!);
+    private Guid? CurrentUserId => User.FindFirstValue("sub") is string s ? Guid.Parse(s) : null;
 
     [HttpPost("api/f/{slug}/submit")]
     [EnableRateLimiting("submit")]
@@ -19,7 +20,7 @@ public class ResponseController(IResponseService responseService) : ControllerBa
     {
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
         var ua = Request.Headers.UserAgent.ToString();
-        var result = await responseService.SubmitAsync(slug, req, ip, ua);
+        var result = await responseService.SubmitAsync(slug, req, ip, ua, CurrentUserId);
         return Ok(result);
     }
 

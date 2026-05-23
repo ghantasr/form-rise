@@ -2,7 +2,7 @@ import { test as base, expect, Page } from '@playwright/test';
 
 export type FormData = { id: string; slug?: string };
 
-const API = 'http://localhost:5000/api';
+const API = 'http://localhost:5001/api';
 
 export const test = base.extend<{
   authToken: string;
@@ -32,6 +32,13 @@ export const test = base.extend<{
         body: JSON.stringify({ accessToken: authToken, user }),
       })
     );
+
+    // Dismiss tour and checklist so they don't block interactions; set session flag so AppInitializer attempts refresh
+    await page.addInitScript(() => {
+      localStorage.setItem('fr_has_session', '1');
+      localStorage.setItem('fr_tour_done', '1');
+      localStorage.setItem('fr_checklist_dismissed', '1');
+    });
 
     await use(page);
   },

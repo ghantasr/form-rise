@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures/index';
 
-const API = 'http://localhost:5000/api';
+const API = 'http://localhost:5001/api';
 
 test.describe('QR Codes — generation', () => {
   test('QR Codes button opens modal with Generate button on published form', async ({ page, createTestForm }) => {

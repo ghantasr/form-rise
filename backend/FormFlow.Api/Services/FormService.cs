@@ -84,11 +84,15 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
         if (req.LimitOneResponse is not null) form.LimitOneResponse = req.LimitOneResponse.Value;
         if (req.ShuffleFields is not null) form.ShuffleFields = req.ShuffleFields.Value;
         if (req.ShowProgress is not null) form.ShowProgress = req.ShowProgress.Value;
+        if (req.IsQuizMode is not null) form.IsQuizMode = req.IsQuizMode.Value;
+        if (req.PassMark is not null) form.PassMark = req.PassMark.Value;
         if (req.AcceptFrom is not null) form.AcceptFrom = req.AcceptFrom;
         if (req.AcceptUntil is not null) form.AcceptUntil = req.AcceptUntil;
         if (req.AllowedEmails is not null) form.AllowedEmails = req.AllowedEmails;
         if (req.ThankYouMsg is not null) form.ThankYouMsg = req.ThankYouMsg;
         if (req.ThemeId is not null) form.Theme = req.ThemeId;
+        if (req.AccessMode is not null) form.AccessMode = req.AccessMode;
+        if (req.OrgId is not null) form.OrgId = req.OrgId;
 
         if (req.Fields is not null)
         {
@@ -107,8 +111,9 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
                 Options = f.Options,
                 Validation = f.Validation,
                 Conditional = f.Conditional,
-                // Preserve saved translations when the client doesn't send any (auto-save never carries them)
-                Translations = f.Translations ?? (f.Id.HasValue && existingById.TryGetValue(f.Id.Value, out var prev) ? prev.Translations : null)
+                // Preserve saved translations and quiz config when the client doesn't send them (auto-save may not carry them)
+                Translations = f.Translations ?? (f.Id.HasValue && existingById.TryGetValue(f.Id.Value, out var prev) ? prev.Translations : null),
+                QuizConfig = f.QuizConfig ?? (f.Id.HasValue && existingById.TryGetValue(f.Id.Value, out var prevQ) ? prevQ.QuizConfig : null)
             }).ToList();
             db.FormFields.AddRange(newFields);
             form.Fields = newFields;
@@ -157,15 +162,18 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
         form.Id, form.Slug, form.Title, form.Description, form.Status,
         form.IsPublic, form.AllowAnonymous, form.CollectEmail,
         form.LimitOneResponse, form.ShuffleFields, form.ShowProgress,
+        form.IsQuizMode, form.PassMark,
         form.AcceptFrom, form.AcceptUntil, form.AllowedEmails, form.ThankYouMsg,
         form.ForkedFromId, form.ForkCount, form.ResponseCount, form.ViewCount,
         form.CreatedAt, form.UpdatedAt,
         form.Fields.OrderBy(f => f.SortOrder).Select(ff => new FormFieldDto(
             ff.Id, ff.FieldType, ff.Label, ff.Placeholder, ff.HelpText,
-            ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations
+            ff.IsRequired, ff.SortOrder, ff.Options, ff.Validation, ff.Conditional, ff.Translations, ff.QuizConfig
         )).ToList(),
         form.EnabledLanguages,
         form.Translations,
-        form.Theme  // serializes as "themeId" via camelCase policy
+        form.Theme,  // serializes as "themeId" via camelCase policy
+        form.AccessMode,
+        form.OrgId
     );
 }

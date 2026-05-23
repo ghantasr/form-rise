@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { formsApi } from '../api/forms';
+import { authApi } from '../api/auth';
 import { responsesApi, type SubmitAnswerDto } from '../api/responses';
+import { studentsApi } from '../api/orgs';
 import { offlineQueue } from '../stores/offlineStore';
+import { useAuthStore } from '../stores/authStore';
 import { validateField } from '../utils/validation';
 import { FieldRenderer } from '../components/renderer/FieldRenderer';
 import { Button } from '../components/shared/Button';
@@ -15,12 +19,12 @@ import type { Form, FormField } from '../types/form';
 // ── Scenario screen shared by closed / paused / date-restricted states ────────
 function ScenarioScreen({
   themeVars, bg, cardBg, border, text, muted, primary, primaryLight,
-  icon, title, subtitle,
+  icon, title, subtitle, action,
 }: {
   themeVars: React.CSSProperties;
   bg: string; cardBg: string; border: string; text: string; muted: string;
   primary: string; primaryLight: string;
-  icon: string; title: string; subtitle?: string;
+  icon: string; title: string; subtitle?: string; action?: React.ReactNode;
 }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 form-themed" style={{ ...themeVars, backgroundColor: bg }}>
@@ -31,6 +35,7 @@ function ScenarioScreen({
           </div>
           <h1 className="text-xl font-bold mb-2" style={{ color: text }}>{title}</h1>
           {subtitle && <p className="text-sm leading-relaxed" style={{ color: muted }}>{subtitle}</p>}
+          {action && <div className="mt-5">{action}</div>}
         </div>
         <p className="text-center text-xs mt-4" style={{ color: muted }}>
           Powered by <span className="font-semibold" style={{ color: primary }}>FormRise™</span>
@@ -45,17 +50,78 @@ function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, { dateStyle: 'long' });
 }
 
+function SignInToAccessScreen({ slug }: { slug: string }) {
+  const login = useAuthStore((s) => s.login);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (response) => {
+      setLoading(true);
+      setError('');
+      try {
+        const { data } = await authApi.googleLogin(response.access_token);
+        login(data.accessToken, data.user);
+        navigate(`/f/${slug}`, { replace: true });
+      } catch {
+        setError('Google sign-in failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => setError('Google sign-in was cancelled or failed.'),
+    flow: 'implicit',
+    scope: 'openid email profile',
+  });
+
+  return (
+    <div className="min-h-screen bg-[#F7F7F5] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        <div className="bg-white border border-[#E8E8E4] rounded-xl p-8 text-center shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-[#E8F5EE] flex items-center justify-center mx-auto mb-5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="11" width="18" height="11" rx="2" stroke="#1B6B4A" strokeWidth="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#1B6B4A" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <h1 className="text-xl font-bold text-[#1A1A18] mb-2">Sign in to access this form</h1>
+          <p className="text-sm text-[#6B6B66] mb-6">This form is restricted. Please sign in to continue.</p>
+          <button
+            type="button"
+            onClick={() => googleLogin()}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-[#E4E4E0] rounded-lg bg-white hover:bg-[#F5F5F3] transition-colors text-sm font-medium text-[#1A1A18] disabled:opacity-60 cursor-pointer"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+              <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+              <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+              <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+            </svg>
+            {loading ? 'Signing in...' : 'Continue with Google'}
+          </button>
+          {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function FormFill() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const qrToken   = searchParams.get('token') ?? undefined;
   const isPreview = searchParams.get('preview') === 'true';
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isAuthLoading = useAuthStore((s) => s.isLoading);
 
   const [form, setForm]             = useState<Form | null>(null);
   const [loading, setLoading]       = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError]           = useState<string | null>(null);
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [values, setValues]         = useState<Record<string, unknown>>({});
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [activeLang, setActiveLang] = useState<string | null>(null);
@@ -109,6 +175,17 @@ export function FormFill() {
         : 'This form is not available or does not exist.'))
       .finally(() => setLoading(false));
   }, [slug]);
+
+  // Check if the logged-in user has already submitted this quiz under an attempt_once assignment
+  useEffect(() => {
+    if (!form?.isQuizMode || !isAuthenticated || isPreview) return;
+    studentsApi.getMyAssignments()
+      .then(({ data }) => {
+        const match = data.find((a) => a.formSlug === slug && a.mode === 'attempt_once' && a.hasSubmitted);
+        if (match) setAlreadySubmitted(true);
+      })
+      .catch(() => {});
+  }, [form?.isQuizMode, slug, isAuthenticated, isPreview]);
 
   useEffect(() => {
     if (!slug || isPreview) return;
@@ -224,8 +301,25 @@ export function FormFill() {
       }
       const ids = Array.from(reachedFields.current);
       if (ids.length) formsApi.recordFieldReach(slug, ids).catch(() => {});
-      await responsesApi.submit(slug, respondentEmail, qrToken, answers);
-      navigate(`/f/${slug}/thank-you`, { state: { thankYouMsg: getFormText(form).thankYouMsg } });
+      const { data: submitResult } = await responsesApi.submit(slug, respondentEmail, qrToken, answers);
+      const thankYouMsg = getFormText(form).thankYouMsg;
+      if (form.isQuizMode && submitResult.totalScore !== undefined) {
+        navigate(`/f/${slug}/thank-you`, {
+          state: {
+            thankYouMsg,
+            quizResult: {
+              totalScore: submitResult.totalScore,
+              maxScore: submitResult.maxScore,
+              isPassed: submitResult.isPassed,
+              passMark: form.passMark,
+              answers: submitResult.answers,
+              fields: form.fields,
+            },
+          },
+        });
+      } else {
+        navigate(`/f/${slug}/thank-you`, { state: { thankYouMsg } });
+      }
     } catch {
       setFieldErrors({ _submit: 'Failed to submit. Please try again.' });
     } finally {
@@ -234,7 +328,7 @@ export function FormFill() {
   };
 
   // ── Early returns ──────────────────────────────────────────────────────────
-  if (loading) return <PageLoader />;
+  if (loading || isAuthLoading) return <PageLoader />;
 
   if (error) {
     return (
@@ -243,7 +337,7 @@ export function FormFill() {
           <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">😕</span>
           </div>
-          <h1 className="text-xl font-bold text-[#1A1A18] mb-2">Form not available</h1>
+          <h1 className="text-xl font-bold text-[#1A1A18] mb-2">Form not found</h1>
           <p className="text-sm text-[#6B6B66]">{error}</p>
         </div>
       </div>
@@ -251,6 +345,11 @@ export function FormFill() {
   }
 
   if (!form) return null;
+
+  // Access guard: non-public forms require sign-in
+  if (!isPreview && form.accessMode && form.accessMode !== 'public' && !isAuthenticated) {
+    return <SignInToAccessScreen slug={slug!} />;
+  }
 
   const theme = getTheme(form.themeId);
   const themeVars = {
@@ -264,6 +363,18 @@ export function FormFill() {
     themeVars, bg: theme.bg, cardBg: theme.cardBg, border: theme.border,
     text: theme.text, muted: theme.muted, primary: theme.primary, primaryLight: theme.primaryLight,
   };
+
+  // ── Scenario: already submitted (attempt_once) ───────────────────────────
+  if (!isPreview && alreadySubmitted) {
+    return (
+      <ScenarioScreen {...scenarioProps}
+        icon="✅"
+        title="Already submitted"
+        subtitle="You've already completed this quiz. Only one attempt is allowed."
+        action={<a href="/my-results" className="mt-4 inline-block px-5 py-2.5 rounded-xl text-sm font-medium text-white" style={{ background: theme.primary }}>View my results</a>}
+      />
+    );
+  }
 
   // ── Scenario: form is closed ──────────────────────────────────────────────
   if (!isPreview && form.status === 'closed') {
@@ -518,7 +629,7 @@ export function FormFill() {
               className="w-full justify-center"
               style={{ backgroundColor: theme.primary, borderColor: theme.primary } as React.CSSProperties}
             >
-              {isPreview ? '— Preview mode —' : 'Submit form'}
+              {isPreview ? '— Preview mode —' : form.isQuizMode ? 'Submit quiz' : 'Submit form'}
             </Button>
           </div>
         </form>
@@ -539,7 +650,7 @@ export function FormFill() {
           onClick={!isPreview ? (e) => { e.preventDefault(); handleSubmit(e as unknown as React.FormEvent); } : undefined}
           style={{ backgroundColor: theme.primary, borderColor: theme.primary } as React.CSSProperties}
         >
-          {isPreview ? '— Preview mode —' : 'Submit form'}
+          {isPreview ? '— Preview mode —' : form.isQuizMode ? 'Submit quiz' : 'Submit form'}
         </Button>
       </div>
     </div>
