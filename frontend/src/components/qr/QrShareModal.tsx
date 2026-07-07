@@ -11,9 +11,10 @@ interface QrShareModalProps {
   isOpen: boolean;
   onClose: () => void;
   formId: string;
+  formTitle?: string;
 }
 
-export function QrShareModal({ isOpen, onClose, formId }: QrShareModalProps) {
+export function QrShareModal({ isOpen, onClose, formId, formTitle }: QrShareModalProps) {
   const { toast } = useToast();
 
   const [qrCodes, setQrCodes] = useState<QrDto[]>([]);
@@ -132,7 +133,7 @@ export function QrShareModal({ isOpen, onClose, formId }: QrShareModalProps) {
 
               {expandedId === qr.id && (
                 <div className="pb-4 pt-1 flex justify-center">
-                  <QrDisplay url={qr.url} label={qr.label ?? qr.token.slice(0, 12)} size={180} />
+                  <QrDisplay url={qr.url} label={qr.label ?? qr.token.slice(0, 12)} size={180} formTitle={formTitle} />
                 </div>
               )}
             </div>

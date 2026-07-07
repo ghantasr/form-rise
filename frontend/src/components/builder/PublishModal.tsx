@@ -8,9 +8,10 @@ interface PublishModalProps {
   isOpen: boolean;
   onClose: () => void;
   slug: string;
+  formTitle?: string;
 }
 
-export function PublishModal({ isOpen, onClose, slug }: PublishModalProps) {
+export function PublishModal({ isOpen, onClose, slug, formTitle }: PublishModalProps) {
   const [copied, setCopied] = useState(false);
   const formUrl = `${window.location.origin}/f/${slug}`;
 
@@ -61,7 +62,7 @@ export function PublishModal({ isOpen, onClose, slug }: PublishModalProps) {
         <div>
           <p className="text-xs font-semibold text-[#6B6B66] uppercase tracking-wider mb-3">QR Code</p>
           <div className="flex justify-center">
-            <QrDisplay url={formUrl} label={`form-${slug}`} size={160} />
+            <QrDisplay url={formUrl} label={`form-${slug}`} size={160} formTitle={formTitle} />
           </div>
         </div>
 

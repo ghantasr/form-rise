@@ -726,6 +726,7 @@ export function FormBuilder() {
         isOpen={publishModalOpen}
         onClose={() => setPublishModalOpen(false)}
         slug={publishedSlug}
+        formTitle={form?.title}
       />
 
       {form?.id && (
@@ -733,6 +734,7 @@ export function FormBuilder() {
           isOpen={qrModalOpen}
           onClose={() => setQrModalOpen(false)}
           formId={form.id}
+          formTitle={form.title}
         />
       )}
 
