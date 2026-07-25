@@ -6,7 +6,7 @@ export function computeSubtotal(items: { amount: number }[]): number {
   return items.reduce((sum, item) => sum + item.amount, 0);
 }
 
-export function computeTax(subtotal: number, taxRate: number, taxableAmount: number): number {
+export function computeTax(_subtotal: number, taxRate: number, taxableAmount: number): number {
   return Math.round((taxableAmount * taxRate / 100) * 100) / 100;
 }
 

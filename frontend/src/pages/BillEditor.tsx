@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Plus, Trash2, Send, Save, GripVertical, Printer, Eye, Phone,
   FileText, Hash, Package, Wrench, Monitor, ShoppingCart, Briefcase,
-  Home, FileSpreadsheet, IndianRupee, Calendar, Clock, Building2,
-  Mail, MapPin, FileDigit, Landmark, Bookmark, Layout, AlignLeft, AlignCenter, Columns3, Palette,
+  Home, FileSpreadsheet, Calendar, Clock, Building2,
+  Mail, MapPin, FileDigit, Landmark, Bookmark, Layout, AlignLeft, AlignCenter, Columns3,
 } from 'lucide-react';
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors,

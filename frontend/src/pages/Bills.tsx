@@ -131,7 +131,7 @@ export function Bills() {
   const totalBills = bills.length;
   const totalAmount = bills.reduce((sum, b) => sum + b.total, 0);
   const paidBills = bills.filter((b) => b.status === 'paid').length;
-  const overdueBills = bills.filter((b) => b.status === 'overdue' || (b.status === 'sent' && isOverdue(b.dueDate))).length;
+  const _overdueBills = bills.filter((b) => b.status === 'overdue' || (b.status === 'sent' && isOverdue(b.dueDate))).length;
   const pendingAmount = bills.filter((b) => b.status === 'sent' || b.status === 'overdue').reduce((sum, b) => sum + b.total, 0);
 
   return (
