@@ -78,6 +78,8 @@ builder.Services.AddScoped<IForkService, ForkService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<IOrgService, OrgService>();
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+builder.Services.AddScoped<IBillService, BillService>();
+builder.Services.AddScoped<IBillTemplateService, BillTemplateService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>

@@ -61,7 +61,7 @@ export function Templates() {
 
   useEffect(() => {
     client
-      .get<Template[]>('/templates')
+      .get<Template[]>(`/templates?_t=${Date.now()}`)
       .then(({ data }) => setTemplates(data))
       .catch(() => toast('Failed to load templates', 'error'))
       .finally(() => setLoading(false));

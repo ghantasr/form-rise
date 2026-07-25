@@ -28,6 +28,14 @@ public class FormController(IFormService formService, AppDbContext db) : Control
         return CreatedAtAction(nameof(Get), new { id = form.Id }, form);
     }
 
+    [HttpGet("by-slug/{slug}")]
+    public async Task<IActionResult> GetBySlug(string slug)
+    {
+        var form = await formService.GetFormBySlugAsync(UserId, slug);
+        if (form is null) return NotFound();
+        return Ok(form);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id) =>
         Ok(await formService.GetFormAsync(id, UserId));

@@ -111,6 +111,8 @@ const AssignmentResults   = lazyWithRetry(() => import('./pages/AssignmentResult
 const MyResults           = lazyWithRetry(() => import('./pages/MyResults').then(m => ({ default: m.MyResults })));
 const MyAssignments       = lazyWithRetry(() => import('./pages/MyAssignments').then(m => ({ default: m.MyAssignments })));
 const Privacy             = lazyWithRetry(() => import('./pages/Privacy').then(m => ({ default: m.Privacy })));
+const Bills               = lazyWithRetry(() => import('./pages/Bills').then(m => ({ default: m.Bills })));
+const BillEditor          = lazyWithRetry(() => import('./pages/BillEditor').then(m => ({ default: m.BillEditor })));
 
 const SESSION_HINT_KEY = 'fr_has_session';
 
@@ -256,13 +258,16 @@ export default function App() {
                   <Route path="/templates" element={<Templates />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/forms/new" element={<FormBuilder />} />
-                  <Route path="/forms/:id/edit" element={<FormBuilder />} />
+                  <Route path="/forms/:slug/edit" element={<FormBuilder />} />
                   <Route path="/forms/:id/responses" element={<FormResponses />} />
                   <Route path="/forms/:formId/assignments/:assignmentId" element={<AssignmentResults />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/org" element={<OrgDashboard />} />
                   <Route path="/my-results" element={<MyResults />} />
                   <Route path="/my-assignments" element={<MyAssignments />} />
+                  <Route path="/bills" element={<Bills />} />
+                  <Route path="/bills/new" element={<BillEditor />} />
+                  <Route path="/bills/edit/:billNumber" element={<BillEditor />} />
                 </Route>
               </Route>
             </Routes>

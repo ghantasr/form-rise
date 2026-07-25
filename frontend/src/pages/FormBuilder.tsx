@@ -21,7 +21,7 @@ import type { FieldType, Form, FormField } from '../types/form';
 import type { OrgGroup, FormAssignment, Organization } from '../types/org';
 
 export function FormBuilder() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const userEmail = useAuthStore((s) => s.user?.email ?? '');
@@ -68,12 +68,12 @@ export function FormBuilder() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!id) {
+    if (!slug) {
       formsApi
         .create('Untitled Form')
         .then(({ data }) => {
           setForm(data);
-          navigate(`/forms/${data.id}/edit`, { replace: true });
+          navigate(`/forms/${data.slug}/edit`, { replace: true });
         })
         .catch(() => {
           toast('Failed to create form', 'error');
@@ -82,7 +82,7 @@ export function FormBuilder() {
         .finally(() => setLoading(false));
     } else {
       formsApi
-        .get(id)
+        .getBySlug(slug)
         .then(({ data }) => setForm(data))
         .catch(() => {
           toast('Failed to load form', 'error');
@@ -95,7 +95,7 @@ export function FormBuilder() {
       reset();
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [id]);
+  }, [slug]);
 
   // Show tour after load only for first-time users
   useEffect(() => {

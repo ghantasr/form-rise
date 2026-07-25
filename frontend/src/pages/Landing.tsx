@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Zap, WifiOff, GitBranch, Globe, CheckCircle2, Star } from 'lucide-react';
+import { ArrowRight, Zap, WifiOff, GitBranch, Globe, CheckCircle2, Star, ReceiptText } from 'lucide-react';
 import { LogoMark } from '../components/shared/LogoMark';
 
 const features = [
@@ -22,6 +22,11 @@ const features = [
     icon: WifiOff,
     title: 'Works offline',
     desc: 'Collect responses with no internet. Answers sync automatically when reconnected.',
+  },
+  {
+    icon: ReceiptText,
+    title: 'Bills & Invoices',
+    desc: 'Create professional invoices with templates, email them to clients, and track payments.',
   },
 ];
 
@@ -86,7 +91,7 @@ export function Landing() {
                 style={{ background: '#E8F5EE', color: '#1B6B4A', borderColor: '#B8DFC9' }}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B4A]" />
-                100% free — no credit card needed
+                Forms · Bills · All free — no credit card needed
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-[56px] font-bold tracking-[-0.03em] leading-[1.08] mb-4 md:max-w-xl">
@@ -96,8 +101,8 @@ export function Landing() {
               </h1>
 
               <p className="text-base sm:text-lg text-[#6B6B66] mb-7 leading-relaxed max-w-lg mx-auto md:mx-0">
-                Build smart forms with conditional logic and picture choices. Translate into 40+ languages.
-                Collect responses even offline. No fluff, no paywalls.
+                Build smart forms with conditional logic and picture choices. Create professional invoices.
+                Translate into 40+ languages. Collect responses even offline. No fluff, no paywalls.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3">
@@ -209,9 +214,9 @@ export function Landing() {
 
         {/* ── Features ── */}
         <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] mb-2">Everything you need, nothing you don't</h2>
-            <p className="text-[#6B6B66] text-sm sm:text-base">13 field types. Conditional logic. 40+ languages. All free.</p>
+            <div className="text-center mb-8 sm:mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-[-0.02em] mb-2">Forms, bills & quizzes — all in one place</h2>
+              <p className="text-[#6B6B66] text-sm sm:text-base">13 field types. Conditional logic. Professional invoicing. 40+ languages. All free.</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {features.map(({ icon: Icon, title, desc }) => (

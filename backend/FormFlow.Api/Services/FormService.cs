@@ -35,6 +35,14 @@ public class FormService(AppDbContext db, IDistributedCache cache) : IFormServic
         return MapToDto(form);
     }
 
+    public async Task<FormDto?> GetFormBySlugAsync(Guid userId, string slug)
+    {
+        var form = await db.Forms
+            .Include(f => f.Fields.OrderBy(ff => ff.SortOrder))
+            .FirstOrDefaultAsync(f => f.UserId == userId && f.Slug == slug);
+        return form is null ? null : MapToDto(form);
+    }
+
     public async Task<FormDto> GetPublicFormAsync(string slug)
     {
         var cached = await cache.GetStringAsync(PubFormKey(slug));

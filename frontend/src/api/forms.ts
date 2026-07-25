@@ -14,6 +14,9 @@ export const formsApi = {
   get: (id: string) =>
     client.get<Form>(`/forms/${id}`),
 
+  getBySlug: (slug: string) =>
+    client.get<Form>(`/forms/by-slug/${encodeURIComponent(slug)}`),
+
   getPublic: (slug: string) =>
     client.get<Form>(`/f/${slug}`),
 

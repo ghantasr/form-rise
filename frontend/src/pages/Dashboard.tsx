@@ -67,7 +67,7 @@ export function Dashboard() {
   const handleCreate = async () => {
     try {
       const { data } = await formsApi.create('Untitled Form');
-      navigate(`/forms/${data.id}/edit`);
+      navigate(`/forms/${data.slug}/edit`);
     } catch {
       toast('Failed to create form', 'error');
     }
@@ -254,7 +254,7 @@ export function Dashboard() {
             return (
               <div
                 key={form.id}
-                onClick={() => navigate(`/forms/${form.id}/edit`)}
+                onClick={() => navigate(`/forms/${form.slug}/edit`)}
                 className={`bg-white border border-[#E4E4E0] border-l-4 ${sb} rounded-xl p-5 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 group`}
               >
                 <div className="flex items-start justify-between mb-3">

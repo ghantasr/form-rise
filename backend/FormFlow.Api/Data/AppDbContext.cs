@@ -19,6 +19,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
     public DbSet<FormAssignment> FormAssignments => Set<FormAssignment>();
     public DbSet<OrgInvite> OrgInvites => Set<OrgInvite>();
+    public DbSet<Bill> Bills => Set<Bill>();
+    public DbSet<BillItem> BillItems => Set<BillItem>();
+    public DbSet<BusinessProfile> BusinessProfiles => Set<BusinessProfile>();
+    public DbSet<BillTemplate> BillTemplates => Set<BillTemplate>();
+    public DbSet<BillTemplateItem> BillTemplateItems => Set<BillTemplateItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -127,6 +132,38 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.HasIndex(i => i.Token).IsUnique();
             e.HasOne(i => i.Org).WithMany().HasForeignKey(i => i.OrgId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Bills
+        modelBuilder.Entity<Bill>(e =>
+        {
+            e.HasIndex(b => new { b.UserId, b.CreatedAt });
+            e.HasOne(b => b.User).WithMany().HasForeignKey(b => b.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(b => b.Items).WithOne(i => i.Bill).HasForeignKey(i => i.BillId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BillItem>(e =>
+        {
+            e.HasIndex(i => new { i.BillId, i.SortOrder });
+        });
+
+        modelBuilder.Entity<BusinessProfile>(e =>
+        {
+            e.HasIndex(p => new { p.UserId, p.IsDefault });
+            e.HasOne(p => p.User).WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Bill templates
+        modelBuilder.Entity<BillTemplate>(e =>
+        {
+            e.HasIndex(t => new { t.UserId, t.Category });
+            e.HasOne(t => t.User).WithMany().HasForeignKey(t => t.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(t => t.Items).WithOne(i => i.Template).HasForeignKey(i => i.TemplateId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BillTemplateItem>(e =>
+        {
+            e.HasIndex(i => new { i.TemplateId, i.SortOrder });
         });
     }
 }

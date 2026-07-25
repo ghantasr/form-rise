@@ -57,7 +57,7 @@ export function AppLayout() {
           </div>
         )}
 
-        <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden">
+        <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden" style={{ overscrollBehavior: 'contain' }}>
           <Suspense fallback={<PageLoader />}>
             <Outlet />
           </Suspense>
