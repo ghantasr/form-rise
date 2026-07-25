@@ -24,19 +24,6 @@ const statusConfig: Record<string, { label: string; pill: string; dot: string; b
   cancelled: { label: 'Cancelled', pill: 'bg-amber-50 text-amber-700',   dot: 'bg-amber-400', border: 'border-l-amber-400', iconBg: 'bg-amber-50' },
 };
 
-function relativeTime(dateStr: string): string {
-  const now = Date.now();
-  const date = new Date(dateStr).getTime();
-  const diff = now - date;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days === 0) return 'Today';
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days} days ago`;
-  if (days < 30) return `${Math.floor(days / 7)}w ago`;
-  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
-  return `${Math.floor(days / 365)}y ago`;
-}
-
 function isOverdue(dueDateStr?: string): boolean {
   if (!dueDateStr) return false;
   return new Date(dueDateStr).getTime() < Date.now();
@@ -131,7 +118,6 @@ export function Bills() {
   const totalBills = bills.length;
   const totalAmount = bills.reduce((sum, b) => sum + b.total, 0);
   const paidBills = bills.filter((b) => b.status === 'paid').length;
-  const _overdueBills = bills.filter((b) => b.status === 'overdue' || (b.status === 'sent' && isOverdue(b.dueDate))).length;
   const pendingAmount = bills.filter((b) => b.status === 'sent' || b.status === 'overdue').reduce((sum, b) => sum + b.total, 0);
 
   return (
