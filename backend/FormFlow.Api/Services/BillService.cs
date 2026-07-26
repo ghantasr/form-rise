@@ -228,7 +228,7 @@ public class BillService(
             throw new InvalidOperationException("Recipient email is required to send the bill.");
 
         var pdf = BillPdfRenderer.Render(bill);
-        var fileName = $"{bill.BillNumber.Replace("/", "-")}.pdf";
+        var fileName = $"{bill.BillNumber.Replace("/", "-")}.html";
 
         await emailService.SendBillEmailAsync(
             bill.RecipientEmail,

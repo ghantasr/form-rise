@@ -73,12 +73,12 @@ public class EmailService(IConfiguration config) : IEmailService
                 """
         };
 
-        var attachment = new MimePart("application", "pdf")
+        var attachment = new MimePart("text", "html")
         {
-            Content = new MimeContent(new MemoryStream(pdfBytes)),
+            Content = new MimeContent(new MemoryStream(pdfBytes), ContentEncoding.Default),
             ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
             ContentTransferEncoding = ContentEncoding.Base64,
-            FileName = fileName
+            FileName = fileName.Replace(".pdf", ".html")
         };
 
         var multipart = new Multipart("mixed") { body, attachment };
