@@ -67,7 +67,7 @@ export function Templates() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleFork = async (slug: string) => {
+const handleFork = async (slug: string) => {
     if (!isAuthenticated) {
       navigate('/login', { state: { next: '/templates' } });
       return;
@@ -75,11 +75,15 @@ export function Templates() {
     setForkingId(slug);
     try {
       const { data } = await client.post<{ id: string }>(`/templates/${slug}/fork`);
-      await new Promise((r) => setTimeout(r, 2000));  // ← this line (2s delay)
       toast('Template added to your forms', 'success');
-      navigate(`/forms/${data.id}/edit`);
-    } catch {
-      toast('Failed to use template', 'error');
+      navigate(`/forms/${data.id}/edit`, { replace: true }); // Prevent history stack from resetting session
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast('Session expired. Please log in again.', 'error');
+        navigate('/login', { state: { next: '/templates' } });
+      } else {
+        toast('Failed to use template', 'error');
+      }
     } finally {
       setForkingId(null);
     }
