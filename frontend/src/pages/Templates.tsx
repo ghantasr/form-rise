@@ -75,6 +75,7 @@ export function Templates() {
     setForkingId(slug);
     try {
       const { data } = await client.post<{ id: string }>(`/templates/${slug}/fork`);
+      await new Promise((r) => setTimeout(r, 2000));  // ← this line (2s delay)
       toast('Template added to your forms', 'success');
       navigate(`/forms/${data.id}/edit`);
     } catch {
